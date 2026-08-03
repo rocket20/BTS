@@ -1,0 +1,334 @@
+"<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura de Servicios</title>
+    <style>
+        :root {
+            --primary-color: #065f46;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-color: #f3f4f6;
+            --border-color: #e5e7eb;
+            --badge-bg: #d1fae5;
+            --badge-text: #065f46;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .invoice-box {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .header-info {
+            text-align: right;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+
+        .details-section {
+            flex: 1;
+        }
+
+        .details h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .details p {
+            margin: 0;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 32px;
+        }
+
+        th, td {
+            padding: 16px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-size: 1rem;
+        }
+
+        th.text-right, td.text-right {
+            text-align: right;
+        }
+        
+        .item-desc {
+            color: var(--text-main);
+        }
+
+        .totals-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 32px;
+        }
+
+        .totals {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 12px;
+            color: var(--text-muted);
+        }
+
+        .totals-row.grand-total {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            align-items: center;
+            margin-top: 8px;
+            padding: 16px 12px;
+        }
+
+        .status-badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            margin-top: 48px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 12px 32px;
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background-color: var(--badge-bg);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+            .invoice-box {
+                padding: 24px 16px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .header-info {
+                text-align: left;
+            }
+            .details {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .totals-container {
+                justify-content: center;
+            }
+            .totals {
+                max-width: 100%;
+            }
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .invoice-box {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            .btn-action {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <div>
+                <h1>Factura</h1>
+            </div>
+            <div class="header-info">
+                <strong>Factura No:</strong> #FAC-2026-0803<br>
+                <strong>Fecha de emisión:</strong> 03 de Agosto, 2026<br>
+            </div>
+        </div>
+
+        <div class="details">
+            <div class="details-section">
+                <h3>Facturado a:</h3>
+                <p>
+                    <strong>Cliente Residencial</strong><br>
+                    Diriamba, Carazo<br>
+                    Nicaragua
+                </p>
+            </div>
+            <div class="details-section">
+                <h3>Emitido por:</h3>
+                <p>
+                    <strong>Servicios de Limpieza S.A.</strong><br>
+                    contacto@limpiezasa.com<br>
+                    +505 8000 0000
+                </p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Descripción del servicio</th>
+                    <th class="text-right">Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="item-desc">Limpieza profunda</td>
+                    <td class="text-right">C$1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="item-desc">Desinfección premium</td>
+                    <td class="text-right">C$300.00</td>
+                </tr>
+                <tr>
+                    <td class="item-desc">
+                        Cuota de servicio 
+                        <span style="color: #9ca3af; font-size: 0.85em; margin-left: 4px;">&#9432;</span>
+                    </td>
+                    <td class="text-right">C$60.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals-container">
+            <div class="totals">
+                <div class="totals-row">
+                    <span>Subtotal</span>
+                    <span>C$1,560.00</span>
+                </div>
+                <div class="totals-row grand-total">
+                    <div>
+                        Total 
+                        <span class="status-badge">Pagado</span>
+                    </div>
+                    <span>C$1,560.00</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-action" onclick="window.print()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Imprimir factura
+        </button>
+
+        <div class="footer">
+            <p>Gracias por confiar en nuestros servicios. Este documento es una representación válida de su comprobante de pago.</p>
+        </div>
+    </div>
+</body>
+</html>
