@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "brand": {
+    "studioName": "BTS Studio",
+    "heroTitle": "",
+    "heroSubtitle": "",
+    "contactEmail": "",
+    "whatsapp": "",
+    "instagram": "",
+    "analyticsId": ""
+  },
+  "events": [],
+  "brands": [],
+  "packages": [
+    {
+      "id": "esencial",
+      "title": "Esencial",
+      "description": "Cobertura fotográfica de los momentos que importan.",
+      "features": [
+        "Hasta 2 horas de cobertura",
+        "1 fotógrafo profesional",
+        "30 fotografías editadas",
+        "Momentos, invitados y detalles",
+        "Corrección de color",
+        "Entrega digital"
+      ],
+      "active": true
+    },
+    {
+      "id": "profesional",
+      "title": "Profesional",
+      "description": "Fotografía y video para que tu evento siga contando historias.",
+      "features": [
+        "Hasta 4 horas de cobertura",
+        "1 fotógrafo + 1 videógrafo",
+        "60 fotografías editadas",
+        "Video resumen de 45–60 s",
+        "1 reel vertical para redes",
+        "Edición, color y entrega digital"
+      ],
+      "active": true
+    },
+    {
+      "id": "premium",
+      "title": "Premium",
+      "description": "Una propuesta audiovisual de mayor alcance para grandes ocasiones.",
+      "features": [
+        "Hasta 6 horas de cobertura",
+        "Equipo de fotografía y video",
+        "100 fotografías editadas",
+        "Video resumen de hasta 2 min",
+        "3 reels verticales",
+        "Gráficos con identidad corporativa"
+      ],
+      "active": true
+    }
+  ],
+  "services": [
+    {
+      "id": "serv1",
+      "title": "Producción de eventos",
+      "description": "Planeación visual, coordinación de cobertura y ejecución de experiencias corporativas.",
+      "active": true
+    },
+    {
+      "id": "serv2",
+      "title": "Producción audiovisual",
+      "description": "Videos de evento, resúmenes cinematográficos, entrevistas y piezas de campaña.",
+      "active": true
+    },
+    {
+      "id": "serv3",
+      "title": "Fotografía profesional",
+      "description": "Cobertura editorial, retratos, detalles y momentos que representan tu marca.",
+      "active": true
+    },
+    {
+      "id": "serv4",
+      "title": "Contenido para redes",
+      "description": "Reels, historias, clips verticales y contenido diseñado para ampliar tu alcance.",
+      "active": true
+    }
+  ],
+  "testimonials": []
+}

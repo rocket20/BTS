@@ -1,0 +1,82 @@
+BTS STUDIO — WEB + DASHBOARD PARA GITHUB PAGES
+==============================================
+
+QUÉ CONTIENE
+- index.html: web original BTS Studio, con cotizador y generación de PDF preservados.
+- admin/index.html: dashboard de administración con KPI, cotizaciones, eventos,
+  marcas, servicios, paquetes, personalización y conexión al repositorio GitHub.
+- admin/app.js + admin/styles.css: código del panel.
+- assets/js/bts-site.js: puente entre web y datos editables.
+- assets/js/bts-cms.css: estilos de galería de marcas.
+- data/bts-content.json: contenido compartido, público y editable.
+- assets/uploads/: espacio para las fotografías publicadas desde GitHub.
+
+INSTALACIÓN EN EL MISMO GITHUB
+1. Hacé una copia de seguridad de tu index.html actual por si hiciste cambios.
+2. Subí EL CONTENIDO INTERIOR del ZIP a la raíz del MISMO repositorio que
+   ya publica tu web en GitHub Pages. Conservá las carpetas admin, data y assets.
+   Si tu web actual utiliza el HTML original de BTS Studio, podés reemplazar
+   index.html por el de este paquete. Si ya hiciste cambios posteriores, revisalos
+   antes de sobrescribir ese archivo.
+3. Confirmá que GitHub Pages publica esa rama, por ejemplo main, desde / (root).
+4. Abrí https://TUUSUARIO.github.io/TUREPO/admin/ ; o para dominio propio
+   https://tudominio.com/admin/ .
+5. Podés crear eventos, editar marcas y paquetes, y guardar borradores LOCALES
+   sin conectar nada. Verás la web original incluso antes de publicar cambios.
+
+PARA PUBLICAR CAMBIOS REALES SIN SUPABASE
+1. Creá en GitHub un "fine-grained personal access token" restringido al
+   repositorio del sitio, con permiso "Contents: Read and write".
+   Preferí un token de duración corta. NO uses una clave de acceso de todo tu perfil.
+2. En /admin/ -> "GitHub y conexiones": indicá usuario, repositorio y rama.
+3. Pegá el token y pulsá "Probar conexión". El token NO se guarda en el
+   almacenamiento local y se pierde al recargar o cerrar esta pestaña.
+4. Agregá eventos, logos y contenido. Pulsá "Publicar en GitHub".
+   El panel sube las imágenes comprimidas a assets/uploads/ y después actualiza
+   data/bts-content.json mediante la API oficial de GitHub.
+5. Esperá a que GitHub Pages publique el commit y recargá tu web.
+   Los eventos nuevos sustituyen las tarjetas ilustrativas originales y las
+   marcas forman una sección nueva. Los paquetes actualizan su descripción.
+
+NOTA IMPORTANTE SOBRE LA SEGURIDAD
+La URL /admin/ es una página ESTÁTICA y puede ser visitada por cualquiera
+que la conozca. No tiene un login propio: solamente quien tenga un token
+válido con permisos puede escribir en GitHub. Nunca guardes un token en
+HTML, JavaScript del repositorio, JSON o parámetros de URL. No compartas
+capturas de pantalla con el token visible. GitHub guarda historial de commits
+(incluyendo imágenes y contenido publicado). No subas datos privados de clientes.
+El token está activo en memoria del navegador mientras dura esa pestaña.
+
+QUÉ KPI ESTÁN CONECTADOS Y CUÁLES NO
+- Contador de proyectos, marcas y paquetes: REAL, derivado del CMS del sitio.
+- Tabla de cotizaciones: permite registrar clientes manualmente, cambiar estados,
+  importar/exportar CSV. Datos SOLO en este navegador; NO se comparten en GitHub.
+- Visitas, clics de WhatsApp y tasas de conversión del panel: DEMOSTRACIÓN
+  claramente identificada, NO son visitas reales ni lecturas de GitHub.
+- La web puede emitir a Google Analytics 4: visitas, clic a WhatsApp, clic de
+  correo, generación de PDF, intento de contacto y apertura de proyecto.
+  Colocá el ID de medición G-XXXXXXXXXX en "Página y contacto", guardá
+  borrador y publicá en GitHub. La medición empieza desde entonces y se
+  consulta en Google Analytics; NO aparecen automáticamente reportes en /admin/.
+- Clic a WhatsApp NO es igual a mensaje enviado y un PDF generado NO es
+  igual a cotización efectivamente recibida.
+
+PARA RECIBIR SOLICITUDES REALES DESDE TODOS LOS VISITANTES
+GitHub Pages no recibe formularios ni ofrece base de datos o backend.
+El cotizador existente abre WhatsApp/correo y descarga un PDF, pero NO
+almacena cotizaciones reales en un buzón central. La captura multiusuario,
+reportes de GA4 dentro del dashboard y autenticación privada se integrarán
+cuando se conecte Supabase (o un backend seguro alternativo).
+
+IMPORTANTE: FORMULARIOS Y PAQUETES
+El generador PDF del brief y las reglas originales del cotizador siguen
+intactos. Las fichas públicas de paquetes admiten cambios de texto; si
+cambiás los nombres de sus categorías, las opciones originales del brief
+pueden seguir usando los nombres anteriores hasta la futura integración.
+
+SIN DEPENDENCIAS DE INSTALACIÓN
+No hace falta Node, compilación, ni instalar nada para subir a Pages.
+El dashboard usa HTML + CSS + JavaScript. Abierto como archivo local,
+el panel funciona en modo borrador; las conexiones en vivo requieren HTTPS.
+
+Archivo preparado el 3 de noviembre de 2026.

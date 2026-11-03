@@ -154,7 +154,7 @@ footer{border-top:1px solid #2f313b;background:#0e1015;padding:54px 0 22px}.foot
    Cambiá SOLAMENTE estos datos antes de publicar la web.
    No se guarda nada en servidores en esta versión de un solo archivo.
    ================================================================ */
-const CONFIG = {
+const CONFIG = window.BTS_CONFIG = {
   whatsapp: "", // Ejem: "50588888888" (solo dígitos, sin + ni espacios)
   email: "",    // Ejem: "hola@tudominio.com"
   instagram: "" // Ejem: "https://www.instagram.com/tuusuario/"
@@ -166,9 +166,9 @@ const CONFIG = {
 const $=(s,root=document)=>root.querySelector(s), $$=(s,root=document)=>Array.from(root.querySelectorAll(s));
 const menuBtn=$('#menuBtn'),mainMenu=$('#mainMenu'),header=$('#siteHeader'),progress=$('#scrollProgress'), toastEl=$('#toast');
 $('#year').textContent=new Date().getFullYear();
-const digits=String(CONFIG.whatsapp||'').replace(/\D/g,'');
+const digits=()=>String(CONFIG.whatsapp||'').replace(/\D/g,'');
 $('#publicEmail').textContent=CONFIG.email||'Pendiente de configurar';
-$('#publicPhone').textContent=digits?('+'+digits):'Pendiente de configurar';
+$('#publicPhone').textContent=digits()?('+'+digits()):'Pendiente de configurar';
 let toastTimer;function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),4100)}
 function closeMenu(){mainMenu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰'}
 menuBtn.addEventListener('click',()=>{const open=!mainMenu.classList.contains('open');mainMenu.classList.toggle('open',open);menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'×':'☰'});
@@ -415,12 +415,15 @@ function downloadQuotePDF(){
   return file;
 }
 
-$('#downloadBrief').addEventListener('click',()=>{if(!readyQuote())return;try{downloadQuotePDF();toast('Tu brief en PDF se descargó correctamente. No se ha enviado ninguna solicitud.');showStatus('PDF generado: ahora podés compartirlo con BTS Studio.')}catch(error){console.error('No se pudo generar el PDF',error);toast('No pudimos preparar el PDF. Intentá de nuevo.')}});
-$('#sendWhatsapp').addEventListener('click',async()=>{if(!readyQuote())return;let msg=encodeURIComponent(quoteMessage());if(digits){window.open(`https://wa.me/${digits}?text=${msg}`,'_blank','noopener');showStatus('Se preparó el mensaje de WhatsApp; verificá el envío en la aplicación.')}else{const ok=await copyText(quoteMessage());window.open('https://web.whatsapp.com/','_blank','noopener');toast(ok?'Copiamos tu brief. Falta configurar el número oficial de BTS Studio para enviarlo directamente.':'Falta configurar el número oficial de WhatsApp. Descargá el PDF del brief para compartirlo.');}});
-$('#sendEmail').addEventListener('click',async()=>{if(!readyQuote())return;if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Cotización BTS Studio — '+(eventType.value||'Evento'))}&body=${encodeURIComponent(quoteMessage())}`;showStatus('Se preparó un correo; verificá el envío en tu aplicación de correo.')}else{await copyText(quoteMessage());toast('Falta configurar el correo oficial de BTS Studio. El resumen fue preparado para copiar.') }});
-$('#contactForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;if(!f.checkValidity()){f.reportValidity();return}const msg=`CONTACTO — BTS STUDIO\nNombre: ${$('#cName').value.trim()}\nEmail: ${$('#cMail').value.trim()}\nServicio: ${$('#cSubject').value}\n\nMensaje:\n${$('#cText').value.trim()}`;if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta BTS Studio: '+$('#cSubject').value)}&body=${encodeURIComponent(msg)}`;toast('Tu aplicación de correo preparará el mensaje; revisá el envío.')}else if(digits){window.open(`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`,'_blank','noopener');toast('WhatsApp abrirá el mensaje para que confirmés el envío.')}else{const ok=await copyText(msg);toast(ok?'Mensaje copiado. Para enviarlo directamente falta configurar un contacto comercial.':'Configurá un correo o WhatsApp comercial antes de publicar la web.')}});
+$('#downloadBrief').addEventListener('click',()=>{if(!readyQuote())return;window.BTSMetric?.('brief_pdf');try{downloadQuotePDF();toast('Tu brief en PDF se descargó correctamente. No se ha enviado ninguna solicitud.');showStatus('PDF generado: ahora podés compartirlo con BTS Studio.')}catch(error){console.error('No se pudo generar el PDF',error);toast('No pudimos preparar el PDF. Intentá de nuevo.')}});
+$('#sendWhatsapp').addEventListener('click',async()=>{if(!readyQuote())return;window.BTSMetric?.('whatsapp_click');let msg=encodeURIComponent(quoteMessage());if(digits()){window.open(`https://wa.me/${digits()}?text=${msg}`,'_blank','noopener');showStatus('Se preparó el mensaje de WhatsApp; verificá el envío en la aplicación.')}else{const ok=await copyText(quoteMessage());window.open('https://web.whatsapp.com/','_blank','noopener');toast(ok?'Copiamos tu brief. Falta configurar el número oficial de BTS Studio para enviarlo directamente.':'Falta configurar el número oficial de WhatsApp. Descargá el PDF del brief para compartirlo.');}});
+$('#sendEmail').addEventListener('click',async()=>{if(!readyQuote())return;window.BTSMetric?.('email_click');if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Cotización BTS Studio — '+(eventType.value||'Evento'))}&body=${encodeURIComponent(quoteMessage())}`;showStatus('Se preparó un correo; verificá el envío en tu aplicación de correo.')}else{await copyText(quoteMessage());toast('Falta configurar el correo oficial de BTS Studio. El resumen fue preparado para copiar.') }});
+$('#contactForm').addEventListener('submit',async e=>{e.preventDefault();window.BTSMetric?.('contact_attempt');const f=e.currentTarget;if(!f.checkValidity()){f.reportValidity();return}const msg=`CONTACTO — BTS STUDIO\nNombre: ${$('#cName').value.trim()}\nEmail: ${$('#cMail').value.trim()}\nServicio: ${$('#cSubject').value}\n\nMensaje:\n${$('#cText').value.trim()}`;if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta BTS Studio: '+$('#cSubject').value)}&body=${encodeURIComponent(msg)}`;toast('Tu aplicación de correo preparará el mensaje; revisá el envío.')}else if(digits()){window.open(`https://wa.me/${digits()}?text=${encodeURIComponent(msg)}`,'_blank','noopener');toast('WhatsApp abrirá el mensaje para que confirmés el envío.')}else{const ok=await copyText(msg);toast(ok?'Mensaje copiado. Para enviarlo directamente falta configurar un contacto comercial.':'Configurá un correo o WhatsApp comercial antes de publicar la web.')}});
 $$('.faq-item button').forEach(btn=>{btn.addEventListener('click',()=>{let open=btn.getAttribute('aria-expanded')==='true';$$('.faq-item button').forEach(b=>{b.setAttribute('aria-expanded','false');b.nextElementSibling.style.maxHeight='0px'});if(!open){btn.setAttribute('aria-expanded','true');btn.nextElementSibling.style.maxHeight=btn.nextElementSibling.scrollHeight+'px'}})});
 })();
 </script>
+
+<link rel="stylesheet" href="assets/js/bts-cms.css">
+<script src="assets/js/bts-site.js" defer></script>
 </body>
 </html>
