@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-11-03T22:21:29.800Z",
   "brand": {
     "studioName": "BTS Studio",
     "heroTitle": "",
@@ -10,7 +10,26 @@
     "instagram": "",
     "analyticsId": ""
   },
-  "events": [],
+  "events": [
+    {
+      "id": "btsmw18xr87lxv0b",
+      "title": "Coca Cola",
+      "category": "eventos",
+      "date": "2026-11-12",
+      "description": "Videos reel corporativos",
+      "active": true,
+      "image": "assets/uploads/events-btsmw18xr87lxv0b-1793744474369.webp",
+      "gallery": [
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744476728-0.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744478756-1.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744480725-2.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744482427-3.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744484272-4.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744486031-5.webp",
+        "assets/uploads/galeria-btsmw18xr87lxv0b-1793744488024-6.webp"
+      ]
+    }
+  ],
   "brands": [],
   "packages": [
     {
