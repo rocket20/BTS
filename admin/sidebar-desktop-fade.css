@@ -1,0 +1,230 @@
+/*
+ BTS Studio · Desktop Sidebar Cinematic Fade
+ Only desktop transitions; existing mobile drawer is untouched.
+ Loaded last so it gently replaces abrupt collapse rules.
+*/
+@media (min-width:791px) and (prefers-reduced-motion:no-preference) {
+ :root {
+  --bts-side-ease:cubic-bezier(.22,.78,.22,1);
+  --bts-side-time:.78s;
+ }
+ /* Smoothly reclaim the dashboard space, instead of instantly jumping. */
+ .sidebar {
+  transition:
+   width var(--bts-side-time) var(--bts-side-ease),
+   padding var(--bts-side-time) var(--bts-side-ease),
+   background .5s ease,
+   border-color .35s ease !important;
+ }
+ .main-wrap {
+  transition:
+   margin-left var(--bts-side-time) var(--bts-side-ease),
+   width var(--bts-side-time) var(--bts-side-ease) !important;
+ }
+
+ /* Avoid the discrete row->column jump in the header: animate arrow position. */
+ .sidebar .bts-sidebar-head {
+  position:relative;
+  flex-direction:row !important;
+  height:73px !important;
+  min-height:73px !important;
+  flex:0 0 73px !important;
+  align-items:flex-start !important;
+  transition: height var(--bts-side-time) var(--bts-side-ease),
+   min-height var(--bts-side-time) var(--bts-side-ease),
+   flex-basis var(--bts-side-time) var(--bts-side-ease) !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .bts-sidebar-head {
+  height:103px !important;
+  min-height:103px !important;
+  flex-basis:103px !important;
+  flex-direction:row !important;
+ }
+ .sidebar .bts-sidebar-head .logo {
+  position:absolute !important;
+  top:4px !important;
+  left:0 !important;
+  right:auto;
+  flex:none !important;
+  display:flex !important;
+  width:calc(100% - 43px) !important;
+  min-width:0 !important;
+  height:55px !important;
+  transition:width var(--bts-side-time) var(--bts-side-ease),
+    height var(--bts-side-time) var(--bts-side-ease),
+    left var(--bts-side-time) var(--bts-side-ease),
+    border-color .25s ease,
+    background .25s ease !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .bts-sidebar-head .logo {
+  left:3px !important;
+  width:48px !important;
+  height:47px !important;
+ }
+ .sidebar .bts-sidebar-head .logo svg {
+  transition:width var(--bts-side-time) var(--bts-side-ease),
+    height var(--bts-side-time) var(--bts-side-ease) !important;
+ }
+ /* Text is kept in the DOM and faded, not display:none (which cannot animate). */
+ .sidebar .bts-sidebar-head .logo>span {
+  display:flex !important;
+  flex-direction:column;
+  min-width:0;
+  overflow:hidden;
+  max-width:155px;
+  opacity:1;
+  visibility:visible;
+  white-space:nowrap;
+  transform:translateX(0);
+  transition:
+   opacity .48s ease .17s,
+   max-width var(--bts-side-time) var(--bts-side-ease),
+   transform .65s var(--bts-side-ease),
+   visibility 0s linear 0s !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .bts-sidebar-head .logo>span {
+  display:flex !important;
+  max-width:0;
+  opacity:0;
+  visibility:hidden;
+  transform:translateX(-8px);
+  transition:
+   opacity .32s ease,
+   max-width var(--bts-side-time) var(--bts-side-ease),
+   transform .45s var(--bts-side-ease),
+   visibility 0s linear .47s !important;
+ }
+ .sidebar .bts-sidebar-collapse {
+  position:absolute !important;
+  top:13px;
+  right:0;
+  margin:0 !important;
+  transition:
+   top var(--bts-side-time) var(--bts-side-ease),
+   right var(--bts-side-time) var(--bts-side-ease),
+   width .6s ease,
+   height .6s ease,
+   background .3s ease,
+   border-color .3s ease !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .bts-sidebar-collapse {
+  top:64px;
+  right:8px;
+  margin:0 !important;
+ }
+
+ /* Stagger-like gentle navigation fade, preserving icon-only compact items. */
+ .sidebar .nav-item {
+  justify-content:flex-start !important;
+  gap:12px !important;
+  animation:none !important;
+  transition:
+   width var(--bts-side-time) var(--bts-side-ease),
+   max-width var(--bts-side-time) var(--bts-side-ease),
+   padding var(--bts-side-time) var(--bts-side-ease),
+   gap var(--bts-side-time) var(--bts-side-ease),
+   margin var(--bts-side-time) var(--bts-side-ease),
+   background .3s ease,
+   border-color .3s ease,
+   box-shadow .3s ease,
+   transform .3s ease !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .nav-item {
+  animation:none !important;
+  justify-content:flex-start !important;
+  gap:0 !important;
+ }
+ .sidebar .nav-item .nav-ico {
+  transition:
+    width var(--bts-side-time) var(--bts-side-ease),
+    height var(--bts-side-time) var(--bts-side-ease),
+    flex-basis var(--bts-side-time) var(--bts-side-ease),
+    background .25s ease,
+    color .25s ease,
+    border-color .25s ease,
+    filter .25s ease !important;
+ }
+ .sidebar .nav-item .nav-text {
+  display:block !important;
+  flex:1 1 auto;
+  min-width:0;
+  max-width:170px;
+  overflow:hidden;
+  white-space:nowrap;
+  opacity:1;
+  visibility:visible;
+  transform:translateX(0);
+  transition:
+   opacity .5s ease .14s,
+   max-width var(--bts-side-time) var(--bts-side-ease),
+   transform .57s var(--bts-side-ease),
+   visibility 0s linear 0s !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .nav-item .nav-text {
+  display:block !important;
+  flex:1 1 auto;
+  max-width:0;
+  opacity:0;
+  visibility:hidden;
+  transform:translateX(-12px);
+  transition:
+   opacity .34s ease,
+   max-width var(--bts-side-time) var(--bts-side-ease),
+   transform .52s var(--bts-side-ease),
+   visibility 0s linear .48s !important;
+ }
+ /* The section dividers contract rather than disappearing abruptly. */
+ .sidebar .sidebar-label,.sidebar .sidebar-label.sub {
+  display:flex !important;
+  height:auto !important;
+  max-height:24px;
+  overflow:hidden;
+  opacity:1;
+  visibility:visible;
+  transition:
+   max-height .7s var(--bts-side-ease),
+   margin .7s var(--bts-side-ease),
+   opacity .52s ease .12s,
+   visibility 0s linear 0s !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .sidebar-label,
+ html.bts-sidebar-collapsed .sidebar .sidebar-label.sub {
+  display:flex !important;
+  max-height:0;
+  opacity:0;
+  visibility:hidden;
+  margin:0 !important;
+  padding:0 !important;
+  transition:
+   max-height .72s var(--bts-side-ease),
+   margin .72s var(--bts-side-ease),
+   opacity .29s ease,
+   visibility 0s linear .44s !important;
+ }
+
+ /* Status card: fade the copy into the already-small BTS monogram. */
+ .sidebar .sidebar-foot .dotline {display:flex !important}
+ .sidebar .sidebar-foot p {display:block !important}
+ .sidebar .sidebar-foot a {display:inline-block !important}
+ .sidebar .sidebar-foot .dotline,
+ .sidebar .sidebar-foot p,
+ .sidebar .sidebar-foot a {
+  opacity:1;
+  visibility:visible;
+  transition:opacity .38s ease .17s, visibility 0s linear 0s !important;
+ }
+ html.bts-sidebar-collapsed .sidebar .sidebar-foot .dotline,
+ html.bts-sidebar-collapsed .sidebar .sidebar-foot p,
+ html.bts-sidebar-collapsed .sidebar .sidebar-foot a {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .22s ease,visibility 0s linear .34s !important;
+ }
+ .sidebar .sidebar-foot::after {opacity:0;transition:opacity .35s ease!important}
+ html.bts-sidebar-collapsed .sidebar .sidebar-foot::after {
+  opacity:1;transition:opacity .36s ease .23s!important;
+ }
+}
+
+/* No animation is forced on mobile or when reduced motion is requested. */
