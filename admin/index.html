@@ -40,6 +40,33 @@
 </section>
 <section class="page" id="page-cotizaciones"><div class="page-intro"><div><div class="eyebrow">GESTIÓN COMERCIAL</div><h1>Solicitudes y clientes.</h1><p>Una mesa de seguimiento preparada para integrarse después con un formulario centralizado.</p></div><button class="btn btn-primary" id="newLead">+ Agregar solicitud</button></div><div class="notice"><span>ⓘ</span><div><strong>Las solicitudes reales aún no llegan aquí desde otros dispositivos.</strong><span>GitHub Pages no recibe formularios. Podés crear registros manuales, importar un CSV o practicar con datos demo; todo este módulo guarda datos solo en el navegador donde lo usás. No publiques información privada en el repositorio.</span></div></div>
 <div class="panel"><div class="table-toolbar"><div class="tool-left"><input id="leadSearch" class="search" type="search" placeholder="Buscar nombre, empresa o servicio"><select id="leadFilter" class="input narrow"><option value="all">Todos los estados</option><option>Pendiente</option><option>Contactado</option><option>Cotizado</option><option>Aprobado</option><option>Rechazado</option></select></div><div class="tool-right"><label class="btn btn-secondary" for="csvInput">Importar CSV</label><input type="file" id="csvInput" accept=".csv,text/csv" hidden><button class="btn btn-secondary" id="exportLeads">Exportar CSV</button></div></div><div class="table-scroll"><table><thead><tr><th>CLIENTE</th><th>SERVICIO</th><th>FECHA</th><th>ESTADO</th><th>ACCIÓN</th></tr></thead><tbody id="leadsTable"></tbody></table></div><div class="table-footer" id="leadFoot"></div></div>
+<div class="panel" id="btsOnlinePanel" style="margin-top:20px">
+  <div class="panel-header"><div><div class="eyebrow">SUPABASE / SOLICITUDES REALES</div><h2>Cotizaciones recibidas desde la web</h2></div></div>
+  <p id="btsOnlineMessage" class="tiny-note" role="status">Comprobando conexión segura…</p>
+  <div id="btsOnlineLogin">
+    <form id="btsOnlineLoginForm" style="display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:20px 0">
+      <div class="field"><label for="btsOnlineEmail">Correo administrador</label><input class="input" id="btsOnlineEmail" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="btsOnlinePassword">Contraseña</label><input class="input" id="btsOnlinePassword" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-primary" type="submit">Ver solicitudes online</button>
+    </form>
+  </div>
+  <div id="btsOnlineWorkspace" hidden>
+    <p id="btsOnlineStats" class="tiny-note"></p>
+    <div class="table-toolbar">
+      <div class="tool-left"><input class="search" id="btsOnlineSearch" type="search" placeholder="Buscar cliente, correo, evento…">
+        <select class="input narrow" id="btsOnlineFilter">
+          <option value="">Todos los estados</option><option value="nueva">Nueva</option><option value="en_revision">En revisión</option>
+          <option value="contactada">Contactada</option><option value="propuesta_enviada">Propuesta enviada</option>
+          <option value="aceptada">Aceptada</option><option value="cerrada">Cerrada</option>
+        </select>
+      </div>
+      <div class="tool-right"><button class="btn btn-secondary" type="button" id="btsOnlineRefresh">Actualizar</button><button class="btn btn-secondary" type="button" id="btsOnlineLogout">Cerrar sesión</button></div>
+    </div>
+    <div class="table-scroll"><table><thead><tr><th>RECIBIDA</th><th>CLIENTE</th><th>EVENTO</th><th>PAQUETE</th><th>ESTADO</th><th>ACCIÓN</th></tr></thead><tbody id="btsOnlineRows"></tbody></table></div>
+    <div class="table-footer">Consultas protegidas por Supabase Auth y políticas RLS.</div>
+    <div id="btsOnlineDetails" style="display:grid;gap:12px;margin-top:24px"></div>
+  </div>
+</div>
 </section>
 <section class="page" id="page-eventos"><div class="page-intro"><div><div class="eyebrow">PORTAFOLIO / CMS</div><h1>Eventos y proyectos.</h1><p>Subí proyectos, portadas, galerías y descripciones. Publicá el contenido directamente en GitHub.</p></div><button class="btn btn-primary" id="newEvent">+ Nuevo proyecto</button></div><div class="notice compact-notice"><span>✦</span><div><strong>Galería conectada a la web.</strong><span>Al publicar en GitHub, los eventos activos se muestran en la sección “Experiencias” de BTS Studio. Si todavía no agregás ninguno, la web conserva los ejemplos originales.</span></div></div><div class="card-grid" id="eventCards"></div></section>
 <section class="page" id="page-marcas"><div class="page-intro"><div><div class="eyebrow">CONTENIDO / CREDIBILIDAD</div><h1>Marcas y aliados.</h1><p>Administrá los logotipos que aparecen en “Marcas que confían en nosotros”.</p></div><button class="btn btn-primary" id="newBrand">+ Agregar marca</button></div><div class="card-grid logos-grid" id="brandCards"></div></section>
@@ -55,4 +82,7 @@
 </main></div></div>
 <div class="overlay" id="modalOverlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="eyebrow" id="modalEyebrow">EDITOR</div><h2 id="modalTitle">Nuevo elemento</h2></div><button id="modalClose" class="close" aria-label="Cerrar">×</button></div><form id="modalForm"><div id="modalFields"></div><div class="modal-actions"><button type="button" id="modalDelete" class="btn btn-danger" hidden>Eliminar</button><span class="spacer"></span><button type="button" id="modalCancel" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary">Guardar borrador</button></div></form></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="app.js" defer></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="../assets/js/bts-supabase-config.js" defer></script>
+<script src="app.js" defer></script>
+<script src="../assets/js/bts-cotizaciones-admin.js" defer></script></body></html>
