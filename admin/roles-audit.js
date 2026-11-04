@@ -52,11 +52,15 @@ function insert(){
 async function loadUsers(){
  if(!token())return;note('auditUsersStatus','Consultando usuarios…');
  try{
-  // Compatible con la tabla real: user_id, created_at y role.
-  // La RPC opcional permite ver nombres y correos de Auth sin exponer auth.users.
-  try{users=await api('/rest/v1/rpc/bts_list_admin_users','POST',{})||[];}
-  catch(e){
-   if(!/function|schema cache|PGRST202|404|not found/i.test(e.message))throw e;
+  // Leer directamente con RLS: owner/admin pueden consultar el equipo tras aplicar
+  // admin/sql/usuarios-visibles.sql. Si aún no están las columnas opcionales,
+  // seguir mostrando UID y rol en vez de fallar completamente.
+  let minimal=false;
+  try{
+   users=await api('/rest/v1/bts_admins?select=user_id,role,created_at,email,display_name&order=created_at.asc')||[];
+  }catch(e){
+   if(!/column|does not exist|42703|PGRST204|PGRST200/i.test(e.message))throw e;
+   minimal=true;
    users=await api('/rest/v1/bts_admins?select=user_id,role,created_at&order=created_at.asc')||[];
   }
   const me=JSON.parse(sessionStorage.getItem(STORAGE)||'{}')?.user?.id;
@@ -67,7 +71,13 @@ async function loadUsers(){
    tr.innerHTML='<td><strong>'+esc(u.display_name||u.email||(u.user_id===me?'Tu cuenta':'Usuario '+u.user_id.slice(0,8)))+'</strong><br><span class="tiny-note">'+esc(u.email||(u.user_id===me?JSON.parse(sessionStorage.getItem(STORAGE)||'{}')?.user?.email||'':'Correo disponible al activar la consulta segura'))+'</span></td><td><code>'+esc(u.user_id)+'</code></td><td><select class="input" aria-label="Rol de usuario" '+(myRole!=='owner'?'disabled':'')+'>'+Object.entries(names).map(([k,v])=>'<option value="'+k+'" '+(u.role===k?'selected':'')+'>'+v+'</option>').join('')+'</select></td><td>'+(myRole==='owner'?'<button type="button" class="btn btn-secondary" data-user="'+esc(u.user_id)+'">Guardar rol</button>':'Solo lectura')+'</td>';
    el.appendChild(tr);
   }
-  note('auditUsersStatus',users.length+' usuario(s) visibles · Tu rol: '+(names[myRole]||'Sin asignar')+(myRole!=='owner'?' · Para modificar roles, asigná owner a tu UID en Supabase.':''));
+  const limited=users.length===1 && ['owner','admin'].includes(myRole);
+  note('auditUsersStatus',
+    (limited?'Solo se ve tu cuenta: RLS está ocultando las otras filas. Ejecutá admin/sql/usuarios-visibles.sql en Supabase.':
+    users.length+' usuario(s) visibles · Tu rol: '+(names[myRole]||'Sin asignar'))+
+    (minimal?' · Correos no configurados aún.':'')+
+    (myRole!=='owner'?' · Para modificar roles, asigná owner a tu UID en Supabase.':'')
+  );
  }catch(e){note('auditUsersStatus','No se pudo cargar: '+e.message+'. Verificá la migración y las políticas RLS.');}
 }
 function renderLogs(){
