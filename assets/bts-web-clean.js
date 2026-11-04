@@ -105,7 +105,7 @@
     // changing page navigation, hash behavior or website content.
     const nav = $("#mainMenu");
     if (nav) {
-      const ids = ["inicio","servicios","experiencias","paquetes","estudio","proceso","preguntas","cotizar"];
+      const ids = ["inicio","experiencias","servicios","paquetes","estudio","proceso","cotizar","preguntas"];
       const links = $$('a[href^="#"]',nav).filter(a=>ids.includes(a.hash.slice(1)));
       let ticking=false;
       const updateNav=()=>{
