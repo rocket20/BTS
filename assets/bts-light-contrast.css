@@ -1,0 +1,216 @@
+/* BTS Studio — Light theme contrast and burgundy surfaces
+   All rules intentionally scoped to PUBLIC light mode only.
+   Dark mode, CMS, quote submission, PDF and Supabase are unaffected.
+*/
+html[data-bts-site-theme="light"]{
+ --bts-wine-solid:#7e2944;
+ --bts-wine-dark:#68213b;
+ --bts-on-wine:#fff;
+}
+/* Package comparison: actual header cells need contrast, not a dark header with dark text. */
+html[data-bts-site-theme="light"] .package-comparison{
+ background:#fff!important;
+ border:1px solid #decbd3!important;
+ box-shadow:0 12px 32px rgba(91,45,66,.055)!important;
+ overflow-x:auto;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare{
+ background:#fff!important;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare thead,
+html[data-bts-site-theme="light"] .package-comparison .compare th{
+ background:#7e2944!important;
+ color:#fff!important;
+ border-color:rgba(255,255,255,.16)!important;
+ font-weight:800;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare th:first-child{
+ text-align:left;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare tbody td,
+html[data-bts-site-theme="light"] .package-comparison .compare tbody td:first-child{
+ color:#513846!important;
+ background:#fff!important;
+ border-top:1px solid #eadfe4!important;
+ font-weight:600;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare tbody td:first-child{
+ color:#6c2d47!important;
+ font-weight:750;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare tbody tr:nth-child(even) td{
+ background:#fbf7f9!important;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare tbody tr:hover td{
+ background:#f2e1e9!important;
+ color:#63263e!important;
+}
+html[data-bts-site-theme="light"] .package-comparison .compare tbody tr td:last-child{
+ border-right:0!important;
+}
+/* Studio descriptions and checklist: avoid pale letters on white. */
+html[data-bts-site-theme="light"] .studio-copy>p{
+ color:#624c5a!important;
+}
+html[data-bts-site-theme="light"] .studio-benefits p{
+ color:#673249!important;
+ font-weight:650;
+}
+html[data-bts-site-theme="light"] .studio-benefits b{
+ color:#8c2d4c!important;
+}
+html[data-bts-site-theme="light"] .studio .btn-text{
+ color:#6e2944!important;
+}
+html[data-bts-site-theme="light"] .studio .btn-text .arr{
+ color:#8a2949!important;
+}
+html[data-bts-site-theme="light"] .studio .fig-note{color:#6b5866!important}
+/* Process: richer, truly wine-colored step numbers. */
+html[data-bts-site-theme="light"] .steps .step-num{
+ color:#82304c!important;
+ opacity:1!important;
+ font-weight:900;
+ text-shadow:none!important;
+}
+html[data-bts-site-theme="light"] .steps .step h3{
+ color:#32212e!important;
+}
+html[data-bts-site-theme="light"] .steps .step p{
+ color:#675562!important;
+}
+html[data-bts-site-theme="light"] .steps .step{
+ border-top-color:rgba(125,42,71,.46)!important;
+}
+/* Quote heading: full burgundy surface, all copy bright and legible. */
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head{
+ background:#7e2944!important;
+ background-image:linear-gradient(115deg,#8d3451 0%,#74273f 58%,#652238 100%)!important;
+ border-bottom:1px solid rgba(73,17,39,.34)!important;
+ color:#fff!important;
+}
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head h2,
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head p,
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head>p,
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head .kicker{
+ color:#fff!important;
+ text-shadow:none!important;
+}
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head>p{
+ color:#f5e2ea!important;
+}
+html[data-bts-site-theme="light"] .quote .quote-outer .quote-head .kicker::before{
+ background:#f8d8e5!important;
+}
+/* Package cards: entirely wine on hover, text and icons switch to white.
+   The burgundy fill is only for LIGHT mode. */
+html[data-bts-site-theme="light"] .packages-grid .package{
+ transition:background .42s cubic-bezier(.2,.72,.2,1),
+            color .36s,border-color .36s,box-shadow .38s,
+            transform .38s cubic-bezier(.2,.72,.2,1)!important;
+}
+@media(hover:hover) and (pointer:fine){
+ html[data-bts-site-theme="light"] .packages-grid .package:hover{
+  background:#7e2944!important;
+  background-image:linear-gradient(135deg,#8e3551,#73253e 68%,#68213a)!important;
+  border-color:rgba(111,37,63,.92)!important;
+  color:#fff!important;
+  box-shadow:0 23px 48px rgba(103,39,62,.23),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  transform:translateY(-5px);
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover::before{
+  opacity:0!important;background:none!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover::after{
+  opacity:0!important;animation:none!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover h3,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .package-summary,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .quote-only,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .quote-only span,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover ul,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover li,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .package-index,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover p,
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .tiny{
+  color:#fff!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover ul{
+  border-color:rgba(255,255,255,.24)!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover li::before{
+  color:#fff!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .popular-tag{
+  color:#fff!important;background:rgba(255,255,255,.18)!important;
+  border:1px solid rgba(255,255,255,.28);
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .btn{
+  position:relative;z-index:3;
+  color:#712940!important;
+  background:#fff!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.68)!important;
+  box-shadow:0 9px 24px rgba(31,8,21,.14)!important;
+ }
+ html[data-bts-site-theme="light"] .packages-grid .package:hover .btn:hover{
+  background:#f7eaf0!important;
+ }
+}
+/* Keep focus accessible for keyboard users. */
+html[data-bts-site-theme="light"] .packages-grid .package:focus-within{
+ outline:2px solid #8a3754;
+ outline-offset:3px;
+}
+/* Full footer in burgundy, bright typography and original logo shape. */
+html[data-bts-site-theme="light"] footer{
+ background:#75283f!important;
+ background-image:linear-gradient(120deg,#81304b,#6e263f 62%,#612238)!important;
+ color:#fff!important;
+ border-top:1px solid rgba(84,24,47,.27)!important;
+}
+html[data-bts-site-theme="light"] footer .footer-brand,
+html[data-bts-site-theme="light"] footer .footer-brand p,
+html[data-bts-site-theme="light"] footer .footer-col h4,
+html[data-bts-site-theme="light"] footer .footer-col a,
+html[data-bts-site-theme="light"] footer .footer-slogan,
+html[data-bts-site-theme="light"] footer .overline,
+html[data-bts-site-theme="light"] footer .footer-bottom,
+html[data-bts-site-theme="light"] footer .footer-bottom a,
+html[data-bts-site-theme="light"] footer .logo,
+html[data-bts-site-theme="light"] footer .logo-type,
+html[data-bts-site-theme="light"] footer .logo-type b,
+html[data-bts-site-theme="light"] footer .logo-type span{
+ color:#fff!important;
+}
+html[data-bts-site-theme="light"] footer .footer-brand p,
+html[data-bts-site-theme="light"] footer .footer-col a,
+html[data-bts-site-theme="light"] footer .footer-bottom{
+ color:#f1dce5!important;
+}
+html[data-bts-site-theme="light"] footer .footer-col a:hover,
+html[data-bts-site-theme="light"] footer .footer-bottom a:hover{
+ color:#fff!important;text-decoration:underline;
+}
+html[data-bts-site-theme="light"] footer .logo .mark{
+ color:#fff!important;
+}
+html[data-bts-site-theme="light"] footer .footer-slogan .gradient-text{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+html[data-bts-site-theme="light"] footer .footer-bottom{
+ border-top:1px solid rgba(255,255,255,.27)!important;
+}
+html[data-bts-site-theme="light"] footer .btn-primary{
+ color:#713047!important;background:#fff!important;background-image:none!important;
+ border:1px solid rgba(255,255,255,.64)!important;
+ box-shadow:0 9px 24px rgba(37,12,24,.13)!important;
+}
+html[data-bts-site-theme="light"] footer .btn-primary:hover{
+ color:#672840!important;background:#f7eaf0!important;
+ box-shadow:0 11px 26px rgba(30,11,22,.2)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-bts-site-theme="light"] .packages-grid .package{transition:none!important}
+}
