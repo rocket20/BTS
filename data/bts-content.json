@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-04T04:39:54.207Z",
+  "updatedAt": "2026-11-04T04:42:09.287Z",
   "brand": {
     "studioName": "BTS Studio",
     "heroTitle": "",
@@ -11,21 +11,6 @@
     "analyticsId": ""
   },
   "events": [
-    {
-      "id": "btsmw19c0biyj639",
-      "title": "Belly belly",
-      "category": "audiovisual",
-      "date": "2026-11-12",
-      "description": "Sesión de fotos casuales",
-      "active": true,
-      "image": "assets/uploads/events-btsmw19c0biyj639-1793744794371.webp",
-      "gallery": [
-        "assets/uploads/galeria-btsmw19c0biyj639-1793744797460-0.webp",
-        "assets/uploads/galeria-btsmw19c0biyj639-1793744800898-1.webp",
-        "assets/uploads/galeria-btsmw19c0biyj639-1793744802793-2.webp",
-        "assets/uploads/galeria-btsmw19c0biyj639-1793744804559-3.webp"
-      ]
-    },
     {
       "id": "btsmw18xr87lxv0b",
       "title": "Coca Cola",
