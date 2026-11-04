@@ -43,12 +43,12 @@
     "Solicitudes registradas":"leads",
     "Clics a WhatsApp":"whatsapp"
   };
-  const icon=(path)=>'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
+  const icon=(name)=>'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="icons/lucide-'+(name==='users-round'||name==='eye'?'ui':'content')+'.svg#'+name+'"></use></svg>';
   const ICONS={
-    visitors:icon('<circle cx="9" cy="8" r="3"/><path d="M2.5 20v-2a6.5 6.5 0 0 1 13 0v2M17 5.5a3 3 0 0 1 0 5.5M17 14a5 5 0 0 1 4.5 5v1"/>'),
-    views:icon('<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m9 10 6 3-6 3Z"/>'),
-    leads:icon('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'),
-    whatsapp:icon('<path d="M7 18 3 21l1-5a9 9 0 1 1 4 4"/><path d="M9 9c1 3 3 5 6 6l1.5-1.5"/>')
+    visitors:icon('users-round'),
+    views:icon('eye'),
+    leads:icon('clipboard-list'),
+    whatsapp:icon('message-circle')
   };
   let editing=false;
   let draggingId=null;
@@ -103,7 +103,7 @@
     b.type="button";
     b.title=dir<0?"Mover a la izquierda / arriba":"Mover a la derecha / abajo";
     b.setAttribute("aria-label",b.title);
-    b.innerHTML=dir<0?icon('<path d="m14 6-6 6 6 6"/>'):icon('<path d="m10 6 6 6-6 6"/>');
+    b.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="icons/lucide-content.svg#'+(dir<0?'chevron-left':'chevron-right')+'"></use></svg>';
     b.addEventListener("click",(e)=>{
       e.preventDefault();e.stopPropagation();
       const ids=cards().map(el=>el.dataset.kpiId);

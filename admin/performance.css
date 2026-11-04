@@ -1,0 +1,142 @@
+/* BTS Studio — Performance pass, v1
+   Keep premium glass and wine identity, eliminate high-cost infinite effects.
+   Desktop smoother sidebar, mobile animation deliberately preserved.
+*/
+:root{
+ --bts-side-time:.38s;
+ --bts-side-ease:cubic-bezier(.22,.72,.25,1);
+}
+/* Static cards shouldn't each run an infinite blur and gradient repaint. */
+.page-intro::before,.page-intro::after,
+.kpi-card::before,.panel::before,.item-card::before,
+.sidebar::after,.sidebar-foot::before{
+ animation:none!important;
+}
+.kpi-card::before,.panel::before,.item-card::before{
+ filter:none!important;
+}
+.sidebar::after,.sidebar-foot::before{filter:none!important}
+.page-intro,.kpi-card,.panel,.notice,.item-card,
+.sidebar-foot,.quick-stat,.table-scroll{
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+}
+/* Preserve optical glass on the structural surfaces only. */
+.sidebar{
+ backdrop-filter:blur(12px) saturate(120%)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(120%)!important;
+}
+.topbar{
+ backdrop-filter:blur(12px) saturate(120%)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(120%)!important;
+}
+.bts-sidebar-head .logo,.sidebar-foot,
+.btn-secondary,.bts-theme-toggle,
+.search,.field input,.field textarea,.field select{
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+}
+/* Consistent self-hosted Lucide strokes and SVG sizing. */
+.nav-ico svg,.kpi-icon svg,.theme-icon svg,
+.notice-icon svg,.title-star svg,.bts-placeholder-icon,.mobile-menu svg,.bts-inline-check{
+ display:block;
+ width:20px;height:20px;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.9!important;stroke-linecap:round;stroke-linejoin:round;
+ flex-shrink:0;
+}
+.kpi-icon svg{width:19px;height:19px}
+.theme-icon svg{width:17px;height:17px}
+.bts-placeholder-icon{width:28px;height:28px}
+.title-star svg{width:23px;height:23px}
+.bts-inline-check{width:15px;height:15px;vertical-align:-3px;display:inline-block;color:var(--red);margin-right:5px}
+.shell{transition:opacity .16s ease}
+.notice-icon{display:inline-grid;place-items:center;min-width:22px}
+.mobile-menu svg{margin:auto}
+.theme-icon{display:inline-flex;align-items:center;justify-content:center}
+/* Reducing simultaneous layout animations: animate only sidebar and canvas
+   dimensions, and fade text instead of animating each row's width and padding. */
+@media(min-width:791px) and (prefers-reduced-motion:no-preference){
+ .sidebar{
+  transition:width .38s cubic-bezier(.22,.72,.25,1)!important;
+ }
+ .main-wrap{
+  transition:margin-left .38s cubic-bezier(.22,.72,.25,1),
+             width .38s cubic-bezier(.22,.72,.25,1)!important;
+ }
+ .sidebar .bts-sidebar-head,
+ .sidebar .bts-sidebar-head .logo,
+ .sidebar .bts-sidebar-collapse{
+  transition-duration:.38s!important;
+ }
+ .sidebar .nav-item{
+  transition:color .16s ease,background-color .18s ease,
+             border-color .18s ease,box-shadow .18s ease,
+             transform .18s ease!important;
+ }
+ .sidebar .nav-item .nav-ico{
+  transition:color .16s ease,background-color .16s ease,
+             border-color .16s ease,transform .16s ease!important;
+ }
+ .sidebar .nav-item .nav-text,
+ .sidebar .bts-sidebar-head .logo>span{
+  transition:opacity .24s ease, transform .30s ease,
+             max-width .32s ease,visibility 0s linear .24s!important;
+ }
+ .sidebar .sidebar-label,.sidebar .sidebar-label.sub{
+  transition:opacity .19s ease, margin .28s ease,max-height .28s ease,
+             visibility 0s linear .25s!important;
+ }
+ .sidebar .sidebar-foot{
+  transition:opacity .24s ease!important;
+ }
+ html.bts-sidebar-collapsed .sidebar .nav-item{
+  animation:none!important;
+ }
+ /* During collapse, keep cursor-driven shine and large blur repaint off. */
+ html.bts-sidebar-moving .sidebar{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+ }
+ html.bts-sidebar-moving .sidebar::before,
+ html.bts-sidebar-moving .sidebar::after{
+  opacity:0!important;animation:none!important;
+ }
+ html.bts-sidebar-moving .sidebar nav{
+  scroll-behavior:auto!important;
+ }
+}
+/* Theme change: one short composite-level fade, no expensive per-card tween. */
+html.bts-theme-switching .shell{
+ opacity:.93;
+ transition:opacity .14s ease!important;
+}
+html.bts-theme-switching .sidebar,
+html.bts-theme-switching .topbar{
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.bts-theme-switching .shell *,
+html.bts-theme-switching .shell *::before,
+html.bts-theme-switching .shell *::after{
+ transition-property:none!important;
+ animation-play-state:paused!important;
+}
+html:not(.bts-theme-switching) .shell{opacity:1}
+/* Mobile drawer retains the existing stagger, but avoid expensive
+   blur interpolation on its full-screen backdrop. */
+@media(max-width:790px){
+ .bts-sidebar-backdrop{
+  -webkit-backdrop-filter:blur(4px)!important;
+  backdrop-filter:blur(4px)!important;
+  transition:opacity .26s ease!important;
+ }
+ .sidebar,.sidebar.open{
+  -webkit-backdrop-filter:blur(12px)!important;
+  backdrop-filter:blur(12px)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .sidebar,.main-wrap,.shell,.nav-item,.bts-theme-toggle{
+  transition:none!important;
+ }
+}

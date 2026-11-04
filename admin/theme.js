@@ -22,14 +22,21 @@
       button.setAttribute("aria-pressed", String(mode === "light"));
       const icon = button.querySelector(".theme-icon");
       const label = button.querySelector(".theme-label");
-      if (icon) icon.textContent = mode === "light" ? "☾" : "☀";
+      if (icon) { const use=icon.querySelector("use"); if(use)use.setAttribute("href","icons/lucide-ui.svg#"+(mode==="light"?"moon":"sun")); }
       if (label) label.textContent = "Modo " + next;
     }
   }
   apply(stored() || "dark");
   if (button) button.addEventListener("click", () => {
     const mode = root.getAttribute("data-bts-theme") === "dark" ? "light" : "dark";
+    root.classList.add("bts-theme-switching");
+    // One atomic style update. Suppress expensive nested transitions while
+    // the theme changes; fade only the composite layer very briefly.
     apply(mode);
     save(mode);
+    clearTimeout(window.__btsThemeSwitchTimeout);
+    window.__btsThemeSwitchTimeout = setTimeout(() => {
+      root.classList.remove("bts-theme-switching");
+    }, 220);
   });
 })();
