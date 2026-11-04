@@ -52,16 +52,22 @@ function insert(){
 async function loadUsers(){
  if(!token())return;note('auditUsersStatus','Consultando usuarios…');
  try{
-  users=await api('/rest/v1/bts_admins?select=user_id,display_name,email,role,created_at&order=created_at.asc')||[];
+  // Compatible con la tabla real: user_id, created_at y role.
+  // La RPC opcional permite ver nombres y correos de Auth sin exponer auth.users.
+  try{users=await api('/rest/v1/rpc/bts_list_admin_users','POST',{})||[];}
+  catch(e){
+   if(!/function|schema cache|PGRST202|404|not found/i.test(e.message))throw e;
+   users=await api('/rest/v1/bts_admins?select=user_id,role,created_at&order=created_at.asc')||[];
+  }
   const me=JSON.parse(sessionStorage.getItem(STORAGE)||'{}')?.user?.id;
   myRole=users.find(x=>x.user_id===me)?.role||'';
   const el=$('#auditUsersRows');el.replaceChildren();
   for(const u of users){
    const tr=document.createElement('tr');
-   tr.innerHTML='<td><strong>'+esc(u.display_name||u.email||'Usuario')+'</strong><br><span class="tiny-note">'+esc(u.email||'')+'</span></td><td><code>'+esc(u.user_id)+'</code></td><td><select class="input" aria-label="Rol de usuario" '+(myRole!=='owner'?'disabled':'')+'>'+Object.entries(names).map(([k,v])=>'<option value="'+k+'" '+(u.role===k?'selected':'')+'>'+v+'</option>').join('')+'</select></td><td>'+(myRole==='owner'?'<button type="button" class="btn btn-secondary" data-user="'+esc(u.user_id)+'">Guardar rol</button>':'Solo lectura')+'</td>';
+   tr.innerHTML='<td><strong>'+esc(u.display_name||u.email||(u.user_id===me?'Tu cuenta':'Usuario '+u.user_id.slice(0,8)))+'</strong><br><span class="tiny-note">'+esc(u.email||(u.user_id===me?JSON.parse(sessionStorage.getItem(STORAGE)||'{}')?.user?.email||'':'Correo disponible al activar la consulta segura'))+'</span></td><td><code>'+esc(u.user_id)+'</code></td><td><select class="input" aria-label="Rol de usuario" '+(myRole!=='owner'?'disabled':'')+'>'+Object.entries(names).map(([k,v])=>'<option value="'+k+'" '+(u.role===k?'selected':'')+'>'+v+'</option>').join('')+'</select></td><td>'+(myRole==='owner'?'<button type="button" class="btn btn-secondary" data-user="'+esc(u.user_id)+'">Guardar rol</button>':'Solo lectura')+'</td>';
    el.appendChild(tr);
   }
-  note('auditUsersStatus',users.length+' usuario(s) visibles · Tu rol: '+(names[myRole]||'Sin asignar'));
+  note('auditUsersStatus',users.length+' usuario(s) visibles · Tu rol: '+(names[myRole]||'Sin asignar')+(myRole!=='owner'?' · Para modificar roles, asigná owner a tu UID en Supabase.':''));
  }catch(e){note('auditUsersStatus','No se pudo cargar: '+e.message+'. Verificá la migración y las políticas RLS.');}
 }
 function renderLogs(){
