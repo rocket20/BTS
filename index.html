@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#080b0f">
+<script>(function(){try{var p=localStorage.getItem("bts-public-theme-v1"),a=localStorage.getItem("bts-admin-theme-v1");document.documentElement.setAttribute("data-bts-site-theme",p==="light"||p==="dark"?p:(a==="light"||a==="dark"?a:"dark"));}catch(e){document.documentElement.setAttribute("data-bts-site-theme","dark");}})();</script>
 <meta name="description" content="BTS Studio. Producción de eventos, fotografía profesional, producción audiovisual y contenido para marcas. Explorá servicios, paquetes y solicitá tu cotización.">
 <title>BTS Studio — Una productora para tus eventos</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' rx='13' fill='%23080b0f'/%3E%3Cpath d='M10 12h13l10 13H20zM20 27h15L22 49 8 53zM36 12h17L40 37 28 44 37 26 31 18z' fill='%23ff0037'/%3E%3C/svg%3E">
@@ -108,6 +109,7 @@ body.bts-admin-open{overflow:hidden}
 <link rel="stylesheet" href="assets/bts-web-clean.css">
 <link rel="stylesheet" href="assets/bts-movie-posters.css">
 <link rel="stylesheet" href="assets/bts-mobile-dock.css">
+<link rel="stylesheet" href="assets/bts-light-theme.css">
 </head>
 <body>
 
@@ -137,12 +139,17 @@ body.bts-admin-open{overflow:hidden}
 <script src="assets/bts-web-clean.js" defer></script>
 <script src="assets/bts-movie-posters.js" defer></script>
 <script src="assets/bts-mobile-dock.js" defer></script>
+<script src="assets/bts-site-theme.js" defer></script>
 <div class="progress" id="scrollProgress" aria-hidden="true"></div>
 <header class="site-header" id="siteHeader">
   <div class="wrap nav-wrap">
     <a href="#inicio" class="logo" aria-label="BTS Studio, ir al inicio"><svg class="mark" viewBox="0 0 448 390" aria-hidden="true"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span class="logo-type"><b>BTS</b><span>STUDIO</span></span></a>
     <nav class="nav-links" id="mainMenu" aria-label="Navegación principal"><a href="#servicios">Servicios</a><a href="#experiencias">Experiencias</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a><a href="#proceso">Proceso</a><a href="#preguntas">FAQ</a><a href="#cotizar" class="btn btn-primary btn-sm">Cotizar proyecto <span aria-hidden="true">↗</span></a></nav>
-    <div class="header-cta"><a href="#cotizar" class="btn btn-ghost btn-sm">Hablemos de tu evento ↗</a><button id="menuBtn" class="menu-toggle" type="button" aria-label="Abrir menú" aria-controls="mainMenu" aria-expanded="false">☰</button></div>
+    <div class="header-cta"><button type="button" id="btsSiteThemeToggle" class="bts-site-theme-toggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar a modo claro">
+  <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+  <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.65 8.65 0 1 0 11.1 11.1Z"/></svg>
+  <span class="bts-theme-label">Modo claro</span>
+ </button><a href="#cotizar" class="btn btn-ghost btn-sm">Hablemos de tu evento ↗</a><button id="menuBtn" class="menu-toggle" type="button" aria-label="Abrir menú" aria-controls="mainMenu" aria-expanded="false">☰</button></div>
   </div>
 </header>
 <main>
