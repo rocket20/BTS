@@ -28,8 +28,11 @@
       return;
     }
     const next = !root.classList.contains("bts-sidebar-collapsed");
+    clearTimeout(window.__btsSidebarTimer);
+    root.classList.add("bts-sidebar-moving");
     apply(next);
     save(next);
+    window.__btsSidebarTimer=setTimeout(()=>root.classList.remove("bts-sidebar-moving"),440);
   });
   for (const item of nav.querySelectorAll("button[data-page]")) {
     // Names remain visible to assistive technology in the compact state.
