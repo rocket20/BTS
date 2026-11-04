@@ -83,3 +83,128 @@ html[data-bts-theme] .kpi-grid .kpi-card .kpi-icon {
     transition: none !important;
   }
 }
+
+/* ============================================================
+   BTS DARK NEON PERIMETER
+   El modo oscuro mantiene el vidrio sin relleno vino.
+   Una luz roja recorre solamente el contorno de cada KPI.
+   El modo blanco conserva intacto el hover vino completo.
+   ============================================================ */
+
+/* Propiedad tipada para que el gradiente pueda girar suavemente. */
+@property --bts-kpi-orbit {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes bts-kpi-border-orbit {
+  to { --bts-kpi-orbit: 360deg; }
+}
+html[data-bts-theme="dark"] .kpi-grid .kpi-card {
+  /* Mantiene el acabado glass de fondo (sin sobrecarga de color). */
+  background: linear-gradient(
+    132deg,
+    rgba(255,255,255,.065),
+    rgba(255,255,255,.007)
+  ), rgba(25,15,26,.62) !important;
+}
+html[data-bts-theme="dark"] .kpi-grid .kpi-card::before,
+html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover::before {
+  /* Cancela completamente el fondo vino de hover de la regla general. */
+  opacity: 0 !important;
+  animation: none !important;
+}
+html[data-bts-theme="dark"] .kpi-grid .kpi-card::after {
+  content: "";
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  padding: 2px !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: inherit !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  transform: none !important;
+  filter: none !important;
+  /* Base tenue + un destello blanco/rojo que circula por los cuatro lados. */
+  background: conic-gradient(
+    from var(--bts-kpi-orbit),
+    rgba(255,40,103,.24) 0deg,
+    rgba(255,40,103,.3) 265deg,
+    rgba(255,43,100,.67) 306deg,
+    #fff0f5 323deg,
+    #ff225f 334deg,
+    rgba(255,40,103,.26) 351deg,
+    rgba(255,40,103,.24) 360deg
+  ) !important;
+  /* Resta el interior: únicamente quedan los 2px del contorno. */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0 !important;
+  animation: none !important;
+  transition: opacity .32s ease !important;
+}
+@media (hover:hover) and (pointer:fine) {
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover {
+    border-color: rgba(255,56,111,.28) !important;
+    background: linear-gradient(
+      132deg, rgba(255,255,255,.065), rgba(255,255,255,.007)
+    ), rgba(25,15,26,.62) !important;
+    box-shadow:
+      0 0 0 1px rgba(255,46,102,.12),
+      0 0 18px rgba(255,0,76,.17),
+      0 17px 38px rgba(0,0,0,.18),
+      inset 0 1px 0 rgba(255,255,255,.065) !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover::after {
+    opacity: 1 !important;
+    animation: bts-kpi-border-orbit 3.4s linear infinite !important;
+  }
+  /* Se preservan los colores de la tarjeta oscura, no los del modo vino. */
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-label {
+    color: #e8dbe5 !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-value {
+    color: #fff !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-foot,
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-foot span {
+    color: #b8a9b8 !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-foot .pending {
+    color: #e6b269 !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-icon {
+    color: #ff628b !important;
+    background: rgba(255,58,112,.085) !important;
+    border-color: rgba(255,95,144,.25) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important;
+  }
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover .kpi-icon svg {
+    color: #ff628b !important;
+    stroke: currentColor !important;
+  }
+  html[data-bts-theme="dark"] #overviewKpis .kpi-card:hover .bts-kpi-card-controls button {
+    color: #f9dbe5 !important;
+    background: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,129,175,.22) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-bts-theme="dark"] .kpi-grid .kpi-card:hover::after {
+    animation: none !important;
+    opacity: 1 !important; /* contorno fijo, sin giro */
+  }
+}
