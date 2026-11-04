@@ -1,0 +1,181 @@
+/* BTS Studio — sidebar reference layout
+   Collapsible vertical glass navigation, based on supplied UI reference.
+   App modules/ids are preserved. Loaded after all other CSS.
+*/
+:root{--bts-side-open:292px;--bts-side-closed:88px}
+.sidebar{
+ width:var(--bts-side-open)!important;
+ padding:17px 15px 15px!important;
+ display:flex;flex-direction:column;
+ overflow:hidden;
+ background:linear-gradient(160deg,rgba(24,23,27,.93),rgba(15,14,18,.94))!important;
+ border:1px solid rgba(255,255,255,.095)!important;
+ border-radius:20px!important;
+ inset:12px auto 12px 12px!important;
+ height:calc(100dvh - 24px)!important;
+ box-shadow:0 20px 68px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.055)!important;
+ backdrop-filter:blur(28px) saturate(125%)!important;
+ -webkit-backdrop-filter:blur(28px) saturate(125%)!important;
+ transition:width .32s cubic-bezier(.22,1,.36,1),transform .3s cubic-bezier(.22,1,.36,1),background .25s!important;
+}
+.sidebar::before{opacity:.28!important}
+.sidebar::after{opacity:.22!important}
+.main-wrap{
+ margin-left:calc(var(--bts-side-open) + 18px)!important;
+ width:calc(100% - var(--bts-side-open) - 18px)!important;
+ transition:margin-left .32s cubic-bezier(.22,1,.36,1),width .32s cubic-bezier(.22,1,.36,1)!important;
+}
+.bts-sidebar-head{position:relative;display:flex;align-items:center;min-height:63px;flex-shrink:0;gap:8px}
+.bts-sidebar-head .logo{
+ min-width:0;flex:1;min-height:60px!important;margin:0!important;
+ padding:9px 10px!important;border-radius:13px!important;
+ background:transparent!important;border:1px solid transparent!important;
+ box-shadow:none!important;gap:10px!important;overflow:hidden!important;
+ transition:background .25s,border-color .25s!important;
+}
+.bts-sidebar-head .logo:hover{transform:none!important;background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.075)!important}
+.bts-sidebar-head .logo::before,.bts-sidebar-head .logo::after{display:none!important}
+.bts-sidebar-head .logo svg{width:34px!important;height:32px!important;flex-shrink:0}
+.bts-sidebar-head .logo span{overflow:hidden;white-space:nowrap}
+.bts-sidebar-head .logo b{font-size:25px!important}
+.bts-sidebar-head .logo small{font-size:8px!important;letter-spacing:3.4px!important}
+.bts-sidebar-collapse{
+ display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;
+ border:1px solid transparent;border-radius:10px;color:#d0cbd2;
+ background:rgba(255,255,255,.015);cursor:pointer;
+ transition:background .2s,border-color .2s,transform .2s;
+}
+.bts-sidebar-collapse:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12)}
+.bts-sidebar-collapse svg{transition:transform .32s cubic-bezier(.22,1,.36,1)}
+.bts-sidebar-rule{flex-shrink:0;height:1px;margin:6px 8px 16px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.sidebar nav{flex:1;min-height:0;padding:0 3px 7px 0!important;margin:0!important;overflow-y:auto!important;
+ -webkit-mask-image:none!important;mask-image:none!important;scrollbar-width:thin}
+.sidebar .sidebar-label{margin:13px 9px 9px!important;padding:0 2px!important;height:19px;overflow:hidden;white-space:nowrap;
+ font-size:9px!important;letter-spacing:1.6px!important;color:#99939d!important}
+.sidebar .sidebar-label.sub{margin-top:17px!important}
+.sidebar .sidebar-label::after{opacity:.4}
+.sidebar .nav-item{
+ position:relative;display:flex;align-items:center;gap:13px;min-height:53px!important;
+ padding:7px 10px!important;margin:6px 0!important;
+ width:100%;border:1px solid rgba(255,255,255,.065)!important;
+ background:rgba(255,255,255,.025)!important;
+ border-radius:12px!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.015)!important;
+ color:#d3cfd5!important;
+ transition:border-color .22s,background .22s,box-shadow .22s,transform .22s!important;
+ white-space:nowrap;overflow:hidden;
+}
+.sidebar .nav-item::after{display:none!important}
+.sidebar .nav-item::before{display:none!important}
+.sidebar .nav-item:hover{
+ transform:translateX(2px)!important;border-color:rgba(255,255,255,.18)!important;
+ background:rgba(255,255,255,.075)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 5px 14px rgba(0,0,0,.08)!important}
+.sidebar .nav-item.active{
+ transform:none!important;border-color:rgba(255,255,255,.53)!important;
+ background:linear-gradient(115deg,rgba(255,255,255,.095),rgba(255,255,255,.025) 70%)!important;
+ box-shadow:0 0 0 1px rgba(255,255,255,.09),inset 0 1px 0 rgba(255,255,255,.14),0 10px 27px rgba(0,0,0,.14)!important;
+ color:#fff!important}
+.sidebar .nav-item .nav-ico{
+ flex:0 0 36px!important;width:36px!important;height:36px!important;
+ display:grid!important;place-items:center!important;
+ border:1px solid rgba(255,255,255,.11);border-radius:10px;
+ background:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.012));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 3px 10px rgba(0,0,0,.055);
+ color:#ddd9df!important;transition:color .2s,border-color .2s,background .2s,transform .2s!important;
+}
+.sidebar .nav-item .nav-ico svg{width:20px;height:20px;display:block;stroke:currentColor;fill:none;stroke-width:1.8}
+.sidebar .nav-item:hover .nav-ico{transform:scale(1.04)!important;color:white!important;border-color:rgba(255,255,255,.22)}
+.sidebar .nav-item.active .nav-ico{
+ background:linear-gradient(140deg,rgba(255,255,255,.14),rgba(255,255,255,.04));
+ border-color:rgba(255,255,255,.25);color:#fff!important;filter:none!important;
+}
+.sidebar .nav-text{font-size:12px;font-weight:680;flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis}
+.sidebar .nav-bubble{margin-left:auto!important;flex-shrink:0}
+.sidebar-foot{
+ margin-top:10px!important;flex-shrink:0;padding:12px 15px!important;border-radius:13px!important;
+ background:rgba(255,255,255,.033)!important;border-color:rgba(255,255,255,.09)!important;box-shadow:none!important}
+.sidebar-foot::before{display:none}
+.sidebar-foot .dotline{font-size:11px}.sidebar-foot p{font-size:11px!important;line-height:1.45}
+.sidebar-foot a{font-size:11px!important}
+/* Folded icon-only state */
+html.bts-sidebar-collapsed .sidebar{width:var(--bts-side-closed)!important}
+html.bts-sidebar-collapsed .main-wrap{
+ margin-left:calc(var(--bts-side-closed) + 18px)!important;
+ width:calc(100% - var(--bts-side-closed) - 18px)!important;
+}
+html.bts-sidebar-collapsed .bts-sidebar-head{flex-direction:column;gap:5px;min-height:98px}
+html.bts-sidebar-collapsed .bts-sidebar-head .logo{flex:none;width:58px!important;height:49px!important;padding:7px!important;justify-content:center}
+html.bts-sidebar-collapsed .bts-sidebar-head .logo svg{width:33px!important}
+html.bts-sidebar-collapsed .logo>span,html.bts-sidebar-collapsed .sidebar .sidebar-label,
+html.bts-sidebar-collapsed .sidebar .nav-text,html.bts-sidebar-collapsed .sidebar-foot p,
+html.bts-sidebar-collapsed .sidebar-foot a,html.bts-sidebar-collapsed .sidebar-foot .dotline{
+ display:none!important}
+html.bts-sidebar-collapsed .bts-sidebar-collapse{margin-left:auto;margin-right:10px;width:32px;height:29px;flex-basis:29px}
+html.bts-sidebar-collapsed .bts-sidebar-collapse svg{transform:rotate(180deg)}
+html.bts-sidebar-collapsed .bts-sidebar-rule{margin:8px 8px 15px}
+html.bts-sidebar-collapsed .sidebar nav{padding:0!important}
+html.bts-sidebar-collapsed .sidebar .nav-item{
+ justify-content:center;min-height:54px!important;width:55px!important;
+ margin:8px auto!important;padding:6px!important;border-radius:13px!important}
+html.bts-sidebar-collapsed .sidebar .nav-ico{flex:0 0 40px!important;width:40px!important;height:40px!important}
+html.bts-sidebar-collapsed .sidebar .nav-bubble{
+ position:absolute;right:0;top:1px;min-width:17px;height:17px;padding:1px 4px!important;font-size:9px;line-height:13px}
+html.bts-sidebar-collapsed .sidebar-foot{margin-top:auto!important;height:58px;padding:8px!important;display:flex;align-items:center;justify-content:center}
+html.bts-sidebar-collapsed .sidebar-foot::after{content:"BTS";color:#ff4d78;letter-spacing:2px;font-size:11px;font-weight:900}
+html.bts-sidebar-collapsed .sidebar .nav-item{animation:bts-sidebar-pop .24s ease both}
+@keyframes bts-sidebar-pop{from{opacity:.75;transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+/* White / burgundy mode */
+html[data-bts-theme="light"] .sidebar{
+ background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(251,246,248,.92))!important;
+ border-color:rgba(110,56,76,.14)!important;
+ box-shadow:0 18px 48px rgba(73,41,56,.07),inset 0 1px 0 #fff!important}
+html[data-bts-theme="light"] .bts-sidebar-collapse{color:#743c4e}
+html[data-bts-theme="light"] .bts-sidebar-collapse:hover{background:rgba(119,45,71,.07);border-color:rgba(119,45,71,.14)}
+html[data-bts-theme="light"] .bts-sidebar-rule{background:linear-gradient(90deg,transparent,rgba(109,50,74,.18),transparent)}
+html[data-bts-theme="light"] .sidebar .nav-item{
+ color:#594553!important;background:rgba(255,255,255,.62)!important;
+ border-color:rgba(120,62,80,.09)!important;box-shadow:inset 0 1px 0 #fff!important}
+html[data-bts-theme="light"] .sidebar .nav-item:hover{
+ color:#733347!important;background:rgba(125,32,56,.06)!important;border-color:rgba(110,40,65,.2)!important}
+html[data-bts-theme="light"] .sidebar .nav-item.active{
+ color:#642c40!important;background:rgba(139,51,83,.08)!important;
+ border-color:rgba(120,53,77,.34)!important;
+ box-shadow:0 4px 15px rgba(75,45,59,.05),inset 0 1px 0 #fff!important}
+html[data-bts-theme="light"] .sidebar .nav-ico{
+ background:linear-gradient(140deg,rgba(255,255,255,.9),rgba(247,239,243,.85));
+ color:#66445a!important;border-color:rgba(114,58,78,.14)!important}
+html[data-bts-theme="light"] .sidebar .nav-item.active .nav-ico{
+ color:#7b2f49!important;border-color:rgba(119,47,72,.27)!important;
+ background:rgba(138,51,81,.075)}
+html[data-bts-theme="light"] .sidebar-foot{background:rgba(255,255,255,.68)!important;border-color:rgba(125,62,84,.11)!important}
+html[data-bts-theme="light"].bts-sidebar-collapsed .sidebar-foot::after{color:#7d2945}
+/* Mobile keeps drawer behavior and full text navigation */
+@media(max-width:790px){
+ .sidebar{width:min(292px,86vw)!important;inset:7px auto 7px 7px!important;height:calc(100dvh - 14px)!important;
+  transform:translateX(-115%)!important}
+ .sidebar.open{transform:translateX(0)!important}
+ .main-wrap,html.bts-sidebar-collapsed .main-wrap{margin-left:0!important;width:100%!important}
+ html.bts-sidebar-collapsed .sidebar{width:min(292px,86vw)!important}
+ html.bts-sidebar-collapsed .bts-sidebar-head{flex-direction:row;min-height:63px}
+ html.bts-sidebar-collapsed .bts-sidebar-head .logo{flex:1;width:auto!important;height:auto!important;justify-content:flex-start}
+ html.bts-sidebar-collapsed .logo>span,html.bts-sidebar-collapsed .sidebar .sidebar-label,
+ html.bts-sidebar-collapsed .sidebar .nav-text,html.bts-sidebar-collapsed .sidebar-foot p,
+ html.bts-sidebar-collapsed .sidebar-foot a,html.bts-sidebar-collapsed .sidebar-foot .dotline{display:initial!important}
+ html.bts-sidebar-collapsed .sidebar .nav-item{
+  width:100%!important;min-height:53px!important;justify-content:flex-start;padding:7px 10px!important;margin:6px 0!important}
+ html.bts-sidebar-collapsed .sidebar .nav-ico{flex:0 0 36px!important;width:36px!important;height:36px!important}
+ html.bts-sidebar-collapsed .sidebar-foot{height:auto;display:block;padding:12px 15px!important}
+ html.bts-sidebar-collapsed .sidebar-foot::after{display:none}
+ html.bts-sidebar-collapsed .bts-sidebar-collapse{margin:0;width:36px;height:36px;flex-basis:36px}
+ html.bts-sidebar-collapsed .bts-sidebar-collapse svg{transform:none}
+ html.bts-sidebar-collapsed .sidebar .nav-bubble{position:static;margin-left:auto!important;height:auto;font-size:10px}
+ html.bts-sidebar-collapsed .sidebar .sidebar-label{display:flex!important}
+ html.bts-sidebar-collapsed .sidebar-foot .dotline{display:flex!important}
+ html.bts-sidebar-collapsed .sidebar .nav-item{animation:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .sidebar,.main-wrap,.bts-sidebar-collapse,.bts-sidebar-collapse svg,
+ .sidebar .nav-item,.sidebar .nav-ico{animation:none!important;transition:none!important}
+ html.bts-sidebar-collapsed .sidebar .nav-item{animation:none!important}
+}
