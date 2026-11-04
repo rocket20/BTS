@@ -311,3 +311,6 @@ html[data-bts-theme="light"] .bts-kpi-drag-label{color:#866579}
  .bts-kpi-drag-label{display:none}
 }
 @media(max-width:420px){.kpi-grid{grid-template-columns:1fr}}
+
+/* In edit mode, support long-press drag on touch; scroll remains possible outside cards. */
+@media(pointer:coarse){#overviewKpis.bts-kpi-edit .kpi-card{touch-action:none}}
