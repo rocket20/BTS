@@ -51,6 +51,56 @@ footer{border-top:1px solid #2f313b;background:#0e1015;padding:54px 0 22px}.foot
 #downloadBrief{background:linear-gradient(90deg,#ff00371b,#7a00b321)!important;border:1px solid #bb365d!important;color:#fff!important}
 #downloadBrief:hover{background:#ff003733!important;box-shadow:0 5px 24px #ff00371a}
 .preview-actions .btn-soft{color:#f4f5f8}
+
+/* Integración de formularios BTS Studio */
+.consent-line{display:flex;align-items:flex-start;gap:11px;margin:23px 0 5px;color:#d8d7dd;font-size:12px;line-height:1.65;cursor:pointer}
+.consent-line input{width:17px;height:17px;flex-shrink:0;margin:2px 0 0;accent-color:#ff0037}
+#submitQuote{width:100%;min-height:52px;box-shadow:0 12px 32px #ff003722}
+#submitQuote:disabled,#contactSubmit:disabled{opacity:.6;cursor:wait}
+#contactStatus{margin-top:14px;min-height:20px;font-size:13px;line-height:1.5;color:#f4cdd9}
+
+
+/* Dashboard administrativo: accesible por URL privada de entrada, datos protegidos con Auth + RLS */
+.bts-honeypot{position:absolute!important;left:-10000px!important;width:1px;height:1px;opacity:0;pointer-events:none}
+#btsAdminShell{display:none;position:fixed;inset:0;z-index:5000;background:#080b0f;color:#fff;overflow:auto;font:400 14px/1.55 Inter,Lato,"Segoe UI",Arial,sans-serif}
+#btsAdminShell.open{display:block}
+body.bts-admin-open{overflow:hidden}
+.ba-wrap{width:min(1180px,calc(100% - 42px));margin:0 auto}
+.ba-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:25px 0;border-bottom:1px solid #292b35}
+.ba-mark{font-weight:900;font-size:20px;letter-spacing:-.5px}.ba-mark span{color:#ff0037}.ba-kicker{font-size:11px;text-transform:uppercase;color:#a6a9b5;letter-spacing:1.7px;font-weight:800}
+.ba-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ba-btn{display:inline-flex;gap:7px;align-items:center;justify-content:center;cursor:pointer;border:1px solid #434550;border-radius:10px;padding:10px 15px;background:#1b1c23;color:white;font:700 12px/1.3 inherit;transition:border-color .2s,background .2s}
+.ba-btn:hover{border-color:#ff466a}.ba-btn.primary{background:#ff0037;border-color:#ff0037}.ba-btn:disabled{opacity:.55;cursor:progress}
+.ba-login{max-width:440px;margin:65px auto 10vh;border:1px solid #343442;border-radius:22px;padding:32px;background:#14151c;box-shadow:0 24px 70px #0005}
+.ba-login h2,.ba-title{font-size:32px;letter-spacing:-1px;line-height:1.2;margin:8px 0 12px;color:white}
+.ba-help{color:#a6a9b5;margin:0 0 23px;line-height:1.6}
+.ba-field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.ba-field label{color:#d4d4dc;font-weight:700;font-size:12px}
+.ba-field input,.ba-field select,.ba-field textarea,.ba-search{width:100%;padding:13px 14px;background:#0c0d13;border:1px solid #3c3d4b;border-radius:10px;color:white;font:inherit;outline:none}
+.ba-field input:focus,.ba-field select:focus,.ba-field textarea:focus,.ba-search:focus{border-color:#ff0037}
+.ba-status{min-height:23px;color:#ff99af;margin-top:12px;font-size:13px}
+.ba-body{padding:26px 0 70px}
+.ba-topline{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.ba-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}
+.ba-kpi{background:#15151d;border:1px solid #2c2d38;border-radius:14px;padding:20px}
+.ba-kpi p{margin:0;color:#a6a9b5;font-size:12px}.ba-kpi strong{display:block;font-size:33px;letter-spacing:-1px;margin-top:7px;color:#fff}
+.ba-panel{background:#14151c;border:1px solid #31313c;border-radius:17px;padding:18px;overflow:hidden}
+.ba-filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:17px}
+.ba-filters .ba-search{flex:1;min-width:190px}.ba-filters select{min-width:160px;flex:0 0 auto;background:#0c0d13;border:1px solid #3c3d4b;color:white;padding:13px;border-radius:10px}
+.ba-table-wrap{overflow-x:auto}.ba-table{width:100%;border-collapse:collapse;text-align:left;min-width:730px;font-size:13px}
+.ba-table th{color:#a6a9b5;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid #353641;padding:12px 11px;white-space:nowrap}
+.ba-table td{padding:13px 11px;border-bottom:1px solid #262831;vertical-align:middle}
+.ba-table tbody tr:hover{background:#1b1d26}.ba-table small{display:block;color:#a6a9b5;font-size:11px}.ba-chip{display:inline-block;padding:4px 9px;background:#292b36;border-radius:20px;color:#f5f5f8;white-space:nowrap;font-size:11px}
+.ba-detail{display:none;position:fixed;inset:0;z-index:5100;background:#000a;align-items:stretch;justify-content:flex-end}.ba-detail.open{display:flex}
+.ba-detail-card{background:#14151c;border-left:1px solid #41414d;width:min(550px,100%);height:100%;overflow:auto;padding:28px}
+.ba-detail-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.ba-detail-section{padding:17px 0;border-top:1px solid #353541}.ba-detail-section h4{margin:0 0 12px;font-size:12px;color:#ff6c89;letter-spacing:.08em;text-transform:uppercase}
+.ba-detail-line{margin:10px 0;overflow-wrap:anywhere}.ba-detail-line b{display:block;font-size:11px;color:#a6a9b5;margin-bottom:2px}.ba-detail-line span{white-space:pre-wrap}
+.ba-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba-detail .ba-field textarea{min-height:115px;resize:vertical}
+.ba-empty{padding:24px;color:#a6a9b5;text-align:center}
+@media(max-width:800px){.ba-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ba-head{padding:17px 0}.ba-login{margin-top:32px}.ba-title{font-size:26px}}
+@media(max-width:480px){.ba-wrap{width:min(100% - 24px,1180px)}.ba-grid{gap:8px}.ba-kpi{padding:14px}.ba-kpi strong{font-size:26px}.ba-login{padding:23px}.ba-detail-card{padding:18px}.ba-detail-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -119,7 +169,7 @@ footer{border-top:1px solid #2f313b;background:#0e1015;padding:54px 0 22px}.foot
  </div></section>
 <section id="proceso" class="section process"><div class="wrap"><div class="headrow reveal"><div><span class="kicker">Cómo trabajamos</span><h2 style="margin-top:17px">De una idea a<br>una gran historia.</h2></div><p>Un proceso claro para que puedas concentrarte en tu evento mientras cuidamos su narrativa visual.</p></div><div class="steps reveal"><div class="step"><div class="step-num">01</div><h3>Nos contás.</h3><p>Compartís el tipo de evento, la fecha, el lugar y lo que necesitás comunicar.</p></div><div class="step"><div class="step-num">02</div><h3>Diseñamos.</h3><p>Te recomendamos el alcance y los entregables adecuados para el proyecto.</p></div><div class="step"><div class="step-num">03</div><h3>Producimos.</h3><p>Coordinamos la cobertura visual siguiendo un plan claro de trabajo.</p></div><div class="step"><div class="step-num">04</div><h3>Entregamos.</h3><p>Editamos, revisamos y entregamos las piezas finales acordadas.</p></div></div></div></section>
 <section id="cotizar" class="section quote"><div class="wrap"><div class="quote-outer reveal"><div class="quote-head"><span class="kicker">Brief de producción</span><h2>Tu evento comienza <span class="gradient-text">aquí.</span></h2><p>Contanos qué imaginás. Te orientamos hacia el paquete más adecuado y generamos un brief personalizado en PDF, listo para compartir. Sin tarifas inventadas ni compromiso.</p></div>
- <div class="quote-inner"><form id="quoteForm" novalidate>
+ <div class="quote-inner"><form id="quoteForm" novalidate><input id="btsHoneyQuote" name="site_url" tabindex="-1" autocomplete="off" class="bts-honeypot" aria-hidden="true">
   <h3 class="form-label"><span class="bubble">01</span> Sobre tu evento</h3>
   <div class="field-grid"><div class="field full"><label for="qEventName">Nombre del evento o proyecto</label><input id="qEventName" name="evento_nombre" maxlength="100" placeholder="Ej. Lanzamiento de nueva línea de productos"></div><div class="field"><label for="qType">Tipo de evento *</label><select name="tipo" id="qType" required><option value="">Seleccioná una opción</option><option>Congreso o conferencia</option><option>Lanzamiento de producto</option><option>Gala o premiación</option><option>Aniversario empresarial</option><option>Evento interno o capacitación</option><option>Activación de marca</option><option>Otro evento</option></select></div>
   <div class="field"><label for="qDate">Fecha estimada *</label><input id="qDate" name="fecha" type="date" required></div>
@@ -135,40 +185,69 @@ footer{border-top:1px solid #2f313b;background:#0e1015;padding:54px 0 22px}.foot
   <div class="field full"><label for="qMessage">Contanos tu idea</label><textarea id="qMessage" name="mensaje" maxlength="1200" placeholder="¿Qué momentos no pueden faltar? ¿Hay un concepto o una referencia visual?"></textarea></div></div>
   <h3 class="form-label"><span class="bubble">03</span> Cómo contactarte</h3>
   <div class="field-grid"><div class="field"><label for="qName">Tu nombre *</label><input id="qName" name="nombre" autocomplete="name" maxlength="100" placeholder="Nombre y apellido" required></div><div class="field"><label for="qCompany">Empresa u organización</label><input id="qCompany" name="empresa" maxlength="100" placeholder="Nombre de la empresa"></div><div class="field"><label for="qEmail">Correo electrónico *</label><input id="qEmail" name="correo" type="email" autocomplete="email" maxlength="150" placeholder="tu@empresa.com" required></div><div class="field"><label for="qPhone">Teléfono de contacto</label><input id="qPhone" name="telefono" type="tel" autocomplete="tel" maxlength="30" placeholder="+505 ..."><div class="field full"><label for="qContactPref">¿Cómo preferís que te contactemos?</label><select id="qContactPref"><option selected>Correo electrónico</option><option>WhatsApp</option><option>Cualquiera de los dos</option></select></div></div></div>
+ <label class="consent-line"><input id="qConsent" type="checkbox" required> Autorizo a BTS Studio a usar los datos de esta solicitud para contactarme y preparar la cotización.</label>
  </form>
- <aside class="quote-preview" aria-label="Resumen de la solicitud"><p class="preview-eyebrow">TU BRIEF / VISTA PREVIA</p><h3 id="recPackage">Profesional.</h3><p class="reason" id="recReason" aria-live="polite">Por la duración y el contenido solicitado, esta opción puede ser un buen punto de partida.</p><div class="spec"><div><span>Evento</span><b id="specEvent">Por definir</b></div><div><span>Duración</span><b id="specHours">Hasta 4 horas</b></div><div><span>Ubicación</span><b id="specPlace">Por definir</b></div><div><span>Fecha</span><b id="specDate">Por definir</b></div><div><span>Extras</span><b id="specExtras">Sin adicionales</b></div></div><div class="pdf-teaser"><span class="pdf-teaser-icon">PDF</span><div><b>Tu propuesta empieza aquí.</b><small>Un documento con todos los detalles, listo para compartir con nuestro equipo.</small></div></div><div class="preview-actions"><button id="sendWhatsapp" type="button" class="btn btn-primary">Preparar en WhatsApp ↗</button><button id="sendEmail" type="button" class="btn btn-ghost">Enviar por correo ↗</button><button id="downloadBrief" type="button" class="btn btn-soft">Generar brief en PDF ↓</button><button id="copyBrief" type="button" class="btn btn-soft">Copiar resumen ⧉</button></div><p class="preview-foot">La recomendación es orientativa, no una confirmación de disponibilidad ni una cotización de precio. Se requiere validar el alcance con BTS Studio.</p><p class="quote-success" id="quoteStatus" role="status"></p></aside>
+ <aside class="quote-preview" aria-label="Resumen de la solicitud"><p class="preview-eyebrow">TU BRIEF / VISTA PREVIA</p><h3 id="recPackage">Profesional.</h3><p class="reason" id="recReason" aria-live="polite">Por la duración y el contenido solicitado, esta opción puede ser un buen punto de partida.</p><div class="spec"><div><span>Evento</span><b id="specEvent">Por definir</b></div><div><span>Duración</span><b id="specHours">Hasta 4 horas</b></div><div><span>Ubicación</span><b id="specPlace">Por definir</b></div><div><span>Fecha</span><b id="specDate">Por definir</b></div><div><span>Extras</span><b id="specExtras">Sin adicionales</b></div></div><div class="pdf-teaser"><span class="pdf-teaser-icon">PDF</span><div><b>Tu propuesta empieza aquí.</b><small>Un documento con todos los detalles, listo para compartir con nuestro equipo.</small></div></div><div class="preview-actions"><button id="submitQuote" type="button" class="btn btn-primary" style="font-weight:800">Enviar solicitud a BTS Studio ↗</button><button id="sendWhatsapp" type="button" class="btn btn-primary">Preparar en WhatsApp ↗</button><button id="sendEmail" type="button" class="btn btn-ghost">Enviar por correo ↗</button><button id="downloadBrief" type="button" class="btn btn-soft">Generar brief en PDF ↓</button><button id="copyBrief" type="button" class="btn btn-soft">Copiar resumen ⧉</button></div><p class="preview-foot">La solicitud se guarda en BTS Studio únicamente cuando presionás «Enviar solicitud». Descargar el PDF no envía tus datos. No es una reserva ni una tarifa confirmada.</p><p class="quote-success" id="quoteStatus" role="status"></p></aside>
  </div></div></div></section>
 <section id="preguntas" class="section faq"><div class="wrap faq-grid"><div class="faq-side reveal"><span class="kicker">Preguntas frecuentes</span><h2>Todo claro,<br>desde el inicio.</h2><p>Estas son algunas de las preguntas más habituales antes de producir un evento.</p><a href="#contacto" class="btn-text" style="margin-top:28px">Tengo otra consulta <span class="arr">↗</span></a></div>
  <div class="faq-list reveal"><div class="faq-item"><button type="button" aria-expanded="false">¿Con cuánta anticipación debo cotizar?<span class="plus">+</span></button><div class="faq-panel"><p>Lo ideal es escribir tan pronto tengas una fecha tentativa. Así podremos revisar el alcance, la logística y los recursos necesarios antes de confirmar la cobertura.</p></div></div><div class="faq-item"><button type="button" aria-expanded="false">¿Pueden personalizar un paquete?<span class="plus">+</span></button><div class="faq-panel"><p>Sí, el cotizador permite describir necesidades específicas. Los paquetes presentados sirven como punto de partida y la propuesta final se define según tu evento.</p></div></div><div class="faq-item"><button type="button" aria-expanded="false">¿Realizan coberturas fuera de Managua?<span class="plus">+</span></button><div class="faq-panel"><p>Podés indicar cualquier ciudad de Nicaragua al cotizar. La posibilidad de desplazamiento, los costos logísticos y la disponibilidad se confirman de forma individual.</p></div></div><div class="faq-item"><button type="button" aria-expanded="false">¿Cuándo se entrega el material?<span class="plus">+</span></button><div class="faq-panel"><p>El plazo depende del paquete, la duración del evento y el volumen de fotografías o videos. Se acuerda antes de contratar y queda indicado en la propuesta.</p></div></div><div class="faq-item"><button type="button" aria-expanded="false">¿Puedo solicitar videos verticales para redes?<span class="plus">+</span></button><div class="faq-panel"><p>Sí. Podés seleccionar reels extra o incluir una solicitud de contenido vertical dentro del brief.</p></div></div><div class="faq-item"><button type="button" aria-expanded="false">¿Este formulario confirma mi reserva?<span class="plus">+</span></button><div class="faq-panel"><p>No. El formulario prepara una solicitud de cotización. BTS Studio deberá confirmar el servicio, el precio y la fecha directamente con vos.</p></div></div></div>
  </div></section>
 <section id="contacto" class="section contact"><div class="wrap contact-grid"><div class="reveal"><span class="kicker">Contacto</span><h2 class="section-title">Una buena idea<br><span class="gradient-text">comienza hablando.</span></h2><p class="sub">¿Tenés un evento o proyecto audiovisual en mente? Contanos la idea y diseñemos una propuesta que tenga sentido para tu marca.</p><div class="contact-details"><div class="contact-detail"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></svg></span><div><span>Correo de contacto</span><b id="publicEmail">Pendiente de configurar</b></div></div><div class="contact-detail"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a9 9 0 0 1-13 8L3 21l1.5-5A9 9 0 1 1 21 11.5z"/></svg></span><div><span>WhatsApp comercial</span><b id="publicPhone">Pendiente de configurar</b></div></div><div class="contact-detail"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-6.5 7-13a7 7 0 1 0-14 0c0 6.5 7 13 7 13z"/><circle cx="12" cy="9" r="2"/></svg></span><div><span>Zona de atención</span><b>Nicaragua · según disponibilidad</b></div></div></div></div>
- <form class="contact-panel reveal" id="contactForm"><h3>Escribinos.</h3><p class="intro">Te ayudamos a convertir tu idea en una propuesta visual.</p><div class="field-grid"><div class="field"><label for="cName">Nombre *</label><input id="cName" required autocomplete="name" maxlength="100" placeholder="¿Cómo te llamás?"></div><div class="field"><label for="cMail">Email *</label><input id="cMail" type="email" required autocomplete="email" maxlength="150" placeholder="tu@empresa.com"></div><div class="field full"><label for="cSubject">¿Qué necesitás?</label><select id="cSubject"><option>Producción de evento</option><option>Fotografía profesional</option><option>Producción de video</option><option>Contenido para redes</option><option>Otra consulta</option></select></div><div class="field full"><label for="cText">Tu mensaje *</label><textarea id="cText" required maxlength="1600" placeholder="Contanos un poco de tu proyecto..."></textarea></div></div><button class="btn btn-primary" type="submit">Preparar mensaje ↗</button><p class="hint">Este prototipo genera el mensaje y lo prepara para enviarlo. La recepción directa requiere configurar un correo o WhatsApp oficial.</p></form>
+ <form class="contact-panel reveal" id="contactForm"><input id="btsHoneyContact" name="site_url" tabindex="-1" autocomplete="off" class="bts-honeypot" aria-hidden="true"><h3>Escribinos.</h3><p class="intro">Te ayudamos a convertir tu idea en una propuesta visual.</p><div class="field-grid"><div class="field"><label for="cName">Nombre *</label><input id="cName" required autocomplete="name" maxlength="100" placeholder="¿Cómo te llamás?"></div><div class="field"><label for="cMail">Email *</label><input id="cMail" type="email" required autocomplete="email" maxlength="150" placeholder="tu@empresa.com"></div><div class="field full"><label for="cSubject">¿Qué necesitás?</label><select id="cSubject"><option>Producción de evento</option><option>Fotografía profesional</option><option>Producción de video</option><option>Contenido para redes</option><option>Otra consulta</option></select></div><div class="field full"><label for="cText">Tu mensaje *</label><textarea id="cText" required maxlength="1600" placeholder="Contanos un poco de tu proyecto..."></textarea></div></div><label class="consent-line"><input id="cConsent" type="checkbox" required> Autorizo a BTS Studio a contactarme para responder esta consulta.</label><button id="contactSubmit" class="btn btn-primary" type="submit">Enviar consulta a BTS Studio ↗</button><p class="hint">Tu consulta se envía a nuestro sistema de solicitudes.</p><p id="contactStatus" role="status" aria-live="polite"></p></form>
  </div></section>
 </main>
 <footer><div class="wrap"><div class="footer-top"><div class="footer-brand"><a href="#inicio" class="logo" aria-label="BTS Studio"><svg class="mark" viewBox="0 0 448 390" aria-hidden="true"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span class="logo-type"><b>BTS</b><span>STUDIO</span></span></a><p>Producción de eventos, fotografía y contenido audiovisual para ideas que merecen trascender.</p></div><div class="footer-col"><h4>Explorá</h4><a href="#servicios">Servicios</a><a href="#experiencias">Experiencias</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a></div><div class="footer-col"><h4>Ayuda</h4><a href="#proceso">Nuestro proceso</a><a href="#preguntas">Preguntas frecuentes</a><a href="#cotizar">Solicitar cotización</a><a href="#contacto">Contacto</a></div><div><h4 class="overline" style="margin-bottom:20px">NOS GUSTAN LAS GRANDES IDEAS.</h4><p class="footer-slogan">Hagamos algo<br><span class="gradient-text">que se recuerde.</span></p><a href="#cotizar" class="btn btn-primary btn-sm" style="margin-top:23px">Contanos tu idea ↗</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> BTS Studio. Identidad y concepto creativo.</span><span>Diseñado para comunicar. <a href="#inicio">Volver arriba ↑</a></span></div></div></footer>
 <div id="projectModal" class="dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="dialog-card"><button id="modalClose" class="dialog-close" type="button" aria-label="Cerrar detalle">×</button><img id="modalImage" alt=""><div class="dialog-text"><span class="cat">BTS STUDIO / VISUAL</span><h3 id="modalTitle"></h3><p id="modalDescription"></p></div></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+
+
+<!-- Panel interno. Para acceder: abre el sitio agregando #panel-bts a la URL. -->
+<section id="btsAdminShell" aria-label="Administración de BTS Studio" aria-hidden="true">
+ <div class="ba-wrap">
+  <header class="ba-head"><div><div class="ba-kicker">Panel de administración</div><div class="ba-mark"><span>◢</span> BTS STUDIO</div></div><div class="ba-actions"><button id="baReload" type="button" class="ba-btn" hidden>Actualizar ↻</button><button id="baExport" type="button" class="ba-btn" hidden>Exportar CSV</button><button id="baLogout" type="button" class="ba-btn" hidden>Cerrar sesión</button><button id="baExit" type="button" class="ba-btn">Volver a la web ×</button></div></header>
+  <form id="baLogin" class="ba-login" autocomplete="on">
+   <div class="ba-kicker">Acceso reservado</div><h2>Ingresar al panel.</h2><p class="ba-help">Usá el correo y la contraseña del usuario administrador que registraste en Supabase Authentication. Los clientes no pueden consultar estos datos.</p>
+   <div class="ba-field"><label for="baEmail">Correo electrónico</label><input id="baEmail" type="email" autocomplete="username" required placeholder="correo@empresa.com"></div>
+   <div class="ba-field"><label for="baPassword">Contraseña</label><input id="baPassword" type="password" autocomplete="current-password" required></div>
+   <button id="baLoginBtn" class="ba-btn primary" type="submit" style="width:100%;margin-top:8px">Ingresar ↗</button><div id="baLoginStatus" class="ba-status" role="status" aria-live="polite"></div>
+  </form>
+  <div id="baDashboard" class="ba-body" hidden>
+   <div class="ba-topline"><div><div class="ba-kicker">Cotizaciones y contactos</div><h2 class="ba-title">Solicitudes recibidas.</h2><div id="baUserLabel" style="color:#a6a9b5;font-size:12px"></div></div><div id="baUpdated" style="color:#a6a9b5;font-size:12px"></div></div>
+   <div class="ba-grid"><div class="ba-kpi"><p>Solicitudes recibidas</p><strong id="baKpiTotal">—</strong></div><div class="ba-kpi"><p>Pendientes</p><strong id="baKpiPending">—</strong></div><div class="ba-kpi"><p>Briefs PDF descargados*</p><strong id="baKpiPdf">—</strong></div><div class="ba-kpi"><p>Clics a WhatsApp*</p><strong id="baKpiWhats">—</strong></div></div>
+   <div class="ba-panel"><div class="ba-filters"><input id="baSearch" class="ba-search" type="search" placeholder="Buscar por cliente, empresa, correo o evento" aria-label="Buscar solicitudes"><select id="baFilter" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option>Pendiente</option><option>Contactado</option><option>Cotizado</option><option>Aprobado</option><option>Rechazado</option></select><select id="baSource" aria-label="Filtrar por origen"><option value="">Todos los orígenes</option><option value="brief">Cotizaciones</option><option value="contact">Contactos</option><option value="manual">Manuales</option></select></div>
+    <div class="ba-table-wrap"><table class="ba-table"><thead><tr><th>Recibido</th><th>Cliente / Empresa</th><th>Solicitud</th><th>Estado</th><th></th></tr></thead><tbody id="baRows"></tbody></table></div><p id="baListInfo" class="ba-empty" role="status">Todavía no se han cargado registros.</p>
+   </div><p style="font-size:11px;color:#858997;margin-top:13px">*Interacciones registradas, no visitantes únicos. Los gráficos y métricas no sustituyen Google Analytics.</p>
+  </div>
+ </div>
+</section>
+<section class="ba-detail" id="baDetail" aria-label="Detalle de solicitud" role="dialog" aria-modal="true" aria-hidden="true"><div class="ba-detail-card"><div class="ba-detail-heading"><div><div class="ba-kicker">Solicitud BTS Studio</div><h2 id="baDetailTitle" style="font-size:24px;margin:6px 0">Detalle</h2></div><button type="button" id="baDetailClose" class="ba-btn">Cerrar ×</button></div><div id="baDetailData"></div><div class="ba-detail-section"><h4>Seguimiento</h4><div class="ba-field"><label for="baDetailStatus">Estado</label><select id="baDetailStatus"><option>Pendiente</option><option>Contactado</option><option>Cotizado</option><option>Aprobado</option><option>Rechazado</option></select></div><div class="ba-field"><label for="baDetailNotes">Notas internas (solo administradores)</label><textarea id="baDetailNotes" maxlength="10000"></textarea></div><button id="baDetailSave" type="button" class="ba-btn primary">Guardar cambios</button><span id="baDetailMsg" class="ba-status" role="status" aria-live="polite" style="margin-left:12px"></span></div></div></section>
+
 <script>
 /* ================================================================
    BTS STUDIO — CONFIGURACIÓN COMERCIAL
-   Cambiá SOLAMENTE estos datos antes de publicar la web.
-   No se guarda nada en servidores en esta versión de un solo archivo.
+   Conexión a Supabase configurada con clave publicable.
+   Permisos de lectura protegidos por RLS.
    ================================================================ */
-const CONFIG = window.BTS_CONFIG = {
+const CONFIG = {
   whatsapp: "", // Ejem: "50588888888" (solo dígitos, sin + ni espacios)
   email: "",    // Ejem: "hola@tudominio.com"
-  instagram: "" // Ejem: "https://www.instagram.com/tuusuario/"
+  instagram: "", // Ejem: "https://www.instagram.com/tuusuario/"
+  supabaseUrl: "https://xwehejgwufwhpkpzjzyt.supabase.co", // URL real del proyecto BTS Studio Web
+  supabasePublishableKey: "sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz" // Clave PUBLICABLE; RLS controla los accesos
 };
-// Funcionamiento: todos los cálculos, filtros, animaciones y formularios son locales.
-// El envío directo necesita un destinatario real en CONFIG y conexión a Internet.
+// Los formularios se guardan en bts_leads. Los administradores inician sesión en Supabase Auth.
+// PDF local: se descarga independientemente y NO envía una cotización.
+// La clave pública es apta para el navegador: el acceso depende de RLS.
 (function(){
 'use strict';
 const $=(s,root=document)=>root.querySelector(s), $$=(s,root=document)=>Array.from(root.querySelectorAll(s));
 const menuBtn=$('#menuBtn'),mainMenu=$('#mainMenu'),header=$('#siteHeader'),progress=$('#scrollProgress'), toastEl=$('#toast');
+
 $('#year').textContent=new Date().getFullYear();
-const digits=()=>String(CONFIG.whatsapp||'').replace(/\D/g,'');
+const digits=String(CONFIG.whatsapp||'').replace(/\D/g,'');
 $('#publicEmail').textContent=CONFIG.email||'Pendiente de configurar';
-$('#publicPhone').textContent=digits()?('+'+digits()):'Pendiente de configurar';
+$('#publicPhone').textContent=digits?('+'+digits):'Pendiente de configurar';
 let toastTimer;function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),4100)}
 function closeMenu(){mainMenu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰'}
 menuBtn.addEventListener('click',()=>{const open=!mainMenu.classList.contains('open');mainMenu.classList.toggle('open',open);menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'×':'☰'});
@@ -415,15 +494,213 @@ function downloadQuotePDF(){
   return file;
 }
 
-$('#downloadBrief').addEventListener('click',()=>{if(!readyQuote())return;window.BTSMetric?.('brief_pdf');try{downloadQuotePDF();toast('Tu brief en PDF se descargó correctamente. No se ha enviado ninguna solicitud.');showStatus('PDF generado: ahora podés compartirlo con BTS Studio.')}catch(error){console.error('No se pudo generar el PDF',error);toast('No pudimos preparar el PDF. Intentá de nuevo.')}});
-$('#sendWhatsapp').addEventListener('click',async()=>{if(!readyQuote())return;window.BTSMetric?.('whatsapp_click');let msg=encodeURIComponent(quoteMessage());if(digits()){window.open(`https://wa.me/${digits()}?text=${msg}`,'_blank','noopener');showStatus('Se preparó el mensaje de WhatsApp; verificá el envío en la aplicación.')}else{const ok=await copyText(quoteMessage());window.open('https://web.whatsapp.com/','_blank','noopener');toast(ok?'Copiamos tu brief. Falta configurar el número oficial de BTS Studio para enviarlo directamente.':'Falta configurar el número oficial de WhatsApp. Descargá el PDF del brief para compartirlo.');}});
-$('#sendEmail').addEventListener('click',async()=>{if(!readyQuote())return;window.BTSMetric?.('email_click');if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Cotización BTS Studio — '+(eventType.value||'Evento'))}&body=${encodeURIComponent(quoteMessage())}`;showStatus('Se preparó un correo; verificá el envío en tu aplicación de correo.')}else{await copyText(quoteMessage());toast('Falta configurar el correo oficial de BTS Studio. El resumen fue preparado para copiar.') }});
-$('#contactForm').addEventListener('submit',async e=>{e.preventDefault();window.BTSMetric?.('contact_attempt');const f=e.currentTarget;if(!f.checkValidity()){f.reportValidity();return}const msg=`CONTACTO — BTS STUDIO\nNombre: ${$('#cName').value.trim()}\nEmail: ${$('#cMail').value.trim()}\nServicio: ${$('#cSubject').value}\n\nMensaje:\n${$('#cText').value.trim()}`;if(CONFIG.email){window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta BTS Studio: '+$('#cSubject').value)}&body=${encodeURIComponent(msg)}`;toast('Tu aplicación de correo preparará el mensaje; revisá el envío.')}else if(digits()){window.open(`https://wa.me/${digits()}?text=${encodeURIComponent(msg)}`,'_blank','noopener');toast('WhatsApp abrirá el mensaje para que confirmés el envío.')}else{const ok=await copyText(msg);toast(ok?'Mensaje copiado. Para enviarlo directamente falta configurar un contacto comercial.':'Configurá un correo o WhatsApp comercial antes de publicar la web.')}});
+
+/* Supabase: las políticas RLS del SQL permiten INSERT público sin permitir lecturas. */
+function supabaseReady(){
+  const url=String(CONFIG.supabaseUrl||'').trim();
+  const key=String(CONFIG.supabasePublishableKey||'').trim();
+  return /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(url) && /^sb_publishable_[A-Za-z0-9_-]+$/.test(key);
+}
+async function writeToSupabase(table,row){
+  if(!supabaseReady())throw new Error('La conexión con el servidor no está disponible.');
+  const url=String(CONFIG.supabaseUrl).trim().replace(/\/$/,'');
+  const resp=await fetch(url+'/rest/v1/'+table,{
+    method:'POST',
+    headers:{'apikey':String(CONFIG.supabasePublishableKey).trim(),'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(row)
+  });
+  if(!resp.ok){
+    let body='';try{body=await resp.text()}catch(e){}
+    console.error('Error Supabase ('+table+'):',resp.status,body);
+    if(resp.status===401||resp.status===403)throw new Error('Supabase rechazó el envío. Revisá la clave pública y las políticas RLS.');
+    if(resp.status===400||resp.status===409)throw new Error('No se pudo guardar el formulario. Revisá los datos e intentá de nuevo.');
+    throw new Error('No pudimos guardar la solicitud. Intentá nuevamente más tarde.');
+  }
+}
+function trackEvent(kind,placement){
+  if(!supabaseReady())return;
+  writeToSupabase('bts_events',{kind,placement}).catch(e=>console.debug('Métrica no enviada',e.message));
+}
+function getQuotePayload(){
+  const q=id=>$('#'+id)?.value?.trim()||'';
+  const selected=selection();
+  const detail={
+    event_name:q('qEventName'),event_type:q('qType'),start_time:q('qTime'),
+    duration_hours:selected.duration,attendees:q('qPeople'),location:q('qPlace'),
+    package_interest:q('qPackage'),package_suggested:selected.rec,
+    package_selected:selected.chosen,goal:q('qGoal'),deliverables:q('qDeliverables'),
+    channel:q('qChannel'),extras:selected.extra,contact_preference:q('qContactPref'),
+    must_have:q('qMustHave'),reference_url:q('qReference'),message:q('qMessage')
+  };
+  return {name:q('qName'),company:q('qCompany'),service:'Evento corporativo / '+selected.chosen,
+    email:q('qEmail'),phone:q('qPhone'),event_date:q('qDate')||null,
+    source:'brief',details:detail};
+}
+let sendingQuote=false;
+$('#submitQuote').addEventListener('click',async()=>{
+  if(sendingQuote||!readyQuote())return;
+  if(document.getElementById('btsHoneyQuote')?.value)return;
+  const button=$('#submitQuote');const original=button.textContent;
+  sendingQuote=true;button.disabled=true;button.textContent='Enviando solicitud…';
+  showStatus('Estamos enviando tu solicitud.');
+  try{
+    await writeToSupabase('bts_leads',getQuotePayload());
+    showStatus('¡Solicitud recibida! BTS Studio ya puede consultarla en su sistema. Podés descargar tu brief en PDF.');
+    toast('Tu cotización se guardó correctamente.');
+    trackEvent('quote_submitted','cotizador');
+    button.textContent='✓ Solicitud enviada';
+    // Bloquear dobles envíos accidentales hasta que la persona modifique el formulario.
+    button.dataset.sent='1';
+  }catch(error){
+    console.error(error);
+    showStatus(error.message||'No se pudo enviar la solicitud.');
+    toast(error.message||'Error al guardar. Intentá nuevamente.');
+    button.textContent=original;
+    button.disabled=false;
+  }finally{sendingQuote=false;if(button.dataset.sent!=='1'){button.disabled=false;button.textContent=original}}
+});
+// Si modifica datos después de enviar, puede remitir una solicitud actualizada.
+form.addEventListener('input',()=>{const b=$('#submitQuote');if(b.dataset.sent==='1'){delete b.dataset.sent;b.disabled=false;b.textContent='Enviar solicitud a BTS Studio ↗';}});
+form.addEventListener('change',()=>{const b=$('#submitQuote');if(b.dataset.sent==='1'){delete b.dataset.sent;b.disabled=false;b.textContent='Enviar solicitud a BTS Studio ↗';}});
+$('#downloadBrief').addEventListener('click',()=>{if(!readyQuote())return;try{downloadQuotePDF();trackEvent('brief_pdf','cotizador');toast('PDF descargado. Esta descarga no envía una solicitud adicional.');showStatus($('#submitQuote').dataset.sent==='1'?'PDF descargado. Tu solicitud ya está registrada en BTS Studio.':'PDF generado. Para enviar la cotización, presioná «Enviar solicitud a BTS Studio».')}catch(error){console.error('No se pudo generar el PDF',error);toast('No pudimos preparar el PDF. Intentá de nuevo.')}});
+$('#sendWhatsapp').addEventListener('click',async()=>{if(!readyQuote())return;let msg=encodeURIComponent(quoteMessage());if(digits){trackEvent('whatsapp_click','cotizador');window.open(`https://wa.me/${digits}?text=${msg}`,'_blank','noopener');showStatus('Se preparó el mensaje de WhatsApp; verificá el envío en la aplicación.')}else{const ok=await copyText(quoteMessage());window.open('https://web.whatsapp.com/','_blank','noopener');toast(ok?'Copiamos tu brief. Falta configurar el número oficial de BTS Studio para enviarlo directamente.':'Falta configurar el número oficial de WhatsApp. Descargá el PDF del brief para compartirlo.');}});
+$('#sendEmail').addEventListener('click',async()=>{if(!readyQuote())return;if(CONFIG.email){trackEvent('email_click','cotizador');window.location.href=`mailto:${CONFIG.email}?subject=${encodeURIComponent('Cotización BTS Studio — '+(eventType.value||'Evento'))}&body=${encodeURIComponent(quoteMessage())}`;showStatus('Se preparó un correo; verificá el envío en tu aplicación de correo.')}else{await copyText(quoteMessage());toast('Falta configurar el correo oficial de BTS Studio. El resumen fue preparado para copiar.') }});
+$('#contactForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const f=e.currentTarget;if(document.getElementById('btsHoneyContact')?.value)return;if(!f.checkValidity()){f.reportValidity();return}
+  const button=$('#contactSubmit');if(button.disabled)return;
+  const msg=$('#cText').value.trim();
+  const row={name:$('#cName').value.trim(),company:'',service:$('#cSubject').value,
+    email:$('#cMail').value.trim(),phone:'',source:'contact',event_date:null,
+    details:{message:msg,origin:'formulario de contacto'}};
+  button.disabled=true;const label=button.textContent;button.textContent='Enviando…';
+  $('#contactStatus').textContent='Enviando consulta…';
+  try{
+    await writeToSupabase('bts_leads',row);
+    trackEvent('contact_submitted','contacto');
+    f.reset();
+    $('#contactStatus').textContent='¡Consulta enviada! BTS Studio ya puede verla en su sistema.';
+    toast('Tu mensaje se guardó correctamente.');
+  }catch(error){
+    console.error(error);
+    $('#contactStatus').textContent=error.message||'No fue posible enviar la consulta.';
+    toast(error.message||'No se pudo enviar tu mensaje.');
+  }finally{button.disabled=false;button.textContent=label}
+});
 $$('.faq-item button').forEach(btn=>{btn.addEventListener('click',()=>{let open=btn.getAttribute('aria-expanded')==='true';$$('.faq-item button').forEach(b=>{b.setAttribute('aria-expanded','false');b.nextElementSibling.style.maxHeight='0px'});if(!open){btn.setAttribute('aria-expanded','true');btn.nextElementSibling.style.maxHeight=btn.nextElementSibling.scrollHeight+'px'}})});
 })();
 </script>
 
-<link rel="stylesheet" href="assets/js/bts-cms.css">
-<script src="assets/js/bts-site.js" defer></script>
+<script>
+/* BTS Studio | Administración. Nunca incluye contraseñas ni secret/service_role keys. */
+(()=>{'use strict';
+ const base=CONFIG.supabaseUrl.replace(/\/$/,'');
+ const pub=CONFIG.supabasePublishableKey;
+ const el=id=>document.getElementById(id);
+ let session=null,requests=[],activeId=null,refreshing=null;
+ const k='bts_panel_session_v1';
+ const admin=el('btsAdminShell'),login=el('baLogin'),dashboard=el('baDashboard');
+ function showMessage(msg){el('baLoginStatus').textContent=msg||''}
+ function showAdmin(){
+   const open=location.hash==='#panel-bts';admin.classList.toggle('open',open);admin.setAttribute('aria-hidden',String(!open));document.body.classList.toggle('bts-admin-open',open);
+   if(!open){closeDetail();return}
+   if(session){login.hidden=true;dashboard.hidden=false;loadDashboard().catch(e=>{el('baListInfo').textContent=e.message})}
+ }
+ function saveSession(){try{if(session)sessionStorage.setItem(k,JSON.stringify(session));else sessionStorage.removeItem(k)}catch(e){}}
+ try {const stored=JSON.parse(sessionStorage.getItem(k)||'null');if(stored?.access_token&&stored?.refresh_token&&stored?.user?.id)session=stored;}catch(e){}
+ function authHeaders(){return {'apikey':pub,'Authorization':'Bearer '+session.access_token}}
+ async function refreshAccess(){
+   if(!session?.refresh_token)throw new Error('Volvé a iniciar sesión.');
+   if(refreshing)return refreshing;
+   refreshing=(async()=>{
+    const r=await fetch(base+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':pub,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
+    const j=await r.json().catch(()=>({}));if(!r.ok||!j.access_token)throw new Error('La sesión venció. Iniciá sesión nuevamente.');
+    session={...session,...j};saveSession();return session.access_token;
+   })();
+   try{return await refreshing}finally{refreshing=null}
+ }
+ async function api(path,opts={},retry=true){
+   if(!session)throw new Error('Iniciá sesión para acceder.');
+   if(session.expires_at&&session.expires_at*1000-Date.now()<45_000)await refreshAccess();
+   const response=await fetch(base+path,{...opts,headers:{...authHeaders(),...(opts.headers||{})}});
+   if(response.status===401&&retry){await refreshAccess();return api(path,opts,false)}
+   if(!response.ok){const body=await response.json().catch(()=>({}));throw new Error(body.message||body.error_description||'No se pudo cargar desde Supabase ('+response.status+').')}
+   return response;
+ }
+ async function verifyAdmin(){
+    const r=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id&limit=1');
+    const rows=await r.json();if(!Array.isArray(rows)||rows.length===0)throw new Error('Este usuario no está autorizado en bts_admins.');
+ }
+ function authUi(){const yes=Boolean(session);login.hidden=yes;dashboard.hidden=!yes;for(const id of ['baLogout','baReload','baExport'])el(id).hidden=!yes;el('baUserLabel').textContent=yes?(session.user.email||'Administrador'):' ';}
+ async function signin(ev){
+    ev.preventDefault();if(!login.checkValidity())return;
+    const btn=el('baLoginBtn');btn.disabled=true;showMessage('Validando acceso…');
+    try{
+      const resp=await fetch(base+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':pub,'Content-Type':'application/json'},body:JSON.stringify({email:el('baEmail').value.trim(),password:el('baPassword').value})});
+      const data=await resp.json().catch(()=>({}));
+      if(!resp.ok||!data.access_token||!data.user?.id)throw new Error('Correo o contraseña incorrectos, o cuenta aún no habilitada.');
+      session={...data,expires_at:data.expires_at||Math.floor(Date.now()/1000)+(data.expires_in||3600)};
+      await verifyAdmin();saveSession();el('baPassword').value='';showMessage('');authUi();await loadDashboard();
+    }catch(error){session=null;saveSession();authUi();showMessage(error.message||'No pudimos iniciar sesión.');}
+    finally{btn.disabled=false}
+ }
+ async function logout(){const access=session?.access_token;session=null;saveSession();requests=[];authUi();closeDetail();showMessage('Sesión cerrada.');if(access)fetch(base+'/auth/v1/logout',{method:'POST',headers:{apikey:pub,Authorization:'Bearer '+access}}).catch(()=>{});}
+ async function countRows(table,filter=''){
+   try{const r=await api('/rest/v1/'+table+'?select=id'+(filter?'&'+filter:''),{method:'HEAD',headers:{Prefer:'count=exact'}});
+      const cr=r.headers.get('content-range');return cr?.includes('/')?cr.split('/').pop():'—';
+   }catch(e){return '—'}
+ }
+ async function loadDashboard(){
+   if(!session)return;el('baListInfo').textContent='Cargando solicitudes…';
+   try{
+    const r=await api('/rest/v1/bts_leads?select=id,created_at,name,company,service,email,phone,event_date,source,status,notes,details&order=created_at.desc&limit=200');
+    requests=await r.json();renderRows();el('baUpdated').textContent='Actualizado: '+new Date().toLocaleString('es-NI');
+    const [total,pending,pdfs,whats]=await Promise.all([
+      countRows('bts_leads'),countRows('bts_leads','status=eq.Pendiente'),
+      countRows('bts_events','kind=eq.brief_pdf'),countRows('bts_events','kind=eq.whatsapp_click')]);
+    el('baKpiTotal').textContent=total;el('baKpiPending').textContent=pending;el('baKpiPdf').textContent=pdfs;el('baKpiWhats').textContent=whats;
+   }catch(e){el('baListInfo').textContent='Error cargando datos: '+e.message;throw e}
+ }
+ function niceDate(v){if(!v)return'—';try{return new Date(v).toLocaleString('es-NI',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return String(v)}}
+ function renderRows(){
+   const body=el('baRows');body.replaceChildren();const needle=el('baSearch').value.trim().toLowerCase(),status=el('baFilter').value,source=el('baSource').value;
+   const shown=requests.filter(x=>(!status||x.status===status)&&(!source||x.source===source)&&[x.name,x.company,x.email,x.phone,x.service,x.details?.event_name].some(v=>String(v||'').toLowerCase().includes(needle)));
+   for(const x of shown){const tr=document.createElement('tr');
+     const cell1=document.createElement('td');cell1.textContent=niceDate(x.created_at);tr.append(cell1);
+     const cell2=document.createElement('td');const name=document.createElement('b');name.textContent=x.name||'Sin nombre';cell2.append(name);const co=document.createElement('small');co.textContent=x.company||x.email||'';cell2.append(co);tr.append(cell2);
+     const cell3=document.createElement('td');cell3.textContent=x.service||x.details?.event_name||'Consulta';tr.append(cell3);
+     const cell4=document.createElement('td');const badge=document.createElement('span');badge.className='ba-chip';badge.textContent=x.status;cell4.append(badge);tr.append(cell4);
+     const cell5=document.createElement('td');const btn=document.createElement('button');btn.className='ba-btn';btn.type='button';btn.textContent='Ver detalle';btn.addEventListener('click',()=>showDetail(x.id));cell5.append(btn);tr.append(cell5);
+     body.append(tr);
+   }
+   el('baListInfo').textContent=shown.length?`Mostrando ${shown.length} de las últimas ${requests.length} solicitudes recuperadas.`:'Sin solicitudes que coincidan con el filtro.';
+ }
+ function detailLine(parent,k,v){const d=document.createElement('div');d.className='ba-detail-line';const b=document.createElement('b');b.textContent=k;const span=document.createElement('span');span.textContent=typeof v==='object'?JSON.stringify(v):String(v??'—');d.append(b,span);parent.append(d)}
+ function detailGroup(parent,title,data){const sect=document.createElement('div');sect.className='ba-detail-section';const h=document.createElement('h4');h.textContent=title;sect.append(h);for(const [k,v] of Object.entries(data))if(v!==''&&v!==null&&v!==undefined)detailLine(sect,k,v);parent.append(sect)}
+ function showDetail(id){const x=requests.find(q=>q.id===id);if(!x)return;activeId=x.id;el('baDetailTitle').textContent=x.details?.event_name||x.name||'Solicitud';
+    const data=el('baDetailData');data.replaceChildren();detailGroup(data,'Cliente',{Nombre:x.name,Empresa:x.company,Correo:x.email,Teléfono:x.phone});
+    detailGroup(data,'Evento',{Servicio:x.service,'Fecha del evento':x.event_date,'Creado':niceDate(x.created_at),Origen:x.source});
+    const keys={event_name:'Evento',event_type:'Tipo de evento',start_time:'Hora',duration_hours:'Duración (h)',attendees:'Asistentes',location:'Ubicación',package_interest:'Paquete solicitado',package_suggested:'Paquete sugerido',package_selected:'Paquete elegido',goal:'Objetivo',deliverables:'Entregables',channel:'Destino del contenido',extras:'Adicionales',contact_preference:'Preferencia de contacto',must_have:'Momentos imprescindibles',reference_url:'Referencias',message:'Detalles'};
+    const details={};for(const [k,v] of Object.entries(x.details||{}))details[keys[k]||k]=Array.isArray(v)?v.join(', '):v;detailGroup(data,'Brief y necesidades',details);
+    el('baDetailStatus').value=x.status;el('baDetailNotes').value=x.notes||'';el('baDetailMsg').textContent='';el('baDetail').classList.add('open');el('baDetail').setAttribute('aria-hidden','false');
+ }
+ function closeDetail(){el('baDetail').classList.remove('open');el('baDetail').setAttribute('aria-hidden','true');activeId=null}
+ async function saveDetail(){if(!activeId)return;const btn=el('baDetailSave');btn.disabled=true;el('baDetailMsg').textContent='Guardando…';
+    try{const status=el('baDetailStatus').value,notes=el('baDetailNotes').value;await api('/rest/v1/bts_leads?id=eq.'+encodeURIComponent(activeId),{method:'PATCH',headers:{'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({status,notes})});
+      const x=requests.find(q=>q.id===activeId);if(x){x.status=status;x.notes=notes}renderRows();el('baDetailMsg').textContent='Guardado correctamente.';
+    }catch(e){el('baDetailMsg').textContent='Error: '+e.message}finally{btn.disabled=false}
+ }
+ function exportCsv(){
+    const fields=['created_at','name','company','service','email','phone','event_date','source','status','notes'];
+    const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='\uFEFF'+fields.join(',')+'\r\n'+requests.map(r=>fields.map(f=>esc(r[f])).join(',')).join('\r\n');
+    const a=document.createElement('a'),u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.href=u;a.download='BTS_Studio_Solicitudes.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),4000);
+ }
+ login.addEventListener('submit',signin);el('baExit').addEventListener('click',()=>{location.hash='inicio'});el('baLogout').addEventListener('click',logout);el('baReload').addEventListener('click',()=>loadDashboard().catch(e=>{el('baListInfo').textContent=e.message}));el('baExport').addEventListener('click',exportCsv);
+ el('baSearch').addEventListener('input',renderRows);el('baFilter').addEventListener('change',renderRows);el('baSource').addEventListener('change',renderRows);el('baDetailClose').addEventListener('click',closeDetail);el('baDetailSave').addEventListener('click',saveDetail);
+ el('baDetail').addEventListener('click',e=>{if(e.target===el('baDetail'))closeDetail()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&el('baDetail').classList.contains('open'))closeDetail()});
+ window.addEventListener('hashchange',showAdmin);authUi();if(session){verifyAdmin().then(()=>{authUi();showAdmin()}).catch(()=>{session=null;saveSession();authUi();showAdmin();showMessage('Tu sesión venció o no tiene permisos de administrador. Iniciá sesión nuevamente.')})}else showAdmin();
+})();
+</script>
+
 </body>
 </html>
