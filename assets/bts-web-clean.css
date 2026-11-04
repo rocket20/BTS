@@ -200,6 +200,33 @@ body.bts-catalog-mounted > main > section.experiences{display:none!important}
 .project-meta p,.service-num,.package-index,.quote-only .label{display:none!important}
 /* Package: illuminated red perimeter that rotates on hover, not a full-color fill. */
 .packages-grid .package{overflow:hidden;isolation:isolate}
+
+/* Badge inside package boundaries: avoids the cropped "Más versátil" label.
+   Keep clipping for the animated perimeter, but move the badge INSIDE it. */
+.packages-grid .package.popular{
+ padding-top:60px!important;
+}
+.packages-grid .package .popular-tag{
+ position:absolute!important;
+ top:15px!important;
+ right:17px!important;
+ z-index:5!important;
+ display:inline-flex!important;
+ align-items:center;
+ justify-content:center;
+ max-width:calc(100% - 34px);
+ margin:0!important;
+ padding:7px 13px!important;
+ border-radius:999px!important;
+ white-space:nowrap;
+ line-height:1.1!important;
+ text-align:center;
+ box-sizing:border-box;
+}
+@media(max-width:440px){
+ .packages-grid .package.popular{padding-top:58px!important}
+ .packages-grid .package .popular-tag{top:13px!important;right:14px!important;font-size:9px!important}
+}
 .packages-grid .package::after{
  content:"";position:absolute!important;inset:0!important;
  width:100%!important;height:100%!important;box-sizing:border-box;
