@@ -102,8 +102,32 @@ body.bts-admin-open{overflow:hidden}
 @media(max-width:800px){.ba-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ba-head{padding:17px 0}.ba-login{margin-top:32px}.ba-title{font-size:26px}}
 @media(max-width:480px){.ba-wrap{width:min(100% - 24px,1180px)}.ba-grid{gap:8px}.ba-kpi{padding:14px}.ba-kpi strong{font-size:26px}.ba-login{padding:23px}.ba-detail-card{padding:18px}.ba-detail-grid{grid-template-columns:1fr}}
 </style>
+<link rel="stylesheet" href="assets/bts-public-glass.css">
 </head>
 <body>
+
+<!-- BTS Studio · cargador cinematográfico; colibrí origami basado en el símbolo original -->
+<div class="bts-loader" id="btsIntroLoader" role="status" aria-label="BTS Studio está preparando tu experiencia">
+  <div class="bts-loader-stage" aria-hidden="true">
+    <div class="bts-loader-trail"></div>
+    <div class="bts-loader-word"><b>BTS</b><small>STUDIO</small></div>
+    <div class="bts-loader-orbit">
+      <div class="bts-loader-bird">
+        <svg viewBox="0 0 448 390" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <polygon class="bts-wing" points="63,0 163,0 251,101 142,101" fill="#ff315f"/>
+          <polygon points="147,115 277,115 168,316 0,390" fill="#ff0037"/>
+          <polygon points="268,0 448,0 315,242 194,309 287,111 223,50" fill="#ee0046"/>
+          <path d="M23 358 L153 277" stroke="#ffb8ca" stroke-width="4" opacity=".45"/>
+        </svg>
+      </div>
+    </div>
+    <span class="bts-loader-caption">Producción visual · experiencias memorables</span>
+    <span class="bts-loader-progress" aria-hidden="true"></span>
+  </div>
+  <button class="bts-loader-skip" id="btsIntroSkip" type="button">Omitir intro ↗</button>
+</div>
+
+<script src="assets/bts-intro.js" defer></script>
 <div class="progress" id="scrollProgress" aria-hidden="true"></div>
 <header class="site-header" id="siteHeader">
   <div class="wrap nav-wrap">
