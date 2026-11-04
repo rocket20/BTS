@@ -101,5 +101,18 @@ async function importRows(rows){
  if(payload.some(x=>!x.name||(!x.email&&!x.phone)))throw Error("Cada fila importada necesita nombre y correo o teléfono.");
  for(let i=0;i<payload.length;i+=100)await api("/rest/v1/bts_leads","POST",payload.slice(i,i+100));
 }
-window.BTSLeads={bootstrap,load,save,remove,importRows};
+async function invokePublisher(payload){
+ await refresh();
+ const r=await fetch(BASE+"/functions/v1/publicar-bts",{
+  method:"POST",
+  headers:{"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json"},
+  body:JSON.stringify(payload),
+  cache:"no-store"
+ });
+ let data={};
+ try{data=await r.json();}catch{}
+ if(!r.ok||!data.ok)throw Error(data.error||("Error HTTP "+r.status));
+ return data;
+}
+window.BTSLeads={bootstrap,load,save,remove,importRows,invokePublisher};
 })();
