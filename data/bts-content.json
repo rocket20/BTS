@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-04T04:42:09.287Z",
+  "updatedAt": "2026-11-04T07:25:32.987Z",
   "brand": {
     "studioName": "BTS Studio",
     "heroTitle": "",
@@ -11,6 +11,36 @@
     "analyticsId": ""
   },
   "events": [
+    {
+      "id": "btsmw1sl3yrihh0u",
+      "title": "Evento corporativo",
+      "category": "eventos",
+      "date": "2026-11-27",
+      "description": "",
+      "active": true,
+      "image": "assets/uploads/events-btsmw1sl3yrihh0u-1793777126713.webp",
+      "gallery": []
+    },
+    {
+      "id": "btsmw1skamcaw6p3",
+      "title": "Pantallas leds",
+      "category": "eventos",
+      "date": "2026-11-20",
+      "description": "",
+      "active": true,
+      "image": "assets/uploads/events-btsmw1skamcaw6p3-1793777128944.webp",
+      "gallery": []
+    },
+    {
+      "id": "btsmw1sjg5djdaez",
+      "title": "Fotografía",
+      "category": "eventos",
+      "date": "",
+      "description": "",
+      "active": true,
+      "image": "assets/uploads/events-btsmw1sjg5djdaez-1793777131055.webp",
+      "gallery": []
+    },
     {
       "id": "btsmw18xr87lxv0b",
       "title": "Coca Cola",
