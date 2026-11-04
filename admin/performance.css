@@ -38,7 +38,7 @@
 }
 /* Consistent self-hosted Lucide strokes and SVG sizing. */
 .nav-ico svg,.kpi-icon svg,.theme-icon svg,
-.notice-icon svg,.title-star svg,.bts-placeholder-icon,.mobile-menu svg{
+.notice-icon svg,.title-star svg,.bts-placeholder-icon,.mobile-menu svg,.bts-inline-check{
  display:block;
  width:20px;height:20px;
  fill:none!important;stroke:currentColor!important;
@@ -49,6 +49,8 @@
 .theme-icon svg{width:17px;height:17px}
 .bts-placeholder-icon{width:28px;height:28px}
 .title-star svg{width:23px;height:23px}
+.bts-inline-check{width:15px;height:15px;vertical-align:-3px;display:inline-block;color:var(--red);margin-right:5px}
+.shell{transition:opacity .16s ease}
 .notice-icon{display:inline-grid;place-items:center;min-width:22px}
 .mobile-menu svg{margin:auto}
 .theme-icon{display:inline-flex;align-items:center;justify-content:center}
