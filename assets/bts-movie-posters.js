@@ -56,14 +56,8 @@
       event.preventDefault();event.stopImmediatePropagation();
       suppressClick=false;
     },true);
-    // The rail itself is keyboard focusable, without changing poster buttons.
-    rail.addEventListener("keydown",event=>{
-      if (event.target!==rail || !["ArrowLeft","ArrowRight"].includes(event.key))return;
-      event.preventDefault();
-      const poster=rail.querySelector(".project:not([hidden])");
-      const step=(poster?.getBoundingClientRect().width||220)+16;
-      rail.scrollBy({left:step*(event.key==="ArrowRight"?1:-1),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
-    });
+    // Arrow keys are already handled by bts-web-clean.js; do not scroll twice.
+
   };
   if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",init,{once:true});
   else init();
