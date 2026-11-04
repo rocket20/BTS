@@ -7,7 +7,17 @@ html[data-bts-theme] .kpi-grid .kpi-card {
 html[data-bts-theme] .kpi-grid .kpi-card::before {
   content: "";
   position: absolute;
+  /* Reset the old 240x240px ambient halo from theme.css. */
   inset: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
   z-index: 0 !important;
   border-radius: inherit;
   background: linear-gradient(125deg, #952b4c 0%, #81233f 52%, #711d38 100%) !important;
