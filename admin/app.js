@@ -34,12 +34,10 @@ function renderKpis(){
  // Update existing cards in place so a Supabase refresh does not rebuild
  // the whole grid, invalidate the drag organizer, or trigger costly repaints.
  if(overview.children.length===items.length && overview.querySelector('.kpi-card')){
-   items.forEach(([title,value],i)=>{
-     const card=overview.children[i];
-     if(card?.querySelector('.kpi-label')?.textContent===title){
-       const metric=card.querySelector('.kpi-value');
-       if(metric&&metric.textContent!==value)metric.textContent=value;
-     }
+   const existing=new Map(Array.from(overview.querySelectorAll('.kpi-card')).map(card=>[card.querySelector('.kpi-label')?.textContent,card]));
+   items.forEach(([title,value])=>{
+     const metric=existing.get(title)?.querySelector('.kpi-value');
+     if(metric&&metric.textContent!==value)metric.textContent=value;
    });
  }else{
    overview.innerHTML=items.map(([t,v,ico,foot,type])=>`<article class="kpi-card"><div class="kpi-top"><span class="kpi-label">${t}</span><span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value">${v}</div><div class="kpi-foot"><span class="${type==='demo'?'pending':''}">${type==='demo'?'DEMO':'NUBE'}</span> ${esc(foot)}</div></article>`).join('');
