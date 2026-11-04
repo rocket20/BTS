@@ -126,7 +126,7 @@ content=next;localSet(LS_DRAFT,content);renderAll();notify('¡Contenido enviado 
 }catch(e){console.error(e);notify('No se pudo publicar: '+e.message);}finally{button.disabled=false;button.textContent=prev;}}
 async function loadPublished(){try{let d;{const r=await fetch('../data/bts-content.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('Archivo público no disponible');d=await r.json();}if(localStorage.getItem(LS_DRAFT)&&!confirm('Esto sustituirá tu borrador local por el contenido publicado. ¿Continuar?'))return;content=normalize(d);localSet(LS_DRAFT,content);renderAll();notify('Contenido publicado cargado.');}catch(e){notify('Error cargando el sitio: '+e.message);}}
 function bind(){
-$$('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.page)));$$('[data-goto]').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.goto)));
+$('.sidebar nav').addEventListener('click',e=>{const n=e.target.closest('.nav-item');if(n)navigate(n.dataset.page);});$$('[data-goto]').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.goto)));
 $('#mobileMenu').addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
 $('#saveDraftTop').addEventListener('click',storeDraft);$('#publishTop').addEventListener('click',publish);$('#publishSettings').addEventListener('click',publish);$('#testRepo').addEventListener('click',()=>testConnection().catch(e=>notify('Conexión fallida: '+e.message)));
 $('#noticeAction').addEventListener('click',()=>navigate('configuracion'));
