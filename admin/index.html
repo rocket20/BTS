@@ -1,26 +1,36 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0b10"><title>BTS Studio — Panel de administración</title>
 <meta name="robots" content="noindex,nofollow"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="glass-premium.css"><style>body:not(.bts-authenticated) .shell{visibility:hidden}</style></head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="glass-premium.css"><link rel="stylesheet" href="sidebar-reference.css"><style>body:not(.bts-authenticated) .shell{visibility:hidden}</style></head>
 <body>
 <div class="shell" id="shell">
-<aside class="sidebar" id="sidebar">
-<a class="logo" href="../index.html" aria-label="Ir a BTS Studio"><svg width="35" height="31" viewBox="0 0 448 390"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span><b>BTS</b><small>STUDIO</small></span></a>
-<div class="sidebar-label">PANEL DE CONTROL</div>
-<nav aria-label="Módulos">
-<button class="nav-item active" data-page="resumen"><span class="nav-ico">◫</span> Resumen <span class="nav-tail">›</span></button>
-<button class="nav-item" data-page="trafico"><span class="nav-ico">▥</span> Analítica web</button>
-<button class="nav-item" data-page="cotizaciones"><span class="nav-ico">▤</span> Cotizaciones <span class="nav-bubble" id="navLeadCount">0</span></button>
-<div class="sidebar-label sub">CONTENIDO DEL SITIO</div>
-<button class="nav-item" data-page="eventos"><span class="nav-ico">▣</span> Eventos y proyectos</button>
-<button class="nav-item" data-page="marcas"><span class="nav-ico">◇</span> Marcas y aliados</button>
-<button class="nav-item" data-page="servicios"><span class="nav-ico">▦</span> Servicios</button>
-<button class="nav-item" data-page="paquetes"><span class="nav-ico">◈</span> Paquetes</button>
-<button class="nav-item" data-page="contenido"><span class="nav-ico">◬</span> Página y contacto</button>
-<div class="sidebar-label sub">SISTEMA</div>
-<button class="nav-item" data-page="configuracion"><span class="nav-ico">⚙</span> GitHub y conexiones</button>
-</nav>
-<div class="sidebar-foot"><div class="dotline"><span class="dot"></span><span id="connectionLabel">Modo de preparación</span></div><p>Tu sitio y tu panel, en un mismo repositorio.</p><a href="../index.html" target="_blank" rel="noopener noreferrer">Abrir página pública ↗</a></div>
+<aside class="sidebar" id="sidebar" aria-label="Menú administrativo">
+  <div class="bts-sidebar-head">
+    <a class="logo" href="../index.html" aria-label="Ir a BTS Studio"><svg width="35" height="31" viewBox="0 0 448 390"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span><b>BTS</b><small>STUDIO</small></span></a>
+    <button type="button" class="bts-sidebar-collapse" id="sidebarCollapse" aria-controls="sidebar" aria-expanded="true" aria-label="Contraer menú lateral" title="Contraer menú">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+  </div>
+  <div class="bts-sidebar-rule"></div>
+  <nav aria-label="Módulos">
+    <div class="sidebar-label">PANEL DE CONTROL</div>
+    <button class="nav-item active" data-page="resumen" aria-label="Resumen" title="Resumen"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.3"/><rect x="14" y="3" width="7" height="7" rx="1.3"/><rect x="3" y="14" width="7" height="7" rx="1.3"/><rect x="14" y="14" width="7" height="7" rx="1.3"/></svg></span><span class="nav-text">Resumen</span></button>
+    <button class="nav-item" data-page="trafico" aria-label="Analítica web" title="Analítica web"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 16 5-5 3 3 5-7"/></svg></span><span class="nav-text">Analítica web</span></button>
+    <button class="nav-item" data-page="cotizaciones" aria-label="Cotizaciones" title="Cotizaciones"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span><span class="nav-text">Cotizaciones</span><span class="nav-bubble" id="navLeadCount">0</span></button>
+    <div class="sidebar-label sub">CONTENIDO DEL SITIO</div>
+    <button class="nav-item" data-page="eventos" aria-label="Eventos y proyectos" title="Eventos y proyectos"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="m3 9 18-4M6 4l4 5M12 3l4 5"/><path d="m10 12 5 3-5 3Z"/></svg></span><span class="nav-text">Eventos y proyectos</span></button>
+    <button class="nav-item" data-page="marcas" aria-label="Marcas y aliados" title="Marcas y aliados"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Z"/><path d="m8 12 3 3 5-6"/></svg></span><span class="nav-text">Marcas y aliados</span></button>
+    <button class="nav-item" data-page="servicios" aria-label="Servicios" title="Servicios"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg></span><span class="nav-text">Servicios</span></button>
+    <button class="nav-item" data-page="paquetes" aria-label="Paquetes" title="Paquetes"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></span><span class="nav-text">Paquetes</span></button>
+    <button class="nav-item" data-page="contenido" aria-label="Página y contacto" title="Página y contacto"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10"/><path d="m8 14 2 2 6-7M17 2h5v5"/></svg></span><span class="nav-text">Página y contacto</span></button>
+    <div class="sidebar-label sub">SISTEMA</div>
+    <button class="nav-item" data-page="configuracion" aria-label="GitHub y conexiones" title="GitHub y conexiones"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 1.2 1.1-2.1 3.6-1.6-.5a8 8 0 0 1-2 1.2l-.3 1.6h-4.2l-.4-1.6a8 8 0 0 1-2-1.2l-1.6.5-2.1-3.6L5.6 15a8 8 0 0 1 0-2.4l-1.2-1.1L6.5 8l1.6.5a8 8 0 0 1 2-1.2l.3-1.6h4.2l.4 1.6a8 8 0 0 1 2 1.2l1.6-.5 2.1 3.5-1.3 1.1a8 8 0 0 1 0 2.4Z"/></svg></span><span class="nav-text">GitHub y conexiones</span></button>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="dotline"><span class="dot"></span><span id="connectionLabel">Modo de preparación</span></div>
+    <p>Tu sitio y tu panel, en un mismo repositorio.</p>
+    <a href="../index.html" target="_blank" rel="noopener noreferrer">Abrir página pública ↗</a>
+  </div>
 </aside>
 <div class="main-wrap">
 <header class="topbar"><div class="top-left"><button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button><span class="breadcrumb">BTS STUDIO <span>/</span> <strong id="breadcrumb">Resumen</strong></span></div><div class="top-actions"><button type="button" class="bts-theme-toggle" id="btsThemeToggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar tema"><span class="theme-icon" aria-hidden="true">☀</span><span class="theme-label">Modo claro</span></button><span class="mode-pill" id="modePill">● VISTA DEMO</span><button class="btn btn-secondary compact" id="saveDraftTop">Guardar borrador</button><button class="btn btn-primary compact" id="publishTop">Publicar en GitHub ↗</button><div class="avatar" title="Administrador BTS">B</div></div></header>
@@ -55,4 +65,4 @@
 </main></div></div>
 <div class="overlay" id="modalOverlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="eyebrow" id="modalEyebrow">EDITOR</div><h2 id="modalTitle">Nuevo elemento</h2></div><button id="modalClose" class="close" aria-label="Cerrar">×</button></div><form id="modalForm"><div id="modalFields"></div><div class="modal-actions"><button type="button" id="modalDelete" class="btn btn-danger" hidden>Eliminar</button><span class="spacer"></span><button type="button" id="modalCancel" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary">Guardar borrador</button></div></form></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="theme.js" defer></script><script src="sidebar-motion.js" defer></script><script src="supabase-leads.js" defer></script><script src="app.js" defer></script><noscript>Activá JavaScript para iniciar sesión en el panel de BTS Studio.</noscript></body></html>
+<script src="theme.js" defer></script><script src="sidebar-motion.js" defer></script><script src="sidebar-reference.js" defer></script><script src="supabase-leads.js" defer></script><script src="app.js" defer></script><noscript>Activá JavaScript para iniciar sesión en el panel de BTS Studio.</noscript></body></html>
