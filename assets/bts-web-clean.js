@@ -79,15 +79,14 @@
       // Extract nested qContactPref first: the original markup nests that
       // optional field under the phone field.
       move(["qContactPref","qTime","qHours","qPeople","qGoal","qDeliverables",
-            "qChannel","quoteExtras","qMustHave","qReference"],extraGrid);
-      move(["qName","qCompany","qEmail","qPhone","qType","qDate","qPlace",
-            "qPackage","qEventName","qMessage"],essential);
+            "qChannel","quoteExtras","qMustHave","qReference",
+            "qCompany","qPhone","qEventName","qMessage"],extraGrid);
+      move(["qName","qEmail","qType","qDate","qPlace","qPackage"],essential);
       const firstHeading = $(".form-label",form);
       if (firstHeading) firstHeading.before(essential,details);
       else form.prepend(essential,details);
       // Arrange the concise visible inputs in a logical user-first order.
-      const preferred = ["qName","qCompany","qEmail","qPhone",
-        "qType","qDate","qPlace","qPackage","qEventName","qMessage"];
+      const preferred = ["qName","qEmail","qType","qDate","qPlace","qPackage"];
       const byId = new Map($$(".field",essential).map(field=>{
         const input = field.querySelector("[id]");
         return [input?.id,field];
