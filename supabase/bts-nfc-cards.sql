@@ -17,7 +17,6 @@ create table if not exists public.bts_nfc_cards (
   links jsonb not null default '[]'::jsonb
     check (jsonb_typeof(links) = 'array' and jsonb_array_length(links) <= 15),
   is_active boolean not null default true,
-  created_by uuid references auth.users(id) default auth.uid(),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -54,7 +53,8 @@ with check (exists (
  select 1 from public.bts_admins a where a.user_id = (select auth.uid())
 ));
 
-grant select on public.bts_nfc_cards to anon, authenticated;
-grant insert, update, delete on public.bts_nfc_cards to authenticated;
+revoke all on public.bts_nfc_cards from anon, authenticated;
+grant select on public.bts_nfc_cards to anon;
+grant select, insert, update, delete on public.bts_nfc_cards to authenticated;
 
 -- Prueba posterior: SELECT * FROM public.bts_nfc_cards LIMIT 5;
