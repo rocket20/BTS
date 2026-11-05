@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-04T07:25:32.987Z",
+  "updatedAt": "2026-11-05T20:03:21.294Z",
   "brand": {
     "studioName": "BTS Studio",
     "heroTitle": "",
     "heroSubtitle": "",
-    "contactEmail": "",
-    "whatsapp": "",
-    "instagram": "",
+    "contactEmail": "btsstudio.info@gmail.com",
+    "whatsapp": "50557775064",
+    "instagram": "https://www.instagram.com/btsstudio.ni/?hl=es",
     "analyticsId": ""
   },
   "events": [
