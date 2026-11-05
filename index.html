@@ -81,6 +81,41 @@ body.bts-admin-open{overflow:hidden}
 .ba-field input:focus,.ba-field select:focus,.ba-field textarea:focus,.ba-search:focus{border-color:#ff0037}
 .ba-status{min-height:23px;color:#ff99af;margin-top:12px;font-size:13px}
 .ba-body{padding:26px 0 70px}
+/* Navigation for BTS admin. Does not affect the public website. */
+#btsAdminShell .ba-body{display:grid;grid-template-columns:224px minmax(0,1fr);gap:23px;align-items:start}
+#btsAdminShell .ba-body[hidden],#btsAdminShell .ba-section[hidden]{display:none!important}
+#btsAdminShell .ba-sidebar{position:sticky;top:18px;min-width:0;padding:17px 12px;border:1px solid #30303b;border-radius:17px;background:#13141c;box-shadow:0 10px 35px #0003}
+#btsAdminShell .ba-sidebar-header{display:flex;align-items:center;gap:10px;padding:8px 9px 18px;margin-bottom:10px;border-bottom:1px solid #2b2c37}
+#btsAdminShell .ba-sidebar-dot{width:9px;height:9px;border-radius:3px;background:#ff0037;box-shadow:0 0 13px #ff003766;flex:none}
+#btsAdminShell .ba-sidebar-header b{display:block;font-size:10px;letter-spacing:.09em;color:#faf6fa}
+#btsAdminShell .ba-sidebar-header small{display:block;font-size:11px;color:#9998a6;margin-top:2px}
+#btsAdminShell .ba-sidebar-links{display:flex;flex-direction:column;gap:7px}
+#btsAdminShell .ba-side-link{width:100%;min-height:46px;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid transparent;background:transparent;border-radius:11px;padding:9px 11px;color:#adabb8;font:700 12px/1.4 Inter,Lato,"Segoe UI",Arial,sans-serif;transition:background .16s,border-color .16s,color .16s}
+#btsAdminShell .ba-side-link:hover{background:#24212b;color:#fff}
+#btsAdminShell .ba-side-link.is-active{background:#ff00371b;color:#fff;border-color:#ff003750}
+#btsAdminShell .ba-side-icon{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:8px;background:#ffffff0c;color:#ff7897;font-size:19px;line-height:1}
+#btsAdminShell .ba-side-link.is-active .ba-side-icon{background:#ff00372b;color:#ff456d}
+#btsAdminShell .ba-side-dot{margin-left:auto;width:6px;height:6px;background:#ff345a;border-radius:50%}
+#btsAdminShell .ba-sidebar-foot{font-size:10px;color:#767784;padding:16px 9px 4px;line-height:1.5}
+#btsAdminShell .ba-panel-content{min-width:0}
+#btsAdminShell .ba-nfc-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:21px}
+#btsAdminShell .ba-nfc-heading .ba-title{margin-bottom:5px}
+#btsAdminShell .ba-nfc-heading p{font-size:13px;color:#a6a9b5;margin:0}
+#btsAdminShell #baNfcFrame{display:block;width:100%;height:max(780px,78vh);border:1px solid #30303b;border-radius:17px;background:#0b0c11}
+@media(max-width:850px){
+ #btsAdminShell .ba-body{grid-template-columns:minmax(0,1fr);gap:16px}
+ #btsAdminShell .ba-sidebar{position:relative;top:auto;padding:11px}
+ #btsAdminShell .ba-sidebar-header,#btsAdminShell .ba-sidebar-foot{display:none}
+ #btsAdminShell .ba-sidebar-links{display:flex;flex-direction:row;overflow-x:auto}
+ #btsAdminShell .ba-side-link{width:auto;flex:1;min-width:max-content;justify-content:center;padding:9px 12px}
+ #btsAdminShell #baNfcFrame{height:max(750px,80vh)}
+}
+@media(max-width:480px){
+ #btsAdminShell .ba-side-link{font-size:11px;gap:7px}
+ #btsAdminShell .ba-side-icon{width:25px;height:25px;font-size:17px}
+ #btsAdminShell .ba-nfc-heading .ba-btn{width:100%}
+}
+
 .ba-topline{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
 .ba-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}
 .ba-kpi{background:#15151d;border:1px solid #2c2d38;border-radius:14px;padding:20px}
@@ -262,7 +297,7 @@ body.bts-admin-open{overflow:hidden}
 <!-- Panel interno. Para acceder: abre el sitio agregando #panel-bts a la URL. -->
 <section id="btsAdminShell" aria-label="Administración de BTS Studio" aria-hidden="true">
  <div class="ba-wrap">
-  <header class="ba-head"><div><div class="ba-kicker">Panel de administración</div><div class="ba-mark"><span>◢</span> BTS STUDIO</div></div><div class="ba-actions"><a id="baNfcNav" href="/nfc/admin/" class="ba-btn" hidden style="display:none">Tarjetas NFC ↗</a><button id="baReload" type="button" class="ba-btn" hidden>Actualizar ↻</button><button id="baExport" type="button" class="ba-btn" hidden>Exportar CSV</button><button id="baLogout" type="button" class="ba-btn" hidden>Cerrar sesión</button><button id="baExit" type="button" class="ba-btn">Volver a la web ×</button></div></header>
+  <header class="ba-head"><div><div class="ba-kicker">Panel de administración</div><div class="ba-mark"><span>◢</span> BTS STUDIO</div></div><div class="ba-actions"><button id="baReload" type="button" class="ba-btn" hidden>Actualizar ↻</button><button id="baExport" type="button" class="ba-btn" hidden>Exportar CSV</button><button id="baLogout" type="button" class="ba-btn" hidden>Cerrar sesión</button><button id="baExit" type="button" class="ba-btn">Volver a la web ×</button></div></header>
   <form id="baLogin" class="ba-login" autocomplete="on">
    <div class="ba-kicker">Acceso reservado</div><h2>Ingresar al panel.</h2><p class="ba-help">Usá el correo y la contraseña del usuario administrador que registraste en Supabase Authentication. Los clientes no pueden consultar estos datos.</p>
    <div class="ba-field"><label for="baEmail">Correo electrónico</label><input id="baEmail" type="email" autocomplete="username" required placeholder="correo@empresa.com"></div>
@@ -270,13 +305,32 @@ body.bts-admin-open{overflow:hidden}
    <button id="baLoginBtn" class="ba-btn primary" type="submit" style="width:100%;margin-top:8px">Ingresar ↗</button><div id="baLoginStatus" class="ba-status" role="status" aria-live="polite"></div>
   </form>
   <div id="baDashboard" class="ba-body" hidden>
+   <aside class="ba-sidebar" aria-label="Navegación del dashboard">
+     <div class="ba-sidebar-header"><span class="ba-sidebar-dot"></span><div><b>ADMINISTRACIÓN</b><small>BTS Studio</small></div></div>
+     <nav class="ba-sidebar-links" aria-label="Secciones del panel">
+       <button type="button" class="ba-side-link is-active" id="baSideOverview" data-ba-section="overview" aria-current="page">
+         <span class="ba-side-icon" aria-hidden="true">▦</span><span>Resumen general</span>
+       </button>
+       <button type="button" class="ba-side-link" id="baSideNfc" data-ba-section="nfc">
+         <span class="ba-side-icon" aria-hidden="true">▣</span><span>Tarjetas NFC</span><span class="ba-side-dot" aria-hidden="true"></span>
+       </button>
+     </nav>
+     <div class="ba-sidebar-foot">Gestión privada de BTS Studio</div>
+   </aside>
+   <div class="ba-panel-content">
+     <section id="baSectionOverview" class="ba-section" aria-label="Resumen general">
    <div class="ba-topline"><div><div class="ba-kicker">Cotizaciones y contactos</div><h2 class="ba-title">Solicitudes recibidas.</h2><div id="baUserLabel" style="color:#a6a9b5;font-size:12px"></div></div><div id="baUpdated" style="color:#a6a9b5;font-size:12px"></div></div>
-   <div id="baNfcCard" class="ba-panel" hidden style="display:none;margin-bottom:18px;border-color:#ff003755;background:#1b151d"><div style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap"><div><div class="ba-kicker">BTS NFC</div><h3 style="font-size:22px;margin:5px 0">Tarjetas NFC para negocios</h3><p style="font-size:13px;color:#aaa9b5">Creá enlaces independientes para las redes sociales de tus clientes.</p></div><a class="ba-btn primary" href="/nfc/admin/">Administrar tarjetas NFC ↗</a></div></div>
    <div class="ba-grid"><div class="ba-kpi"><p>Solicitudes recibidas</p><strong id="baKpiTotal">—</strong></div><div class="ba-kpi"><p>Pendientes</p><strong id="baKpiPending">—</strong></div><div class="ba-kpi"><p>Briefs PDF descargados*</p><strong id="baKpiPdf">—</strong></div><div class="ba-kpi"><p>Clics a WhatsApp*</p><strong id="baKpiWhats">—</strong></div></div>
    <div class="ba-panel"><div class="ba-filters"><input id="baSearch" class="ba-search" type="search" placeholder="Buscar por cliente, empresa, correo o evento" aria-label="Buscar solicitudes"><select id="baFilter" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option>Pendiente</option><option>Contactado</option><option>Cotizado</option><option>Aprobado</option><option>Rechazado</option></select><select id="baSource" aria-label="Filtrar por origen"><option value="">Todos los orígenes</option><option value="brief">Cotizaciones</option><option value="contact">Contactos</option><option value="manual">Manuales</option></select></div>
     <div class="ba-table-wrap"><table class="ba-table"><thead><tr><th>Recibido</th><th>Cliente / Empresa</th><th>Solicitud</th><th>Estado</th><th></th></tr></thead><tbody id="baRows"></tbody></table></div><p id="baListInfo" class="ba-empty" role="status">Todavía no se han cargado registros.</p>
    </div><p style="font-size:11px;color:#858997;margin-top:13px">*Interacciones registradas, no visitantes únicos. Los gráficos y métricas no sustituyen Google Analytics.</p>
   </div>
+     </section>
+     <section id="baSectionNfc" class="ba-section" aria-label="Tarjetas NFC" hidden>
+       <div class="ba-nfc-heading"><div><div class="ba-kicker">GESTIÓN DE CLIENTES · NFC</div><h2 class="ba-title">Tarjetas NFC.</h2><p>Creá y administrá enlaces para las redes sociales de cada negocio.</p></div><a class="ba-btn" href="/nfc/admin/" target="_blank" rel="noopener">Abrir en otra pestaña ↗</a></div>
+       <iframe id="baNfcFrame" title="Administrador de tarjetas NFC de BTS Studio" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+     </section>
+   </div>
  </div>
 </section>
 <section class="ba-detail" id="baDetail" aria-label="Detalle de solicitud" role="dialog" aria-modal="true" aria-hidden="true"><div class="ba-detail-card"><div class="ba-detail-heading"><div><div class="ba-kicker">Solicitud BTS Studio</div><h2 id="baDetailTitle" style="font-size:24px;margin:6px 0">Detalle</h2></div><button type="button" id="baDetailClose" class="ba-btn">Cerrar ×</button></div><div id="baDetailData"></div><div class="ba-detail-section"><h4>Seguimiento</h4><div class="ba-field"><label for="baDetailStatus">Estado</label><select id="baDetailStatus"><option>Pendiente</option><option>Contactado</option><option>Cotizado</option><option>Aprobado</option><option>Rechazado</option></select></div><div class="ba-field"><label for="baDetailNotes">Notas internas (solo administradores)</label><textarea id="baDetailNotes" maxlength="10000"></textarea></div><button id="baDetailSave" type="button" class="ba-btn primary">Guardar cambios</button><span id="baDetailMsg" class="ba-status" role="status" aria-live="polite" style="margin-left:12px"></span></div></div></section>
@@ -689,7 +743,22 @@ $$('.faq-item button').forEach(btn=>{btn.addEventListener('click',()=>{let open=
     const r=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id&limit=1');
     const rows=await r.json();if(!Array.isArray(rows)||rows.length===0)throw new Error('Este usuario no está autorizado en bts_admins.');
  }
- function authUi(){const yes=Boolean(session);login.hidden=yes;dashboard.hidden=!yes;for(const id of ['baLogout','baReload','baExport'])el(id).hidden=!yes;for(const id of ['baNfcNav','baNfcCard']){const item=el(id);if(item){item.hidden=!yes;item.style.display=yes?'':'none';}}el('baUserLabel').textContent=yes?(session.user.email||'Administrador'):' ';}
+ function authUi(){const yes=Boolean(session);login.hidden=yes;dashboard.hidden=!yes;for(const id of ['baLogout','baReload','baExport'])el(id).hidden=!yes;el('baUserLabel').textContent=yes?(session.user.email||'Administrador'):' ';if(!yes){selectAdminSection('overview');const frame=el('baNfcFrame');if(frame){frame.removeAttribute('src');frame.dataset.loaded='';}}}
+ function selectAdminSection(section){
+  const target=section==='nfc'?'nfc':'overview';
+  const overview=el('baSectionOverview'),nfc=el('baSectionNfc');
+  overview.hidden=target!=='overview';nfc.hidden=target!=='nfc';
+  for(const [id,key] of [['baSideOverview','overview'],['baSideNfc','nfc']]){
+   const button=el(id);if(!button)continue;
+   const active=key===target;button.classList.toggle('is-active',active);
+   if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+  }
+  if(target==='nfc'&&session){
+   const frame=el('baNfcFrame');if(frame&&!frame.dataset.loaded){frame.dataset.loaded='yes';frame.src='/nfc/admin/';}
+  }
+ }
+ el('baSideOverview').addEventListener('click',()=>selectAdminSection('overview'));
+ el('baSideNfc').addEventListener('click',()=>selectAdminSection('nfc'));
  async function signin(ev){
     ev.preventDefault();if(!login.checkValidity())return;
     const btn=el('baLoginBtn');btn.disabled=true;showMessage('Validando acceso…');
