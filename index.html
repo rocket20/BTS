@@ -287,9 +287,9 @@ body.bts-admin-open{overflow:hidden}
    Permisos de lectura protegidos por RLS.
    ================================================================ */
 const CONFIG = {
-  whatsapp: "", // Ejem: "50588888888" (solo dígitos, sin + ni espacios)
-  email: "",    // Ejem: "hola@tudominio.com"
-  instagram: "", // Ejem: "https://www.instagram.com/tuusuario/"
+  whatsapp: "57775064", // Ejem: "50588888888" (solo dígitos, sin + ni espacios)
+  email: "btsstudio.info@gmail.com",    // Ejem: "hola@tudominio.com"
+  instagram: "https://www.instagram.com/btsstudio.ni/?hl=es", // Ejem: "https://www.instagram.com/tuusuario/"
   supabaseUrl: "https://xwehejgwufwhpkpzjzyt.supabase.co", // URL real del proyecto BTS Studio Web
   supabasePublishableKey: "sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz" // Clave PUBLICABLE; RLS controla los accesos
 };
@@ -303,8 +303,8 @@ const menuBtn=$('#menuBtn'),mainMenu=$('#mainMenu'),header=$('#siteHeader'),prog
 
 $('#year').textContent=new Date().getFullYear();
 const digits=String(CONFIG.whatsapp||'').replace(/\D/g,'');
-$('#publicEmail').textContent=CONFIG.email||'Pendiente de configurar';
-$('#publicPhone').textContent=digits?('+'+digits):'Pendiente de configurar';
+$('#publicEmail').textContent=CONFIG.email||'btsstudio.info@gmail.com';
+$('#publicPhone').textContent=digits?('+'+digits):'+505 5777-5064';
 let toastTimer;function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),4100)}
 function closeMenu(){mainMenu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰'}
 menuBtn.addEventListener('click',()=>{const open=!mainMenu.classList.contains('open');mainMenu.classList.toggle('open',open);menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'×':'☰'});
