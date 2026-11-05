@@ -18,21 +18,6 @@
   };
   const css = (tag, cls, text) => { const el=document.createElement(tag);if(cls) el.className=cls;if(text)el.textContent=text;return el; };
 
-  // Acceso al módulo NFC desde el panel autenticado. No aparece en la web pública.
-  function attachNfcDashboardNav(){
-    const actions=document.querySelector('#btsAdminShell .ba-actions');
-    const dashboard=document.getElementById('baDashboard');
-    if(!actions||!dashboard||document.getElementById('baNfcNav'))return;
-    const a=document.createElement('a');
-    a.id='baNfcNav';a.className='ba-btn';
-    a.href='/nfc/admin/';a.textContent='Tarjetas NFC ↗';
-    a.hidden=true;
-    actions.prepend(a);
-    const sync=()=>{a.hidden=dashboard.hidden;a.style.display=dashboard.hidden?'none':'';};
-    new MutationObserver(sync).observe(dashboard,{attributes:true,attributeFilter:['hidden']});
-    sync();
-  }
-  attachNfcDashboardNav();
   function applyBrand(c) {
     const b=c.brand || {};
     if(b.heroTitle) { const h=document.querySelector('.hero-copy h1');if(h){h.textContent=b.heroTitle;h.style.whiteSpace='pre-line';} }
