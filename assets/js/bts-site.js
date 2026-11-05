@@ -28,7 +28,7 @@
     a.href='/nfc/admin/';a.textContent='Tarjetas NFC ↗';
     a.hidden=true;
     actions.prepend(a);
-    const sync=()=>{a.hidden=dashboard.hidden;};
+    const sync=()=>{a.hidden=dashboard.hidden;a.style.display=dashboard.hidden?'none':'';};
     new MutationObserver(sync).observe(dashboard,{attributes:true,attributeFilter:['hidden']});
     sync();
   }
