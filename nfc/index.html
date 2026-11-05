@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a10">
+<meta name="robots" content="noindex, nofollow">
+<title>Tarjeta digital | BTS Studio NFC</title>
+<style>
+:root{--accent:#ff0037;--bg:#0a0a10;--ink:#f8f7fb;--muted:#aaa8b6;--surface:#17171f}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100svh;display:flex;justify-content:center;align-items:center;background:radial-gradient(ellipse 72% 34% at 50% 0%,color-mix(in srgb,var(--accent) 13%, transparent),transparent 100%),var(--bg)}
+main{width:min(100%,475px);min-height:100svh;padding:clamp(38px,7vh,82px) 25px 32px;display:flex;flex-direction:column;align-items:center}
+.avatar{width:112px;height:112px;border-radius:30px;background:linear-gradient(135deg,var(--accent),#20202b);display:grid;place-items:center;overflow:hidden;border:1px solid #ffffff20;box-shadow:0 16px 55px #0009}
+.avatar img{width:100%;height:100%;object-fit:cover}.avatar span{font-weight:850;font-size:40px;color:white;letter-spacing:-.07em}
+h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-height:1.06;font-weight:800;letter-spacing:-.055em;overflow-wrap:anywhere}
+.tagline{margin:8px 0 20px;line-height:1.55;text-align:center;max-width:360px;font-size:14px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff18;border-radius:30px;padding:8px 12px;font-size:10px;color:#bcbac6;letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px}.pill:before{content:"";height:6px;width:6px;background:var(--accent);border-radius:50%}
+.links{width:100%;display:grid;gap:11px}.links a{display:flex;align-items:center;gap:14px;width:100%;padding:14px 17px;min-height:60px;background:var(--surface);color:#fff;border:1px solid #ffffff13;border-radius:17px;text-decoration:none;transition:transform .18s,border-color .18s,background .18s;box-shadow:0 7px 24px #0002}.links a:hover,.links a:focus-visible{transform:translateY(-2px);border-color:var(--accent);background:#20202a}.links .glyph{width:33px;height:33px;display:grid;place-items:center;border-radius:11px;background:color-mix(in srgb,var(--accent) 19%,#222);font-weight:800;font-size:14px}.links a strong{flex:1;font-size:14px;font-weight:650}.links a .arrow{color:#888799;font-size:19px}.foot{margin-top:auto;padding-top:55px;text-align:center;font-size:10px;color:#6f6e7a;letter-spacing:.11em}.foot b{color:#b6b2be}
+.state{width:100%;text-align:center;margin:15px 0 0;font-size:14px;color:var(--muted);line-height:1.6}#profile[hidden],#message[hidden]{display:none}
+@media(max-width:450px){main{padding-left:22px;padding-right:22px}.avatar{width:98px;height:98px;border-radius:26px}}
+@media(prefers-reduced-motion:reduce){.links a{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<section id="profile" hidden style="width:100%;display:flex;flex-direction:column;align-items:center">
+ <div class="avatar" id="avatar" aria-hidden="true"><span id="initials">B</span></div>
+ <h1 id="name"></h1><p class="tagline" id="tagline"></p>
+ <div class="pill">Conectá con nosotros</div>
+ <nav class="links" id="links" aria-label="Redes sociales del negocio"></nav>
+</section>
+<div id="message" class="state" role="status">Preparando tarjeta digital…</div>
+<footer class="foot">TARJETA DIGITAL · <b>BTS STUDIO</b></footer>
+</main>
+<script>
+(()=>{'use strict';
+const ENDPOINT='https://xwehejgwufwhpkpzjzyt.supabase.co';
+const PUBLISHABLE_KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
+const $=id=>document.getElementById(id);
+const types={instagram:'IG',facebook:'f',tiktok:'♪',whatsapp:'WA',website:'↗',youtube:'▶',linkedin:'in',x:'X',telegram:'TG',maps:'⌖',other:'↗'};
+const display={instagram:'Instagram',facebook:'Facebook',tiktok:'TikTok',whatsapp:'WhatsApp',website:'Sitio web',youtube:'YouTube',linkedin:'LinkedIn',x:'X',telegram:'Telegram',maps:'Ubicación',other:'Enlace'};
+const qs=new URLSearchParams(location.search);
+const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
+const status=$('message');
+function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
+function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
+function makeLinks(links){
+ const nav=$('links');nav.replaceChildren();
+ for(const l of Array.isArray(links)?links:[]){
+  if(!l || typeof l!=='object')continue;
+  const type=String(l.type||'other').toLowerCase();
+  let url=safeUrl(l.url);
+  if(!url)continue;
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+String(l.label||display[type]||'Enlace'));
+  const badge=document.createElement('span');badge.className='glyph';badge.textContent=types[type]||'↗';
+  const label=document.createElement('strong');label.textContent=String(l.label||display[type]||'Enlace').slice(0,55);
+  const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
+  a.append(badge,label,arrow);nav.append(a);
+ }
+ if(!nav.children.length){const p=document.createElement('p');p.className='state';p.textContent='Este negocio todavía no agregó sus redes sociales.';nav.append(p);}
+}
+async function boot(){
+ if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
+ try{
+  const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,links&limit=1';
+  const response=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
+  if(!response.ok)throw Error('Servicio no disponible');
+  const rows=await response.json();const card=Array.isArray(rows)?rows[0]:null;
+  if(!card){unavailable('Esta tarjeta digital no está disponible.');return;}
+  document.documentElement.style.setProperty('--accent',/^#[a-f\d]{6}$/i.test(card.accent_color||'')?card.accent_color:'#ff0037');
+  $('name').textContent=String(card.business_name||'Negocio');
+  $('tagline').textContent=String(card.tagline||'').slice(0,180);
+  $('initials').textContent=String(card.business_name||'B').trim().charAt(0).toUpperCase();
+  const avatar=safeUrl(card.avatar_url);
+  if(avatar){const img=document.createElement('img');img.alt='';img.src=avatar;img.onerror=()=>img.remove();$('avatar').append(img);}
+  makeLinks(card.links);
+  document.title=String(card.business_name||'Tarjeta digital')+' | Tarjeta digital';
+  $('profile').hidden=false;status.hidden=true;
+ }catch(e){unavailable('No se pudo cargar esta tarjeta. Intentá nuevamente.');}
+}
+boot();
+})();
+</script>
+</body>
+</html>
