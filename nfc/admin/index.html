@@ -97,6 +97,16 @@ let cards=[],editing=null,session;
 try{session=JSON.parse(sessionStorage.getItem('bts-admin-sb-session-v1')||'null')}catch{session=null}
 function fail(s){notify(s,true)}
 const safeUrl=v=>{try{const u=new URL(String(v||''));return ['https:','http:'].includes(u.protocol)?u.href:'';}catch{return '';}}
+async function fetchTimed(url,options={},ms=6500){
+ const ctrl=new AbortController();
+ const timeout=setTimeout(()=>ctrl.abort(),ms);
+ try{
+  return await fetch(url,{...options,signal:ctrl.signal,cache:'no-store'});
+ }catch(e){
+  if(e?.name==='AbortError')throw Error('La conexión tardó demasiado. Volvé a intentarlo con Actualizar.');
+  throw e;
+ }finally{clearTimeout(timeout);}
+}
 const normalized=v=>String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
 function sessionReady(){
  try{
@@ -107,7 +117,7 @@ function sessionReady(){
 }
 async function refreshSession(){
  if(!session?.refresh_token)throw Error('Sesión vencida. Volvé al dashboard.');
- const resp=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
+ const resp=await fetchTimed(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})},6000);
  const data=await resp.json();if(!resp.ok||!data.access_token)throw Error('Volvé a iniciar sesión en el dashboard.');
  session={...session,...data,expires_at:data.expires_at||Math.floor(Date.now()/1000)+(data.expires_in||3600)};
  sessionStorage.setItem('bts-admin-sb-session-v1',JSON.stringify(session));
@@ -115,7 +125,7 @@ async function refreshSession(){
 async function api(endpoint,options={},retry=true){
  if(!sessionReady())throw Error('Iniciá sesión en el dashboard /admin/ de BTS Studio.');
  if((session.expires_at||0)*1000-Date.now()<60000)await refreshSession();
- const res=await fetch(BASE+endpoint,{...options,cache:'no-store',headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}});
+ const res=await fetchTimed(BASE+endpoint,{...options,headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}},7000);
  if(res.status===401&&retry){await refreshSession();return api(endpoint,options,false)}
  if(!res.ok){let v={};try{v=await res.json()}catch{};const err=new Error(v.message||v.error_description||'No se completó la operación ('+res.status+').');err.code=v.code||null;err.status=res.status;throw err;}
  return res;
@@ -314,42 +324,66 @@ function render(){
  buttons.append(edit,rename,copy,view,remove);item.append(avatar,info,buttons);container.append(item);
  }
 }
+let loadGeneration=0;
 async function load(){
- const target=$('registryStatus');
- const setStatus=(message,kind='')=>{target.textContent=message;target.className='registry-status'+(kind?' '+kind:'');};
- setStatus('Consultando páginas registradas…');
+ const generation=++loadGeneration;
+ const registry=$('registryStatus');
+ const status=(message,level='')=>{
+  if(generation!==loadGeneration)return;
+  registry.className='registry-status'+(level?' '+level:'');
+  registry.textContent=message;
+ };
+ status('Recuperando las páginas activas…');
+ // Lanzar la lectura administrativa simultáneamente, pero no bloquear el historial público.
+ const adminPromise=sessionReady()
+  ?api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500')
+    .then(r=>r.json())
+    .then(rows=>{if(!Array.isArray(rows))throw Error('Respuesta administrativa inválida.');return {rows};})
+    .catch(error=>({error}))
+  :Promise.resolve({error:Error('No hay sesión administrativa.')});
+ let publicRows=[],publicError=null;
  try{
-  let adminRows=null,adminError=null;
-  if(sessionReady()){
-   try{
-    const resp=await api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500');
-    adminRows=await resp.json();
-    if(!Array.isArray(adminRows))throw Error('Respuesta inválida de Supabase.');
-   }catch(e){adminError=e;}
-  }
-  let publicRows=[];
-  if(!Array.isArray(adminRows)||adminRows.length===0){
-   const resp=await fetch(BASE+'/rest/v1/bts_nfc_cards?is_active=eq.true&select=*&order=created_at.desc&limit=500',{
-    headers:{apikey:KEY,Accept:'application/json'},cache:'no-store'
-   });
-   if(resp.ok){
-    const data=await resp.json();
-    if(Array.isArray(data))publicRows=data;
-   }else if(!Array.isArray(adminRows))throw adminError||Error('Error '+resp.status+' recuperando tarjetas.');
-  }
-  const unique=new Map();
-  for(const card of [...publicRows,...(Array.isArray(adminRows)?adminRows:[])])unique.set(card.id,card);
-  cards=[...unique.values()];
-  render();preview();
-  if(publicRows.length&&(!Array.isArray(adminRows)||adminRows.length===0))setStatus('Se recuperaron '+publicRows.length+' página(s) activa(s). Para ver las inactivas, necesitás una sesión de administrador válida.','warning');
-  else setStatus(cards.length===1?'1 página registrada. Seleccioná Editar para modificarla.':cards.length+' páginas registradas.');
-  return true;
- }catch(e){
-  cards=[];render();preview();
-  $('cards').textContent='No se pudo cargar el historial. Presioná Actualizar para intentar nuevamente.';
-  setStatus('Error al consultar tarjetas: '+e.message,'error');fail('No se pudo cargar el historial: '+e.message);
-  return false;
+  const response=await fetchTimed(
+   BASE+'/rest/v1/bts_nfc_cards?is_active=eq.true&select=*&order=created_at.desc&limit=500',
+   {headers:{apikey:KEY,Accept:'application/json'}},6500
+  );
+  if(!response.ok)throw Error('Supabase respondió '+response.status+' al consultar las páginas activas.');
+  const data=await response.json();
+  if(!Array.isArray(data))throw Error('Respuesta pública inválida.');
+  publicRows=data;
+ }catch(e){publicError=e;}
+ if(generation!==loadGeneration)return false;
+ cards=publicRows.slice();
+ render();preview();
+ if(publicRows.length){
+  status(publicRows.length===1?'1 página activa recuperada. Comprobando permisos de edición…':publicRows.length+' páginas activas recuperadas. Comprobando permisos…');
+ }else if(publicError){
+  status('No se pudo consultar las páginas públicas: '+publicError.message,'warning');
+ }else{
+  status('No hay páginas activas. Comprobando el historial administrativo…');
  }
+ const admin=await adminPromise;
+ if(generation!==loadGeneration)return false;
+ if(Array.isArray(admin.rows)){
+  const byId=new Map();
+  for(const card of publicRows)byId.set(card.id,card);
+  for(const card of admin.rows)byId.set(card.id,card);
+  cards=[...byId.values()];
+  render();preview();
+  status(cards.length===1?'1 página registrada. Usá Editar, Editar URL o Eliminar.':cards.length+' páginas registradas. Podés editar sus datos o sus URL.');
+  return true;
+ }
+ if(publicRows.length){
+  status('Mostrando '+publicRows.length+' página(s) activa(s). No se pudo consultar las inactivas o confirmar la sesión administrativa'+(admin.error?': '+admin.error.message:'')+'.','warning');
+  return true;
+ }
+ cards=[];render();
+ $('cards').replaceChildren();
+ const info=document.createElement('p');info.className='empty';
+ info.textContent='No pudimos recuperar el historial. Presioná Actualizar para volver a intentarlo.';
+ $('cards').append(info);
+ status('Error al cargar las tarjetas: '+(admin.error?.message||publicError?.message||'Sin resultados disponibles'),'error');
+ return false;
 }
 async function save(e){
  e.preventDefault();
@@ -442,14 +476,18 @@ async function init(){
  if(!loaded)return;
  if(!sessionReady()){
   $('save').disabled=true;
-  $('registryStatus').textContent+=' Para editar o eliminar negocios, iniciá sesión en el dashboard.';
+  $('registryStatus').textContent+=' Volvé a entrar al dashboard para poder editar las tarjetas.';
   return;
  }
- try{await verifyAdmin();}
- catch(e){
-  fail('No se pudo validar tu acceso administrativo: '+e.message);
+ try{
+  await verifyAdmin();
+  $('save').disabled=false;
+ }catch(e){
   $('save').disabled=true;
-  for(const button of $('cards').querySelectorAll('button'))if(['Editar','Editar URL','Eliminar'].includes(button.textContent))button.disabled=true;
+  fail('No se pudo validar el permiso para editar tarjetas: '+e.message);
+  for(const button of $('cards').querySelectorAll('button')){
+   if(['Editar','Editar URL','Eliminar'].includes(button.textContent))button.disabled=true;
+  }
  }
 }
 init();
