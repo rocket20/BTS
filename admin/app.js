@@ -12,9 +12,23 @@ const pathImage=v=>safeImg(v)?((v||'').startsWith('assets/')?'../'+v:v):'';
 const blank={version:1,updatedAt:null,brand:{studioName:'BTS Studio',heroTitle:'',heroSubtitle:'',contactEmail:'',whatsapp:'',instagram:'',analyticsId:''},events:[],brands:[],packages:[],services:[],testimonials:[]};
 const GA_REPORT_URL='https://xwehejgwufwhpkpzjzyt.supabase.co/functions/v1/bts-ga4-report';
 const GA_KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
-let googleReport=null, googleReportStatus='pending', googleError='';
+let googleReport=null, googleReportStatus='pending', googleError='', whatsappClicks=null;
 const pretty=n=>Number.isFinite(Number(n))?Number(n).toLocaleString('es-NI'):'—';
 function authSession(){try{return JSON.parse(sessionStorage.getItem('bts-admin-sb-session-v1')||'null')}catch{return null}}
+async function updateWhatsappClicks(){
+ const session=authSession();if(!session?.access_token)return;
+ try{
+  const since=new Date(Date.now()-30*86400000).toISOString();
+  const response=await fetch('https://xwehejgwufwhpkpzjzyt.supabase.co/rest/v1/bts_events?select=id&kind=eq.whatsapp_click&created_at=gte.'+encodeURIComponent(since)+'&limit=10000',{
+    headers:{apikey:GA_KEY,Authorization:'Bearer '+session.access_token,Prefer:'count=exact'},cache:'no-store'
+  });
+  if(!response.ok)throw Error('Supabase respondió '+response.status);
+  const rows=await response.json(),contentRange=response.headers.get('content-range')||'';
+  const total=contentRange.includes('/')?Number(contentRange.split('/').pop()):NaN;
+  whatsappClicks=Number.isFinite(total)?total:rows.length;
+  renderKpis();
+ }catch(e){console.warn('WhatsApp analytics unavailable',e);whatsappClicks=null;}
+}
 async function updateGoogleMetrics(){
  const session=authSession();if(!session?.access_token)return;
  googleReportStatus='loading';googleError='';renderKpis();renderChart();
@@ -50,7 +64,7 @@ function renderKpis(){
   ['Vistas de página',ready?pretty(googleReport.pageViews):'—','eye',ready?'Últimos 30 días · GA4':pendingFoot,ready?'ga':'pending'],
   ['Visitantes únicos',ready?pretty(googleReport.users):'—','users-round',ready?'Últimos 30 días · GA4':pendingFoot,ready?'ga':'pending'],
   ['Solicitudes registradas',String(leads.length),'clipboard-list','Registros en Supabase','cloud'],
-  ['Clics a WhatsApp',ready?pretty(googleReport.whatsappClicks):'—','message-circle',ready?'Eventos GA4 · últimos 30 días':pendingFoot,ready?'ga':'pending']
+  ['Clics a WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Supabase · últimos 30 días':ready?'Eventos GA4 · 30 días':'Sin datos de eventos',whatsappClicks!==null?'cloud':ready?'ga':'pending']
  ];
  const overview=$('#overviewKpis');
  const key=items.map(x=>x[0]).join('|');
@@ -71,7 +85,7 @@ function renderKpis(){
  const other=[
   ['Visitantes',ready?pretty(googleReport.users):'—','users-round',ready?'Google Analytics 4':pendingFoot],
   ['Sesiones',ready?pretty(googleReport.sessions):'—','eye',ready?'Últimos 30 días · GA4':pendingFoot],
-  ['Clics WhatsApp',ready?pretty(googleReport.whatsappClicks):'—','message-circle',ready?'Eventos GA4':pendingFoot],
+  ['Clics WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Supabase · 30 días':ready?'Eventos GA4':pendingFoot],
   ['Tasa de conversión',conv,'percent',ready?'Solicitudes GA4 / sesiones':pendingFoot]
  ];
  const traffic=$('#trafficKpis');
@@ -193,6 +207,6 @@ $('#resetDraft').addEventListener('click',async()=>{if(!confirm('¿Descartar los
 $('#loadPublished').addEventListener('click',loadPublished);
 }
 async function init(){repo=localGet(LS_REPO,repo);if(!repo.owner&&!repo.name)repo={owner:'rocket20',name:'BTS',branch:'main'};leads=[];const draft=localGet(LS_DRAFT,null);if(draft){content=normalize(draft);}else{try{const r=await fetch('../data/bts-content.json?t='+Date.now(),{cache:'no-store'});if(r.ok)content=normalize(await r.json());}catch{content=normalize(blank);}}
-bind();$('#todayLabel').textContent=new Intl.DateTimeFormat('es-NI',{dateStyle:'long'}).format(new Date());renderAll();fillRepo();await BTSLeads.bootstrap(reloadLeads);}
+bind();$('#todayLabel').textContent=new Intl.DateTimeFormat('es-NI',{dateStyle:'long'}).format(new Date());renderAll();fillRepo();await BTSLeads.bootstrap(reloadLeads);await Promise.allSettled([updateGoogleMetrics(),updateWhatsappClicks()]);}
 init();
 })();
