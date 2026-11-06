@@ -197,7 +197,7 @@ function bind(){
 $('.sidebar nav').addEventListener('click',e=>{const n=e.target.closest('.nav-item');if(n)navigate(n.dataset.page);});$$('[data-goto]').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.goto)));
 $('#mobileMenu').addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
 $('#saveDraftTop').addEventListener('click',storeDraft);$('#publishTop').addEventListener('click',publish);$('#publishSettings').addEventListener('click',publish);$('#testRepo').addEventListener('click',()=>testConnection().catch(e=>notify('Conexión fallida: '+e.message)));
-$('#noticeAction').addEventListener('click',()=>navigate('configuracion'));
+
 $('#newEvent').addEventListener('click',()=>openModal('event'));$('#newBrand').addEventListener('click',()=>openModal('brand'));$('#newLead').addEventListener('click',()=>openModal('lead'));
 document.addEventListener('click',e=>{const target=e.target.closest('.edit-item,[data-new]');if(target)openModal(target.dataset.type||target.dataset.new,target.dataset.id||'');});
 $('#modalClose').addEventListener('click',closeModal);$('#modalCancel').addEventListener('click',closeModal);$('#modalDelete').addEventListener('click',deleteModal);$('#modalOverlay').addEventListener('click',e=>{if(e.target===$('#modalOverlay'))closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});$('#modalForm').addEventListener('submit',saveModal);
