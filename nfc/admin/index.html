@@ -1,12 +1,22 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b0c11"><title>BTS Studio | Administrador NFC</title>
+<script>
+if(window.self !== window.top || new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('nfc-embedded');
+</script>
 <style>
 :root{--red:#ff0037;--bg:#0b0c11;--surface:#17181f;--line:#30313b;--text:#f6f5f8;--muted:#a1a2af}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
 .shell{max-width:1240px;margin:0 auto;padding:28px 23px 60px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:4px 0 25px;border-bottom:1px solid var(--line)}.brand b{display:block;font-size:17px;letter-spacing:-.04em}.brand small{color:var(--muted);font-size:11px;letter-spacing:.12em}.actions{display:flex;gap:10px;align-items:center}
 .btn{border:1px solid var(--line);background:#24242d;color:white;border-radius:11px;padding:11px 17px;font-weight:700}.btn.primary{background:var(--red);border-color:var(--red)}.btn.soft{background:transparent}.btn:disabled{opacity:.55;cursor:wait}
 h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin:31px 0 8px}.hint{color:var(--muted);margin:0 0 24px}.layout{display:grid;grid-template-columns:1fr 415px;gap:20px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:23px}.panel h2{font-size:19px;letter-spacing:-.03em;margin:0 0 19px}
-.search{width:100%;border:1px solid var(--line);background:#101117;color:#fff;padding:12px 15px;border-radius:11px;margin-bottom:15px}.cards{display:grid;gap:10px;max-height:680px;overflow:auto}.card{padding:15px;border:1px solid #343540;background:#101116;border-radius:13px;display:flex;align-items:center;gap:12px;justify-content:space-between}.card b{display:block;font-size:14px;overflow-wrap:anywhere}.card small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.card-buttons{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.mini{border:1px solid #393b45;background:#22232b;border-radius:8px;color:white;padding:8px 10px;font-size:11px;font-weight:700}.status{font-size:10px;padding:4px 8px;border-radius:8px;margin-right:5px;color:#e1e1e8;background:#30313b}.status.live{background:#1b4430;color:#8ee2af}.field{margin-bottom:14px}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:7px;color:#d7d7df}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#101117;border-radius:10px;color:white;padding:11px 12px;outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red)}.field small{color:var(--muted)}.cols{display:grid;grid-template-columns:1fr 120px;gap:12px}.color{height:44px;padding:5px!important}.sectionTitle{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}.sectionTitle b{font-size:13px}.link-row{display:grid;grid-template-columns:91px minmax(0,1fr) repeat(3,26px);gap:5px;margin-bottom:9px;align-items:center}.link-row input,.link-row select{min-width:0;border:1px solid var(--line);background:#101117;border-radius:9px;color:#fff;padding:9px 10px}.link-row .remove,.link-row .reorder{height:34px;border:1px solid var(--line);background:transparent;color:#fff;border-radius:8px;padding:0;display:grid;place-items:center;font-size:15px}.link-row .reorder:hover,.link-row .remove:hover{border-color:var(--red)}.link-row button:disabled{opacity:.3;cursor:not-allowed}.wide{width:100%}.footerBtns{display:flex;gap:9px;margin-top:23px}.footerBtns .btn{flex:1}.notice{font-size:12px;color:#bcbcc7;margin:12px 0;min-height:19px;line-height:1.6;overflow-wrap:anywhere}.notice.error{color:#ff8198}.help{border:1px solid var(--line);padding:14px;border-radius:12px;color:var(--muted);font-size:12px;margin-top:18px}.help code{color:#eee}.empty{color:var(--muted);font-size:13px;padding:18px}.switch{display:flex;gap:9px;align-items:center;font-weight:700;margin-top:15px}.switch input{accent-color:var(--red)}.linkhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.preview{font-size:12px;margin:5px 0;color:#9ea3b8;overflow-wrap:anywhere}.preview a{color:#ff809c}
+.history-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-6px 0 16px}.history-intro p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}.history-count{flex:none;border:1px solid #43303a;padding:5px 10px;border-radius:20px;color:#f7b3c4;background:#281922;font-size:11px;font-weight:750}
+.history-group{display:flex;align-items:center;gap:10px;margin:19px 0 8px;color:#aaa9b6;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.history-group::after{content:"";flex:1;height:1px;background:#34303c}
+.history-entry{display:flex;align-items:center;justify-content:space-between;gap:13px;padding:16px 12px;border:1px solid #36333d;background:#111117;border-radius:13px}.history-entry+.history-entry{margin-top:8px}.history-avatar{flex:none;display:grid;place-items:center;width:43px;height:43px;border-radius:12px;font-size:17px;font-weight:800;color:#fff;background:#532637;background-size:cover;background-position:center}.history-info{flex:1;min-width:0}.history-info b{display:block;font-size:14px;overflow-wrap:anywhere;line-height:1.35}.history-info small{display:block;color:#aaa7b3;font-size:11px;margin-top:4px;overflow-wrap:anywhere}.history-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:8px;font-size:10px;color:#90909c}
+html.nfc-embedded .top,html.nfc-embedded .shell>h1,html.nfc-embedded .shell>.hint{display:none!important}
+html.nfc-embedded .shell{max-width:none;padding:12px 10px 32px}
+html.nfc-embedded .panel{border-radius:16px}
+html.nfc-embedded .layout{gap:16px}
+@media(max-width:560px){.history-entry{align-items:flex-start;flex-wrap:wrap}.history-avatar{width:38px;height:38px}.history-entry .card-buttons{width:100%;padding-left:0;justify-content:flex-start}}.cards{display:grid;gap:10px;max-height:680px;overflow:auto}.card{padding:15px;border:1px solid #343540;background:#101116;border-radius:13px;display:flex;align-items:center;gap:12px;justify-content:space-between}.card b{display:block;font-size:14px;overflow-wrap:anywhere}.card small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.card-buttons{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.mini{border:1px solid #393b45;background:#22232b;border-radius:8px;color:white;padding:8px 10px;font-size:11px;font-weight:700}.status{font-size:10px;padding:4px 8px;border-radius:8px;margin-right:5px;color:#e1e1e8;background:#30313b}.status.live{background:#1b4430;color:#8ee2af}.field{margin-bottom:14px}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:7px;color:#d7d7df}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#101117;border-radius:10px;color:white;padding:11px 12px;outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red)}.field small{color:var(--muted)}.cols{display:grid;grid-template-columns:1fr 120px;gap:12px}.color{height:44px;padding:5px!important}.sectionTitle{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}.sectionTitle b{font-size:13px}.link-row{display:grid;grid-template-columns:91px minmax(0,1fr) repeat(3,26px);gap:5px;margin-bottom:9px;align-items:center}.link-row input,.link-row select{min-width:0;border:1px solid var(--line);background:#101117;border-radius:9px;color:#fff;padding:9px 10px}.link-row .remove,.link-row .reorder{height:34px;border:1px solid var(--line);background:transparent;color:#fff;border-radius:8px;padding:0;display:grid;place-items:center;font-size:15px}.link-row .reorder:hover,.link-row .remove:hover{border-color:var(--red)}.link-row button:disabled{opacity:.3;cursor:not-allowed}.wide{width:100%}.footerBtns{display:flex;gap:9px;margin-top:23px}.footerBtns .btn{flex:1}.notice{font-size:12px;color:#bcbcc7;margin:12px 0;min-height:19px;line-height:1.6;overflow-wrap:anywhere}.notice.error{color:#ff8198}.help{border:1px solid var(--line);padding:14px;border-radius:12px;color:var(--muted);font-size:12px;margin-top:18px}.help code{color:#eee}.empty{color:var(--muted);font-size:13px;padding:18px}.switch{display:flex;gap:9px;align-items:center;font-weight:700;margin-top:15px}.switch input{accent-color:var(--red)}.linkhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.preview{font-size:12px;margin:5px 0;color:#9ea3b8;overflow-wrap:anywhere}.preview a{color:#ff809c}
 .media-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.upload-tile{display:flex;align-items:center;gap:12px;min-height:100px;padding:11px;border:1px dashed #4b3b49;border-radius:13px;background:#111119;cursor:pointer;transition:border-color .2s,background .2s}.upload-tile:hover,.upload-tile:focus-within{border-color:var(--red);background:#1c1820}.upload-image{flex:none;display:grid;place-items:center;width:72px;height:72px;border-radius:50%;font-size:26px;font-weight:800;background:#28232b;background-size:cover;background-position:center;overflow:hidden;color:#c9b6be}.upload-image.cover-image{border-radius:10px}.upload-tile b{display:block;font-size:12px}.upload-tile small{font-size:10px;color:#9f9fae}.file-input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.clear-image{margin-top:7px}.generated-link{padding:18px;margin-top:18px;border:1px solid #a73663;background:linear-gradient(135deg,#29101d,#19141f);border-radius:16px;box-shadow:0 10px 34px #0004}.generated-link[hidden]{display:none!important}.generated-title{display:flex;align-items:center;gap:12px;margin-bottom:15px}.generated-title .generated-check{display:grid;place-items:center;background:#20513b;color:#b4f3ce;width:34px;height:34px;flex:none;border-radius:50%;font-size:18px}.generated-title strong{font-size:15px;display:block}.generated-title small{display:block;color:#bbb8c4;font-size:11px;margin-top:2px}.generated-link strong{font-size:12px}.generated-link-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}.generated-link-row input{min-width:160px;flex:1;background:#0b0b12;border:1px solid #453440;border-radius:9px;color:#fff;padding:10px 12px;font:12px Inter,sans-serif}.generated-link-row .btn{font-size:11px;padding:10px 12px}.generated-link small{display:block;margin-top:8px;font-size:11px;color:#a5a0ad}
 .nfc-preview-heading{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:22px;margin-top:22px}.nfc-preview-heading b{font-size:13px}.nfc-preview-heading small{font-size:11px;color:#9293a1}
 .nfc-phone-wrap{display:flex;justify-content:center;padding:18px 0 7px}
@@ -19,10 +29,10 @@ h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin
 @media(max-width:960px){.layout{grid-template-columns:1fr}.shell{padding:18px 14px 50px}.top{align-items:flex-start}.actions{flex-wrap:wrap}.panel{padding:18px}.cards{max-height:none}}@media(max-width:430px){.link-row{grid-template-columns:76px minmax(0,1fr) repeat(3,25px).cols{grid-template-columns:1fr 94px}.btn{padding:10px 12px}.card{align-items:flex-start;flex-direction:column}.card-buttons{width:100%;justify-content:flex-start}}
 </style></head>
 <body><main class="shell">
-<header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
+<header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
 <h1>Micrositios para negocios.</h1><p class="hint">Personalizá la página de un negocio y, al finalizar, generá su URL para copiarla en tu activador NFC. Las tarjetas físicas se configuran fuera de este dashboard.</p>
 <div id="notice" class="notice" role="status"></div>
-<div class="layout"><section class="panel"><div class="linkhead"><h2 style="flex:1">Negocios registrados</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><input type="search" class="search" id="search" placeholder="Buscar negocio o enlace" aria-label="Buscar negocios"><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Cada negocio tiene una URL permanente. Una vez creada, podés editar su foto, fondo y enlaces sociales sin volver a grabar la tarjeta NFC.</div></section>
+<div class="layout"><section class="panel"><div class="linkhead"><h2 style="flex:1">Historial de tarjetas</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><div class="history-intro"><p>Todos los negocios que registraste, ordenados del más reciente al más antiguo.</p><span class="history-count" id="historyCount">0 tarjetas</span></div><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Cada negocio tiene una URL permanente. Una vez creada, podés editar su foto, fondo y enlaces sociales sin volver a grabar la tarjeta NFC.</div></section>
 <section class="panel"><h2 id="formTitle">Crear negocio</h2>
 <form id="editor">
 <div class="field"><label for="name">Nombre del negocio *</label><input id="name" required maxlength="90" minlength="2" placeholder="Ej. Café Central"></div>
@@ -200,20 +210,45 @@ function showCard(c){
  $('formTitle').textContent='Editar · '+c.business_name;$('save').textContent='Guardar cambios';preview();window.scrollTo({top:0,behavior:'smooth'});
 }
 function render(){
- const q=$('search').value.trim().toLowerCase(),container=$('cards');container.replaceChildren();
- const list=cards.filter(c=>[c.business_name,c.slug].some(v=>String(v||'').toLowerCase().includes(q)));
- if(!list.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay negocios registrados.';container.append(p);return;}
+ const container=$('cards');
+ container.replaceChildren();
+ const list=cards.slice().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+ const count=$('historyCount');count.textContent=list.length===1?'1 tarjeta':list.length+' tarjetas';
+ if(!list.length){
+  const p=document.createElement('p');p.className='empty';
+  p.textContent='Todavía no hay tarjetas registradas. Usá «Nuevo negocio» para crear la primera.';
+  container.append(p);return;
+ }
+ const formatter=new Intl.DateTimeFormat('es-NI',{month:'long',year:'numeric'});
+ const dateFormatter=new Intl.DateTimeFormat('es-NI',{day:'numeric',month:'short',year:'numeric'});
+ let previous='';
  for(const c of list){
- const item=document.createElement('article');item.className='card';
- const info=document.createElement('div');const title=document.createElement('b');title.textContent=c.business_name;
- const sub=document.createElement('small');sub.textContent='/nfc/?slug='+c.slug;
- const status=document.createElement('span');status.className='status'+(c.is_active?' live':'');status.textContent=c.is_active?'Activa':'Desactivada';
- info.append(title,sub,status);
- const buttons=document.createElement('div');buttons.className='card-buttons';
- const edit=document.createElement('button');edit.className='mini';edit.textContent='Editar';edit.onclick=()=>showCard(c);
- const copy=document.createElement('button');copy.className='mini';copy.textContent='Copiar URL';copy.disabled=!c.is_active;copy.title=c.is_active?'Copiar URL del negocio':'Activá el negocio para copiar su URL';copy.onclick=async()=>{try{await navigator.clipboard.writeText(ROOT+c.slug);notify('URL copiada: '+ROOT+c.slug)}catch{notify('Copiá esta URL: '+ROOT+c.slug)}};
- const view=document.createElement('a');view.className='mini';view.href=c.is_active?ROOT+c.slug:'#';view.target='_blank';view.rel='noopener';view.textContent='Ver página';if(!c.is_active){view.style.opacity='.4';view.style.pointerEvents='none';}
- buttons.append(edit,copy,view);item.append(info,buttons);container.append(item);
+  const ts=c.created_at?new Date(c.created_at):null;
+  const month=ts&&!isNaN(ts.getTime())?formatter.format(ts):'Sin fecha';
+  if(month!==previous){
+   const heading=document.createElement('div');heading.className='history-group';heading.textContent=month;
+   container.append(heading);previous=month;
+  }
+  const item=document.createElement('article');item.className='history-entry';
+  const avatar=document.createElement('span');avatar.className='history-avatar';avatar.textContent=String(c.business_name||'B').trim().charAt(0).toUpperCase();
+  const imgUrl=safeUrl(c.avatar_url);
+  if(imgUrl){avatar.style.backgroundImage='url("'+imgUrl.replace(/["\\]/g,'')+'")';avatar.textContent='';}
+  const info=document.createElement('div');info.className='history-info';
+  const title=document.createElement('b');title.textContent=c.business_name;
+  const slug=document.createElement('small');slug.textContent='/nfc/?slug='+c.slug;
+  const meta=document.createElement('div');meta.className='history-meta';
+  const badge=document.createElement('span');badge.className='status'+(c.is_active?' live':'');badge.textContent=c.is_active?'Activa':'Inactiva';
+  const date=document.createElement('span');date.textContent=ts&&!isNaN(ts.getTime())?'Creada: '+dateFormatter.format(ts):'Fecha no disponible';
+  const socials=document.createElement('span');const n=Array.isArray(c.links)?c.links.length:0;socials.textContent=n===1?'1 botón social':n+' botones sociales';
+  meta.append(badge,date,socials);
+  info.append(title,slug,meta);
+  const buttons=document.createElement('div');buttons.className='card-buttons';
+  const edit=document.createElement('button');edit.className='mini';edit.textContent='Editar';edit.onclick=()=>showCard(c);
+  const copy=document.createElement('button');copy.className='mini';copy.textContent='Copiar URL';copy.disabled=!c.is_active;copy.title=c.is_active?'Copiar dirección del negocio':'Activá la página antes de copiar la URL';
+  copy.onclick=async()=>{const url=ROOT+c.slug;try{await navigator.clipboard.writeText(url);notify('URL copiada: '+url);}catch{notify('Copiá esta URL: '+url);}};
+  const view=document.createElement('a');view.className='mini';view.href=c.is_active?ROOT+c.slug:'#';view.target='_blank';view.rel='noopener noreferrer';view.textContent='Abrir página';
+  if(!c.is_active){view.style.opacity='.4';view.style.pointerEvents='none';view.setAttribute('aria-disabled','true');}
+  buttons.append(edit,copy,view);item.append(avatar,info,buttons);container.append(item);
  }
 }
 async function load(){
@@ -259,7 +294,7 @@ $('slug').addEventListener('input',preview);
 for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syncLivePreview);
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
-$('search').addEventListener('input',render);$('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
+$('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
 async function init(){
  reset();
  if(!sessionReady()){fail('Iniciá sesión en /admin/ y luego abrí Tarjetas NFC desde el menú lateral.');return;}
