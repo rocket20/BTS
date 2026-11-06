@@ -144,7 +144,7 @@ function imageThumb(field,url){
 }
 function selectImage(field,file){
  if(!file)return;
- if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4*1024*1024){fail('Elegí una imagen PNG, JPG o WEBP de hasta 4 MB.');$(field+'File').value='';return;}
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4*1024*1024){fail('Elegí una imagen PNG, JPG o WEBP de hasta 4 MB.');$(field+'File').value='';syncLivePreview();return;}
  if(previewBlobs[field])URL.revokeObjectURL(previewBlobs[field]);
  previewBlobs[field]=URL.createObjectURL(file);
  imageThumb(field,previewBlobs[field]);syncLivePreview();
@@ -166,7 +166,7 @@ for(const [id,field] of [['clearAvatar','avatar'],['clearBackground','background
  $(id).addEventListener('click',()=>{if(previewBlobs[field])URL.revokeObjectURL(previewBlobs[field]);previewBlobs[field]=null;$(field).value='';$(field+'File').value='';imageThumb(field,'');syncLivePreview();});
 }
 $('copyGenerated').addEventListener('click',async()=>{const url=$('generatedUrl').value;if(!url||!isPublished())return;try{await navigator.clipboard.writeText(url);notify('Enlace publicado copiado: '+url)}catch{notify('Copiá este enlace: '+url)}});
-function isPublished(){const slug=normalized($('slug').value);return Boolean(slug&&cards.some(c=>c.slug===slug&&c.is_active&&(editing===c.id||!editing)));}
+function isPublished(){const slug=normalized($('slug').value);return Boolean(slug&&editing&&cards.some(c=>c.id===editing&&c.slug===slug&&c.is_active));}
 function preview(){
  const slug=normalized($('slug').value);const url=slug?ROOT+slug:'',published=isPublished();
  $('urlPreview').textContent=slug?'URL sugerida: '+url:'';
@@ -237,7 +237,7 @@ async function save(e){
   if(selectedBackground)data.background_url=await uploadImage(selectedBackground,'fondo');
   const path=editing?'/rest/v1/bts_nfc_cards?id=eq.'+encodeURIComponent(editing):'/rest/v1/bts_nfc_cards';
   await api(path,{method:editing?'PATCH':'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)});
-  reset();await load();notify('Tarjeta guardada correctamente.');
+  await load();const saved=cards.find(c=>c.slug===slug);if(saved)showCard(saved);else reset();notify(data.is_active?'Página guardada y enlace listo para copiar.':'Cambios guardados. Activá la tarjeta para compartir su enlace.');
  }catch(error){fail('No se pudo guardar: '+error.message)}
  finally{btn.disabled=false;}
 }
