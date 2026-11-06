@@ -12,13 +12,13 @@
 *{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100svh;display:flex;justify-content:center;align-items:center;background:linear-gradient(180deg,#0005,#0006),var(--bg);background-image:linear-gradient(180deg,#0004,#0008),var(--nfc-cover,none);background-size:cover;background-position:center;background-attachment:fixed}
 main{width:min(100%,475px);min-height:100svh;padding:clamp(55px,11vh,125px) 25px 32px;display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#090a0c09,#090a0c2a);backdrop-filter:blur(2px)}
 .avatar[hidden]{display:none!important}.avatar{width:112px;height:112px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#20202b);display:grid;place-items:center;overflow:hidden;border:1px solid #ffffff20;box-shadow:0 16px 55px #0009}
-.avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.avatar{position:relative}.avatar span{font-weight:850;font-size:40px;color:white;letter-spacing:-.07em}
+.avatar img{width:100%;height:100%;object-fit:cover;object-position:var(--nfc-avatar-x,50%) var(--nfc-avatar-y,50%);transform:scale(var(--nfc-avatar-zoom,1));transform-origin:center;position:absolute;inset:0}.avatar{position:relative}.avatar span{font-weight:850;font-size:40px;color:white;letter-spacing:-.07em}
 h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-height:1.06;font-weight:800;letter-spacing:-.055em;overflow-wrap:anywhere}
 .tagline{margin:8px 0 20px;line-height:1.55;text-align:center;max-width:360px;font-size:14px;color:var(--muted)}
 .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff18;border-radius:30px;padding:8px 12px;font-size:10px;color:#bcbac6;letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px}.pill:before{content:"";height:6px;width:6px;background:var(--accent);border-radius:50%}
-.links{width:100%;display:grid;gap:11px}.links a{display:flex;align-items:center;gap:14px;width:100%;padding:14px 17px;min-height:60px;background:var(--surface);color:#fff;border:1px solid #ffffff13;border-radius:17px;text-decoration:none;transition:transform .18s,border-color .18s,background .18s;box-shadow:0 7px 24px #0002}.links a:hover,.links a:focus-visible{transform:translateY(-2px);border-color:var(--accent);background:#20202a}.links .glyph{width:33px;height:33px;display:grid;place-items:center;border-radius:11px;background:color-mix(in srgb,var(--accent) 19%,#222);font-weight:800;font-size:14px}.links a strong{flex:1;font-size:14px;font-weight:650}.links a .arrow{color:#888799;font-size:19px}.foot{margin-top:auto;padding-top:55px;text-align:center;font-size:10px;color:#6f6e7a;letter-spacing:.11em}.foot b{color:#b6b2be}
+.links{width:100%;display:grid;gap:11px}.links a{display:grid;grid-template-columns:33px minmax(0,1fr) 33px;align-items:center;column-gap:8px;width:100%;padding:14px 17px;min-height:60px;background:var(--nfc-button-bg,#181820);color:var(--nfc-button-text,#ffffff);border:1px solid var(--nfc-button-border,#42404b);border-radius:17px;text-decoration:none;transition:transform .18s,border-color .18s,filter .18s;box-shadow:0 7px 24px #0002}.links a:hover,.links a:focus-visible{transform:translateY(-2px);filter:brightness(1.12);border-color:var(--accent)}.links .glyph{width:33px;height:33px;display:grid;place-items:center;border-radius:11px;background:color-mix(in srgb,var(--accent) 19%,#222);font-weight:800;font-size:14px}.links a strong{min-width:0;text-align:center;font-size:14px;font-weight:650;overflow-wrap:anywhere;color:inherit}.links a .arrow{color:inherit;opacity:.78;font-size:19px;text-align:center}.foot{margin-top:auto;padding-top:55px;text-align:center;font-size:10px;color:#6f6e7a;letter-spacing:.11em}.foot b{color:#b6b2be}
 .state{width:100%;text-align:center;margin:15px 0 0;font-size:14px;color:var(--muted);line-height:1.6}#message[hidden]{display:none}
-@media(max-width:450px){main{padding-left:22px;padding-right:22px}.avatar{width:98px;height:98px;border-radius:26px}}
+@media(max-width:450px){main{padding-left:22px;padding-right:22px}.avatar{width:98px;height:98px;border-radius:50%}}
 @media(prefers-reduced-motion:reduce){.links a{transition:none}}
 </style>
 </head>
@@ -63,13 +63,23 @@ function makeLinks(links){
 async function boot(){
  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
  try{
-  const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,background_url,background_color,links&limit=1';
+  const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links&limit=1';
   const response=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
   if(!response.ok)throw Error('Servicio no disponible');
   const rows=await response.json();const card=Array.isArray(rows)?rows[0]:null;
   if(!card){unavailable('Esta tarjeta digital no está disponible.');return;}
   document.documentElement.style.setProperty('--accent',/^#[a-f\d]{6}$/i.test(card.accent_color||'')?card.accent_color:'#ff0037');
   document.documentElement.style.setProperty('--bg',/^#[a-f\d]{6}$/i.test(card.background_color||'')?card.background_color:'#0a0a10');
+  const isHex=value=>/^#[0-9a-f]{6}$/i.test(String(value||''));
+  document.documentElement.style.setProperty('--nfc-button-bg',isHex(card.button_bg_color)?card.button_bg_color:'#181820');
+  document.documentElement.style.setProperty('--nfc-button-text',isHex(card.button_text_color)?card.button_text_color:'#ffffff');
+  document.documentElement.style.setProperty('--nfc-button-border',isHex(card.button_border_color)?card.button_border_color:'#42404b');
+  const clipped=(value,min,max,fallback)=>{
+   const number=Number(value);return Number.isFinite(number)?Math.min(max,Math.max(min,number)):fallback;
+  };
+  document.documentElement.style.setProperty('--nfc-avatar-x',clipped(card.avatar_position_x,0,100,50)+'%');
+  document.documentElement.style.setProperty('--nfc-avatar-y',clipped(card.avatar_position_y,0,100,50)+'%');
+  document.documentElement.style.setProperty('--nfc-avatar-zoom',String(clipped(card.avatar_zoom,100,200,100)/100));
   const cover=safeUrl(card.background_url);
   if(cover)document.documentElement.style.setProperty('--nfc-cover','url("'+cover.replace(/["\\]/g,'')+'")');
   $('name').textContent=String(card.business_name||'Negocio');
