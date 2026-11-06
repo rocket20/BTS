@@ -22,6 +22,25 @@ html.nfc-embedded .layout{gap:16px}
 .nfc-preview-heading{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:22px;margin-top:22px}.nfc-preview-heading b{font-size:13px}.nfc-preview-heading small{font-size:11px;color:#9293a1}
 .nfc-phone-wrap{display:flex;justify-content:center;padding:18px 0 7px}
 .nfc-phone{--preview-accent:#ff0037;--preview-bg:#0a0a10;--preview-cover:none;position:relative;width:min(100%,300px);min-height:510px;border:7px solid #09090d;outline:1px solid #46434d;border-radius:35px;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:55px 18px 24px;color:#fff;text-align:center;background-color:var(--preview-bg);background-image:linear-gradient(#0008,#000c),var(--preview-cover);background-position:center;background-size:cover;box-shadow:0 16px 60px #0009}
+
+/* Controles de diseño de cada página NFC */
+.nfc-design-controls{border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin:14px 0 17px;min-width:0;background:#15141c}
+.nfc-design-controls legend{font-size:13px;font-weight:800;color:#f4f1f5;padding:0 7px}
+.nfc-design-controls .design-hint{margin:0 0 12px;color:#a6a2b1;font-size:11px;line-height:1.55}
+.nfc-design-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nfc-design-grid .range-label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;color:#eee;font-weight:650}
+.nfc-design-grid output{font-size:11px;color:#ff9aaf;font-variant-numeric:tabular-nums}
+.nfc-design-grid input[type="range"]{display:block;width:100%;margin:10px 0 5px;accent-color:#ff0037;cursor:pointer}
+.nfc-design-grid input[type="color"]{width:100%;height:41px;padding:5px;min-width:0}
+.nfc-design-grid .field{margin:0}
+.nfc-design-controls .mini{margin-top:12px}
+.nfc-phone-avatar{position:relative;overflow:hidden}
+.nfc-phone-avatar img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1);pointer-events:none}
+.nfc-preview-link{display:grid!important;grid-template-columns:25px minmax(0,1fr) 25px;gap:5px!important;background:var(--button-bg,#181820)!important;color:var(--button-text,#ffffff)!important;border-color:var(--button-border,#42404b)!important}
+.nfc-preview-link b{text-align:center;min-width:0;overflow-wrap:anywhere;color:inherit}
+.nfc-preview-link .preview-arrow{font-size:15px;font-weight:500;text-align:center;color:inherit;opacity:.82}
+@media(max-width:620px){.nfc-design-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(max-width:430px){.nfc-design-grid{grid-template-columns:1fr}}
 .nfc-phone-avatar[hidden]{display:none!important}.nfc-phone-avatar{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;border:1px solid #ffffff55;box-shadow:0 8px 20px #0006;background:var(--preview-accent);background-size:cover;background-position:center;font-weight:800;font-size:28px;flex:none}
 .nfc-phone h3{font-size:23px;letter-spacing:-.04em;overflow-wrap:anywhere;line-height:1.2;margin:15px 0 4px}.nfc-phone p{color:#ddd;font-size:12px;line-height:1.5;margin:4px 0 13px;overflow-wrap:anywhere}
 .nfc-phone-label{border:1px solid #ffffff33;padding:7px 12px;border-radius:20px;color:#ddd;font-size:8px;letter-spacing:.07em;margin-bottom:13px}
@@ -45,8 +64,30 @@ html.nfc-embedded .layout{gap:16px}
 <div class="media-fields">
 <div class="field"><label for="avatarFile">Foto o logo del negocio</label><label class="upload-tile" for="avatarFile"><span class="upload-image" id="avatarThumb">◎</span><span><b>Subir foto de perfil</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="avatar" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearAvatar">Quitar foto</button></div>
 <div class="field"><label for="backgroundFile">Imagen de fondo</label><label class="upload-tile" for="backgroundFile"><span class="upload-image cover-image" id="backgroundThumb">▧</span><span><b>Subir fondo</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="background" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearBackground">Quitar fondo</button></div></div>
+
+<fieldset class="nfc-design-controls" id="avatarAdjustments">
+ <legend>Ajustar foto de perfil</legend>
+ <p class="design-hint">Mové la imagen dentro del círculo y ajustá el zoom. La vista previa mostrará cómo quedará publicada.</p>
+ <div class="nfc-design-grid">
+  <div class="field"><label for="avatarX" class="range-label">Horizontal <output id="avatarXValue" for="avatarX">50%</output></label><input id="avatarX" type="range" min="0" max="100" step="1" value="50"></div>
+  <div class="field"><label for="avatarY" class="range-label">Vertical <output id="avatarYValue" for="avatarY">50%</output></label><input id="avatarY" type="range" min="0" max="100" step="1" value="50"></div>
+  <div class="field"><label for="avatarZoom" class="range-label">Zoom <output id="avatarZoomValue" for="avatarZoom">100%</output></label><input id="avatarZoom" type="range" min="100" max="200" step="5" value="100"></div>
+ </div>
+ <button type="button" class="mini" id="centerAvatar">Centrar foto y restablecer zoom</button>
+</fieldset>
 <div class="field"><label for="bgColor">Color del fondo cuando no hay imagen</label><input id="bgColor" type="color" class="color" value="#0a0a10"></div>
 <div class="cols"><div class="field"><label>Color de marca</label><input id="color" type="color" class="color" value="#ff0037"></div><div class="field"><label>Visibilidad</label><label class="switch"><input type="checkbox" id="active" checked> Activa</label></div></div>
+
+<fieldset class="nfc-design-controls">
+ <legend>Colores de los botones</legend>
+ <p class="design-hint">Personalizá el fondo, el texto y el borde. Los nombres de cada botón permanecerán centrados.</p>
+ <div class="nfc-design-grid">
+  <div class="field"><label for="buttonBg">Fondo</label><input type="color" id="buttonBg" class="color" value="#181820"></div>
+  <div class="field"><label for="buttonText">Texto</label><input type="color" id="buttonText" class="color" value="#ffffff"></div>
+  <div class="field"><label for="buttonBorder">Borde</label><input type="color" id="buttonBorder" class="color" value="#42404b"></div>
+ </div>
+ <button type="button" class="mini" id="resetButtonColors">Restablecer colores</button>
+</fieldset>
 <div class="sectionTitle"><b>Botones de redes sociales</b><button type="button" class="mini" id="add">+ Botón</button></div>
 <div id="links"></div>
 <div id="slugConflict" class="slug-conflict" hidden aria-live="polite">
@@ -63,7 +104,7 @@ html.nfc-embedded .layout{gap:16px}
 </div>
 <div class="nfc-preview-heading"><b>Vista previa del negocio</b><small>Se actualiza mientras editás, sin publicar cambios.</small></div>
 <div class="nfc-phone-wrap"><div class="nfc-phone" id="nfcPreviewPhone">
- <div class="nfc-phone-avatar" id="nfcPreviewAvatar" hidden></div>
+ <div class="nfc-phone-avatar" id="nfcPreviewAvatar" hidden><img id="nfcPreviewAvatarImage" alt="" draggable="false"></div>
  <h3 id="nfcPreviewName">Nombre del negocio</h3>
  <p id="nfcPreviewTagline">Tus redes sociales, todas en un lugar.</p>
  <div class="nfc-phone-label">CONECTÁ CON NOSOTROS</div>
@@ -183,13 +224,25 @@ function syncLivePreview(){
  const phone=$('nfcPreviewPhone');if(!phone)return;
  const ac=$('color').value||'#ff0037',bg=$('bgColor').value||'#0a0a10';
  phone.style.setProperty('--preview-accent',ac);phone.style.setProperty('--preview-bg',bg);
+ phone.style.setProperty('--button-bg',$('buttonBg').value);
+ phone.style.setProperty('--button-text',$('buttonText').value);
+ phone.style.setProperty('--button-border',$('buttonBorder').value);
  const cover=previewBlobs.background||$('background').value;
  const avatar=previewBlobs.avatar||$('avatar').value;
  phone.style.setProperty('--preview-cover',cover?'url("'+cover.replace(/["\\]/g,'')+'")':'none');
  const avatarEl=$('nfcPreviewAvatar');
- avatarEl.style.backgroundImage=avatar?'url("'+avatar.replace(/["\\]/g,'')+'")':'none';
- avatarEl.textContent='';
+ const avatarImg=$('nfcPreviewAvatarImage');
+ if(avatarImg.dataset.srcValue!==(avatar||'')){
+  avatarImg.dataset.srcValue=avatar||'';
+  if(avatar)avatarImg.src=avatar;else avatarImg.removeAttribute('src');
+ }
  avatarEl.hidden=!avatar;
+ const ax=Number($('avatarX').value),ay=Number($('avatarY').value),zoom=Number($('avatarZoom').value);
+ avatarImg.style.objectPosition=ax+'% '+ay+'%';
+ avatarImg.style.transform='scale('+(zoom/100)+')';
+ $('avatarXValue').textContent=ax+'%';
+ $('avatarYValue').textContent=ay+'%';
+ $('avatarZoomValue').textContent=zoom+'%';
  $('nfcPreviewName').textContent=$('name').value.trim()||'Nombre del negocio';
  $('nfcPreviewTagline').textContent=$('tagline').value.trim()||'Todas nuestras redes sociales en un lugar.';
  const box=$('nfcPreviewLinks');box.replaceChildren();
@@ -200,7 +253,8 @@ function syncLivePreview(){
   const button=document.createElement('div');button.className='nfc-preview-link';
   const icon=document.createElement('span');icon.textContent=PREVIEW_SYMBOLS[type]||'↗';
   const text=document.createElement('b');text.textContent=type==='other'?(item.querySelector('.custom-link-input').value.trim()||'Nombre personalizado'):(typeNames[type]||'Enlace');
-  button.append(icon,text);box.append(button);
+  const arrow=document.createElement('span');arrow.className='preview-arrow';arrow.textContent='↗';
+  button.append(icon,text,arrow);box.append(button);
  }
  if(!box.children.length){const p=document.createElement('p');p.textContent='Agregá tus enlaces para verlos aquí.';box.append(p);}
 }
@@ -279,14 +333,24 @@ function clearPreviewBlobs(){for(const key of ['avatar','background']){if(previe
 function reset(){
  clearConflict();
  clearPreviewBlobs();
- editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
+ editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';
+ $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;
+ $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';
+ $('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
 }
 function showCard(c){
  clearConflict();
  clearPreviewBlobs();
- editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=false;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';$('active').checked=c.is_active;
+ editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=false;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';
+ $('avatarX').value=c.avatar_position_x??50;
+ $('avatarY').value=c.avatar_position_y??50;
+ $('avatarZoom').value=c.avatar_zoom??100;
+ $('buttonBg').value=c.button_bg_color||'#181820';
+ $('buttonText').value=c.button_text_color||'#ffffff';
+ $('buttonBorder').value=c.button_border_color||'#42404b';
+ $('active').checked=c.is_active;
  for(const id of ['avatar','background']){$(id+'File').value='';imageThumb(id,$(id).value);}
  $('links').replaceChildren();(Array.isArray(c.links)?c.links:[]).forEach(l=>row(l.type,l.url,l.type==='other'&&l.label!=='Otro'?l.label:''));
  $('formTitle').textContent='Editar · '+c.business_name;$('save').textContent='Guardar cambios';preview();window.scrollTo({top:0,behavior:'smooth'});
@@ -411,7 +475,14 @@ async function save(e){
   links.push({type,label:type==='other'?customName:(typeNames[type]||'Enlace'),url:clean});
  }
  if(!links.length){fail('Agregá por lo menos un enlace social.');return;}
- const data={business_name:$('name').value.trim(),tagline:$('tagline').value.trim(),avatar_url:$('avatar').value.trim(),background_url:$('background').value.trim(),background_color:$('bgColor').value,accent_color:$('color').value,links,is_active:$('active').checked};
+ const data={business_name:$('name').value.trim(),tagline:$('tagline').value.trim(),avatar_url:$('avatar').value.trim(),background_url:$('background').value.trim(),background_color:$('bgColor').value,accent_color:$('color').value,
+ avatar_position_x:Number($('avatarX').value),
+ avatar_position_y:Number($('avatarY').value),
+ avatar_zoom:Number($('avatarZoom').value),
+ button_bg_color:$('buttonBg').value,
+ button_text_color:$('buttonText').value,
+ button_border_color:$('buttonBorder').value,
+ links,is_active:$('active').checked};
  if(data.avatar_url&&!safeUrl(data.avatar_url)){fail('La foto no es válida.');return;}
  data.slug=slug;
  const btn=$('save');btn.disabled=true;notify('Guardando…');
@@ -455,7 +526,13 @@ async function save(e){
 }
 $('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);}preview();});
 $('slug').addEventListener('input',()=>{clearConflict();preview();});
-for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syncLivePreview);
+for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','buttonBg','buttonText','buttonBorder'])$(id).addEventListener('input',syncLivePreview);
+ $('centerAvatar').addEventListener('click',()=>{
+  $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;syncLivePreview();
+ });
+ $('resetButtonColors').addEventListener('click',()=>{
+  $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';syncLivePreview();
+ });
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('resetEditor').addEventListener('click',reset);
 $('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
