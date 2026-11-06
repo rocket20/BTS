@@ -11,7 +11,7 @@
 :root{--accent:#ff0037;--bg:#0a0a10;--ink:#f8f7fb;--muted:#aaa8b6;--surface:#17171f}
 *{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100svh;display:flex;justify-content:center;align-items:center;background:linear-gradient(180deg,#0005,#0006),var(--bg);background-image:linear-gradient(180deg,#0004,#0008),var(--nfc-cover,none);background-size:cover;background-position:center;background-attachment:fixed}
 main{width:min(100%,475px);min-height:100svh;padding:clamp(55px,11vh,125px) 25px 32px;display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#090a0c09,#090a0c2a);backdrop-filter:blur(2px)}
-.avatar{width:112px;height:112px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#20202b);display:grid;place-items:center;overflow:hidden;border:1px solid #ffffff20;box-shadow:0 16px 55px #0009}
+.avatar[hidden]{display:none!important}.avatar{width:112px;height:112px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#20202b);display:grid;place-items:center;overflow:hidden;border:1px solid #ffffff20;box-shadow:0 16px 55px #0009}
 .avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.avatar{position:relative}.avatar span{font-weight:850;font-size:40px;color:white;letter-spacing:-.07em}
 h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-height:1.06;font-weight:800;letter-spacing:-.055em;overflow-wrap:anywhere}
 .tagline{margin:8px 0 20px;line-height:1.55;text-align:center;max-width:360px;font-size:14px;color:var(--muted)}
@@ -25,7 +25,7 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 <body>
 <main>
 <section id="profile" hidden>
- <div class="avatar" id="avatar" aria-hidden="true"><span id="initials">B</span></div>
+ <div class="avatar" id="avatar" aria-hidden="true" hidden></div>
  <h1 id="name"></h1><p class="tagline" id="tagline"></p>
  <div class="pill">Conectá con nosotros</div>
  <nav class="links" id="links" aria-label="Redes sociales del negocio"></nav>
@@ -74,9 +74,9 @@ async function boot(){
   if(cover)document.documentElement.style.setProperty('--nfc-cover','url("'+cover.replace(/["\\]/g,'')+'")');
   $('name').textContent=String(card.business_name||'Negocio');
   $('tagline').textContent=String(card.tagline||'').slice(0,180);
-  $('initials').textContent=String(card.business_name||'B').trim().charAt(0).toUpperCase();
   const avatar=safeUrl(card.avatar_url);
-  if(avatar){const img=document.createElement('img');img.alt='';img.src=avatar;img.onerror=()=>img.remove();$('avatar').append(img);}
+  const avatarContainer=$('avatar');avatarContainer.replaceChildren();avatarContainer.hidden=!avatar;
+  if(avatar){const img=document.createElement('img');img.alt='';img.src=avatar;img.onerror=()=>{img.remove();avatarContainer.hidden=true;};avatarContainer.append(img);}
   makeLinks(card.links);
   document.title=String(card.business_name||'Tarjeta digital')+' | Tarjeta digital';
   $('profile').hidden=false;status.hidden=true;
