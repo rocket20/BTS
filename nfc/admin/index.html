@@ -8,7 +8,7 @@ if(window.self !== window.top || new URLSearchParams(location.search).get('embed
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
 .shell{max-width:1240px;margin:0 auto;padding:28px 23px 60px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:4px 0 25px;border-bottom:1px solid var(--line)}.brand b{display:block;font-size:17px;letter-spacing:-.04em}.brand small{color:var(--muted);font-size:11px;letter-spacing:.12em}.actions{display:flex;gap:10px;align-items:center}
 .btn{border:1px solid var(--line);background:#24242d;color:white;border-radius:11px;padding:11px 17px;font-weight:700}.btn.primary{background:var(--red);border-color:var(--red)}.btn.soft{background:transparent}.btn:disabled{opacity:.55;cursor:wait}
-h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin:31px 0 8px}.hint{color:var(--muted);margin:0 0 24px}.layout{display:grid;grid-template-columns:1fr 415px;gap:20px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:23px}.panel h2{font-size:19px;letter-spacing:-.03em;margin:0 0 19px}
+h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin:31px 0 8px}.hint{color:var(--muted);margin:0 0 24px}.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}.history-panel{width:100%}.history-panel .cards{max-height:620px;overflow:auto}.editor-panel{width:100%;max-width:1080px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:23px}.panel h2{font-size:19px;letter-spacing:-.03em;margin:0 0 19px}
 .slug-conflict{border:1px solid #8a4a45;background:#28191b;padding:15px;border-radius:13px;margin:14px 0;display:grid;gap:9px}.slug-conflict[hidden]{display:none!important}.slug-conflict strong{font-size:14px;color:#ffd3b7}.slug-conflict p{font-size:12px;color:#d7c9cb;line-height:1.5;margin:0}.slug-conflict-actions{display:flex;gap:8px;flex-wrap:wrap}.slug-conflict-actions .mini{border-color:#76525b}
 .history-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-6px 0 16px}.history-intro p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}.history-count{flex:none;border:1px solid #43303a;padding:5px 10px;border-radius:20px;color:#f7b3c4;background:#281922;font-size:11px;font-weight:750}
 .history-group{display:flex;align-items:center;gap:10px;margin:19px 0 8px;color:#aaa9b6;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.history-group::after{content:"";flex:1;height:1px;background:#34303c}
@@ -26,19 +26,22 @@ html.nfc-embedded .layout{gap:16px}
 .nfc-phone h3{font-size:23px;letter-spacing:-.04em;overflow-wrap:anywhere;line-height:1.2;margin:15px 0 4px}.nfc-phone p{color:#ddd;font-size:12px;line-height:1.5;margin:4px 0 13px;overflow-wrap:anywhere}
 .nfc-phone-label{border:1px solid #ffffff33;padding:7px 12px;border-radius:20px;color:#ddd;font-size:8px;letter-spacing:.07em;margin-bottom:13px}
 .nfc-preview-links{width:100%;display:grid;gap:8px;max-height:255px;overflow:auto}.nfc-preview-link{border:1px solid #ffffff30;border-radius:12px;background:#181820cc;min-height:43px;display:flex;align-items:center;text-align:left;gap:10px;padding:8px 10px;font-size:12px;font-weight:700}.nfc-preview-link span{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:var(--preview-accent);color:#fff;font-size:10px}.nfc-phone-footer{font-size:8px;letter-spacing:.1em;color:#bdbbc7;padding-top:28px;margin-top:auto}
-@media(max-width:620px){.media-fields{grid-template-columns:1fr}}
+.registry-status{font-size:12px;color:#aeb0be;margin:0 0 14px;line-height:1.5}.registry-status.warning{color:#ffd08c}.registry-status.error{color:#ffa0b5}
+ .slug-change-warning{border:1px solid #93623b;background:#31231b;color:#ffd5a5;border-radius:11px;padding:11px 13px;margin:0 0 14px;font-size:12px;line-height:1.5}.slug-change-warning[hidden]{display:none!important}
+ .nfc-delete-dialog{border:1px solid #71404a;border-radius:18px;padding:26px;background:#19171e;color:#f6f4f7;width:min(450px,calc(100vw - 30px));box-shadow:0 25px 100px #000b}.nfc-delete-dialog::backdrop{background:#000b;backdrop-filter:blur(5px)}.nfc-delete-dialog h2{font-size:23px;margin:0 0 12px;letter-spacing:-.04em}.nfc-delete-dialog p{font-size:13px;color:#d7c9cc;line-height:1.55}.nfc-delete-dialog label{display:block;font-size:12px;margin:18px 0 8px;font-weight:700}.nfc-delete-dialog input{width:100%;border:1px solid #77515a;background:#101017;color:white;padding:13px;border-radius:10px}.delete-dialog-buttons{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.nfc-delete-dialog .btn.danger{background:#bc2945;border-color:#bc2945}.nfc-delete-dialog .btn.danger:disabled{opacity:.45;cursor:not-allowed}.history-entry .card-buttons .mini.delete{border-color:#704653;color:#ffa8ba}.history-entry .card-buttons .mini.delete:hover{background:#4b222b}
+ @media(max-width:620px){.media-fields{grid-template-columns:1fr}}
 @media(max-width:960px){.layout{grid-template-columns:1fr}.shell{padding:18px 14px 50px}.top{align-items:flex-start}.actions{flex-wrap:wrap}.panel{padding:18px}.cards{max-height:none}}@media(max-width:430px){.link-row{grid-template-columns:76px minmax(0,1fr) repeat(3,25px).cols{grid-template-columns:1fr 94px}.btn{padding:10px 12px}.card{align-items:flex-start;flex-direction:column}.card-buttons{width:100%;justify-content:flex-start}}
 </style></head>
 <body><main class="shell">
 <header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
 <h1>Micrositios para negocios.</h1><p class="hint">Personalizá la página de un negocio y, al finalizar, generá su URL para copiarla en tu activador NFC. Las tarjetas físicas se configuran fuera de este dashboard.</p>
 <div id="notice" class="notice" role="status"></div>
-<div class="layout"><section class="panel"><div class="linkhead"><h2 style="flex:1">Historial de tarjetas</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><div class="history-intro"><p>Todos los negocios que registraste, ordenados del más reciente al más antiguo.</p><span class="history-count" id="historyCount">0 tarjetas</span></div><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Cada negocio tiene una URL permanente. Una vez creada, podés editar su foto, fondo y enlaces sociales sin volver a grabar la tarjeta NFC.</div></section>
-<section class="panel"><h2 id="formTitle">Crear negocio</h2>
+<div class="layout"><section class="panel history-panel"><div class="linkhead"><h2 style="flex:1">Páginas NFC registradas</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><div class="history-intro"><p>Administrá todas las páginas: editar, cambiar URL o eliminar registro.</p><span class="history-count" id="historyCount">0 tarjetas</span></div><p class="registry-status" id="registryStatus" role="status">Consultando negocios…</p><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Cada negocio tiene una URL permanente. Una vez creada, podés editar su foto, fondo y enlaces sociales sin volver a grabar la tarjeta NFC.</div></section>
+<section class="panel editor-panel"><h2 id="formTitle">Crear negocio</h2>
 <form id="editor">
 <div class="field"><label for="name">Nombre del negocio *</label><input id="name" required maxlength="90" minlength="2" placeholder="Ej. Café Central"></div>
-<div class="field"><label for="slug">Identificador de enlace *</label><input id="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="48" minlength="3" required placeholder="cafe-central"><small>Se conserva al editar, para no invalidar las tarjetas ya impresas.</small></div>
-<div class="field"><label for="tagline">Descripción breve</label><textarea id="tagline" rows="2" maxlength="180" placeholder="Conectá con nuestras redes y encontranos fácilmente."></textarea></div>
+<div class="field"><label for="slug">Identificador de enlace *</label><input id="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="48" minlength="3" required placeholder="cafe-central"><small>Podés cambiar este identificador después de crear la página. Si cambia, la URL anterior dejará de funcionar y los NFC programados con ella deberán actualizarse.</small></div>
+<div id="slugChangeWarning" class="slug-change-warning" hidden role="status"></div><div class="field"><label for="tagline">Descripción breve</label><textarea id="tagline" rows="2" maxlength="180" placeholder="Conectá con nuestras redes y encontranos fácilmente."></textarea></div>
 <div class="media-fields">
 <div class="field"><label for="avatarFile">Foto o logo del negocio</label><label class="upload-tile" for="avatarFile"><span class="upload-image" id="avatarThumb">◎</span><span><b>Subir foto de perfil</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="avatar" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearAvatar">Quitar foto</button></div>
 <div class="field"><label for="backgroundFile">Imagen de fondo</label><label class="upload-tile" for="backgroundFile"><span class="upload-image cover-image" id="backgroundThumb">▧</span><span><b>Subir fondo</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="background" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearBackground">Quitar fondo</button></div></div>
@@ -69,6 +72,16 @@ html.nfc-embedded .layout{gap:16px}
 </div></div>
 <div class="help">Los cambios se guardan en Supabase. Para proteger las tarjetas, solo los usuarios administradores de BTS Studio pueden crearlas o modificarlas.</div>
 </section></div></main>
+<dialog id="deleteDialog" class="nfc-delete-dialog" aria-labelledby="deleteDialogTitle">
+ <h2 id="deleteDialogTitle">Eliminar página NFC</h2>
+ <p id="deleteDialogText"></p>
+ <label for="confirmDeleteSlug">Escribí el identificador exacto para confirmar:</label>
+ <input id="confirmDeleteSlug" type="text" autocomplete="off" spellcheck="false" placeholder="Identificador exacto">
+ <div class="delete-dialog-buttons">
+  <button type="button" class="btn" id="cancelDelete">Cancelar</button>
+  <button type="button" class="btn danger" id="confirmDelete" disabled>Eliminar definitivamente</button>
+ </div>
+ </dialog>
 <script>
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co';
@@ -85,7 +98,13 @@ try{session=JSON.parse(sessionStorage.getItem('bts-admin-sb-session-v1')||'null'
 function fail(s){notify(s,true)}
 const safeUrl=v=>{try{const u=new URL(String(v||''));return ['https:','http:'].includes(u.protocol)?u.href:'';}catch{return '';}}
 const normalized=v=>String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
-function sessionReady(){return session&&session.access_token&&session.refresh_token&&session.user?.id}
+function sessionReady(){
+ try{
+  const stored=JSON.parse(sessionStorage.getItem('bts-admin-sb-session-v1')||'null');
+  if(stored?.access_token&&stored?.user?.id)session=stored;
+ }catch(_){}
+ return Boolean(session?.access_token&&session?.refresh_token&&session?.user?.id);
+}
 async function refreshSession(){
  if(!session?.refresh_token)throw Error('Sesión vencida. Volvé al dashboard.');
  const resp=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
@@ -96,7 +115,7 @@ async function refreshSession(){
 async function api(endpoint,options={},retry=true){
  if(!sessionReady())throw Error('Iniciá sesión en el dashboard /admin/ de BTS Studio.');
  if((session.expires_at||0)*1000-Date.now()<60000)await refreshSession();
- const res=await fetch(BASE+endpoint,{...options,headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}});
+ const res=await fetch(BASE+endpoint,{...options,cache:'no-store',headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}});
  if(res.status===401&&retry){await refreshSession();return api(endpoint,options,false)}
  if(!res.ok){let v={};try{v=await res.json()}catch{};const err=new Error(v.message||v.error_description||'No se completó la operación ('+res.status+').');err.code=v.code||null;err.status=res.status;throw err;}
  return res;
@@ -213,6 +232,12 @@ $('copyExisting').addEventListener('click',async()=>{
  catch{notify('Copiá este enlace: '+url);}
 });
 function isPublished(){const slug=normalized($('slug').value);return Boolean(slug&&editing&&cards.some(c=>c.id===editing&&c.slug===slug&&c.is_active));}
+ function updateSlugWarning(){
+  const card=cards.find(c=>c.id===editing),next=normalized($('slug').value);
+  const changed=Boolean(card&&next&&card.slug!==next);
+  const box=$('slugChangeWarning');box.hidden=!changed;
+  if(changed)box.textContent='Cambiar «'+card.slug+'» por «'+next+'» desactivará la URL anterior. Deberás actualizar cualquier NFC que tenga guardado el enlace antiguo.';
+ }
 function preview(){
  const slug=normalized($('slug').value),published=isPublished()&&$('active').checked;
  const url=published?ROOT+slug:'';
@@ -222,6 +247,7 @@ function preview(){
  $('openGenerated').href=published?url:'#';
  $('openGenerated').style.pointerEvents=published?'':'none';
  $('openGenerated').style.opacity=published?'1':'.45';
+ updateSlugWarning();
  $('nfcLinkState').textContent=published?'URL permanente: podés actualizar la página después sin cambiar el enlace grabado en el NFC.':'';
  syncLivePreview();
 }
@@ -236,7 +262,7 @@ function reset(){
 function showCard(c){
  clearConflict();
  clearPreviewBlobs();
- editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=true;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';$('active').checked=c.is_active;
+ editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=false;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';$('active').checked=c.is_active;
  for(const id of ['avatar','background']){$(id+'File').value='';imageThumb(id,$(id).value);}
  $('links').replaceChildren();(Array.isArray(c.links)?c.links:[]).forEach(l=>row(l.type,l.url));
  $('formTitle').textContent='Editar · '+c.business_name;$('save').textContent='Guardar cambios';preview();window.scrollTo({top:0,behavior:'smooth'});
@@ -280,22 +306,48 @@ function render(){
   copy.onclick=async()=>{const url=ROOT+c.slug;try{await navigator.clipboard.writeText(url);notify('URL copiada: '+url);}catch{notify('Copiá esta URL: '+url);}};
   const view=document.createElement('a');view.className='mini';view.href=c.is_active?ROOT+c.slug:'#';view.target='_blank';view.rel='noopener noreferrer';view.textContent='Abrir página';
   if(!c.is_active){view.style.opacity='.4';view.style.pointerEvents='none';view.setAttribute('aria-disabled','true');}
-  buttons.append(edit,copy,view);item.append(avatar,info,buttons);container.append(item);
+  
+ const rename=document.createElement('button');rename.type='button';rename.className='mini';rename.textContent='Editar URL';rename.disabled=!sessionReady();
+ rename.onclick=()=>{showCard(c);$('slug').focus();$('slug').select();notify('Editá la URL. La dirección anterior dejará de funcionar al guardar el cambio.');};
+ const remove=document.createElement('button');remove.type='button';remove.className='mini delete';remove.textContent='Eliminar';remove.disabled=!sessionReady();remove.onclick=()=>openDeleteDialog(c);
+ edit.disabled=!sessionReady();
+ buttons.append(edit,rename,copy,view,remove);item.append(avatar,info,buttons);container.append(item);
  }
 }
 async function load(){
- notify('Cargando historial…');
+ const target=$('registryStatus');
+ const setStatus=(message,kind='')=>{target.textContent=message;target.className='registry-status'+(kind?' '+kind:'');};
+ setStatus('Consultando páginas registradas…');
  try{
-  const r=await api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500');
-  const data=await r.json();if(!Array.isArray(data))throw Error('Respuesta inesperada de Supabase');
-  cards=data;render();preview();notify(cards.length+' negocio(s) registrado(s).');
+  let adminRows=null,adminError=null;
+  if(sessionReady()){
+   try{
+    const resp=await api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500');
+    adminRows=await resp.json();
+    if(!Array.isArray(adminRows))throw Error('Respuesta inválida de Supabase.');
+   }catch(e){adminError=e;}
+  }
+  let publicRows=[];
+  if(!Array.isArray(adminRows)||adminRows.length===0){
+   const resp=await fetch(BASE+'/rest/v1/bts_nfc_cards?is_active=eq.true&select=*&order=created_at.desc&limit=500',{
+    headers:{apikey:KEY,Accept:'application/json'},cache:'no-store'
+   });
+   if(resp.ok){
+    const data=await resp.json();
+    if(Array.isArray(data))publicRows=data;
+   }else if(!Array.isArray(adminRows))throw adminError||Error('Error '+resp.status+' recuperando tarjetas.');
+  }
+  const unique=new Map();
+  for(const card of [...publicRows,...(Array.isArray(adminRows)?adminRows:[])])unique.set(card.id,card);
+  cards=[...unique.values()];
+  render();preview();
+  if(publicRows.length&&(!Array.isArray(adminRows)||adminRows.length===0))setStatus('Se recuperaron '+publicRows.length+' página(s) activa(s). Para ver las inactivas, necesitás una sesión de administrador válida.','warning');
+  else setStatus(cards.length===1?'1 página registrada. Seleccioná Editar para modificarla.':cards.length+' páginas registradas.');
   return true;
  }catch(e){
-  cards=[];render();
-  const p=document.createElement('p');p.className='empty';
-  p.textContent='No se pudo cargar el historial: '+e.message+'. Usá «Actualizar» para intentar de nuevo.';
-  $('cards').replaceChildren(p);
-  fail('No se pudo cargar el historial: '+e.message);
+  cards=[];render();preview();
+  $('cards').textContent='No se pudo cargar el historial. Presioná Actualizar para intentar nuevamente.';
+  setStatus('Error al consultar tarjetas: '+e.message,'error');fail('No se pudo cargar el historial: '+e.message);
   return false;
  }
 }
@@ -311,15 +363,19 @@ async function save(e){
  if(!links.length){fail('Agregá por lo menos un enlace social.');return;}
  const data={business_name:$('name').value.trim(),tagline:$('tagline').value.trim(),avatar_url:$('avatar').value.trim(),background_url:$('background').value.trim(),background_color:$('bgColor').value,accent_color:$('color').value,links,is_active:$('active').checked};
  if(data.avatar_url&&!safeUrl(data.avatar_url)){fail('La foto no es válida.');return;}
- if(!editing)data.slug=slug;
+ data.slug=slug;
  const btn=$('save');btn.disabled=true;notify('Guardando…');
  try{
   // La URL es única: no subimos fotos ni intentamos INSERT cuando ya existe.
-  if(!editing){
+  const current=editing?cards.find(c=>c.id===editing):null;
+  if(editing&&current&&current.slug!==slug){
+   if(!window.confirm('Cambiar la URL de '+current.business_name+'? La dirección anterior /nfc/?slug='+current.slug+' dejará de funcionar. Tendrás que reprogramar las tarjetas físicas con el enlace nuevo.')){notify('Cambio de URL cancelado.');return;}
+  }
+  if(!editing||(current&&current.slug!==slug)){
    const duplicate=await getExistingBySlug(slug);
-   if(duplicate){
+   if(duplicate&&duplicate.id!==editing){
     revealConflict(duplicate);
-    notify('Este enlace ya pertenece a una página NFC. Elegí «Editar página existente» o usá otro nombre.',true);
+    notify('Esta URL ya está asignada a otra página. Seleccioná otro identificador.',true);
     return;
    }
   }
@@ -353,20 +409,47 @@ for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syn
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
 $('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
+let deletingCard=null;
+ function openDeleteDialog(card){
+  if(!sessionReady()){fail('Iniciá sesión nuevamente para eliminar páginas.');return;}
+  deletingCard=card;
+  $('deleteDialogText').textContent='Vas a eliminar «'+card.business_name+'» y la URL /nfc/?slug='+card.slug+'. El enlace dejará de funcionar, incluso si está grabado en una tarjeta NFC. Esta acción no puede deshacerse.';
+  $('confirmDeleteSlug').value='';$('confirmDelete').disabled=true;
+  $('deleteDialog').showModal();$('confirmDeleteSlug').focus();
+ }
+ $('confirmDeleteSlug').addEventListener('input',()=>{$('confirmDelete').disabled=!(deletingCard&&$('confirmDeleteSlug').value.trim()===deletingCard.slug);});
+ $('cancelDelete').addEventListener('click',()=>{$('deleteDialog').close();deletingCard=null;});
+ $('deleteDialog').addEventListener('close',()=>{deletingCard=null;});
+ $('confirmDelete').addEventListener('click',async()=>{
+  const c=deletingCard;
+  if(!c||$('confirmDeleteSlug').value.trim()!==c.slug)return;
+  const btn=$('confirmDelete');btn.disabled=true;btn.textContent='Eliminando…';
+  try{
+   const resp=await api('/rest/v1/bts_nfc_cards?id=eq.'+encodeURIComponent(c.id),{
+    method:'DELETE',headers:{Prefer:'return=representation',Accept:'application/json'}
+   });
+   const rows=await resp.json();
+   if(!Array.isArray(rows)||!rows.some(x=>x.id===c.id))throw Error('No se confirmó la eliminación. Revisá tus permisos.');
+   $('deleteDialog').close();
+   if(editing===c.id)reset();
+   await load();notify('Página eliminada: '+c.business_name+'. La URL anterior ya no está disponible.');
+  }catch(e){fail('No se pudo eliminar: '+e.message);}
+  finally{btn.textContent='Eliminar definitivamente';btn.disabled=false;}
+ });
 async function init(){
  reset();
- if(!sessionReady()){
-  $('cards').textContent='Iniciá sesión en /admin/ para recuperar el historial de tarjetas.';
-  fail('Tu sesión no está disponible en este módulo. Volvé a ingresar al dashboard.');
-  return;
- }
- // Mostrar el historial primero, sin bloquearlo por una consulta de roles.
  const loaded=await load();
  if(!loaded)return;
+ if(!sessionReady()){
+  $('save').disabled=true;
+  $('registryStatus').textContent+=' Para editar o eliminar negocios, iniciá sesión en el dashboard.';
+  return;
+ }
  try{await verifyAdmin();}
  catch(e){
   fail('No se pudo validar tu acceso administrativo: '+e.message);
   $('save').disabled=true;
+  for(const button of $('cards').querySelectorAll('button'))if(['Editar','Editar URL','Eliminar'].includes(button.textContent))button.disabled=true;
  }
 }
 init();
