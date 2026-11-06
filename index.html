@@ -630,8 +630,10 @@ async function writeToSupabase(table,row){
   }
 }
 function trackEvent(kind,placement){
-  if(!supabaseReady())return;
-  writeToSupabase('bts_events',{kind,placement}).catch(e=>console.debug('Métrica no enviada',e.message));
+  // GA4 tracks this without exposing private credentials.
+  if(typeof window.BTSMetric==='function')window.BTSMetric(kind);
+  // Supabase keeps its independent event audit when available.
+  if(supabaseReady())writeToSupabase('bts_events',{kind,placement}).catch(e=>console.debug('Métrica no enviada',e.message));
 }
 function getQuotePayload(){
   const q=id=>$('#'+id)?.value?.trim()||'';
