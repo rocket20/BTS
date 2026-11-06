@@ -42,6 +42,10 @@ async function updateGoogleMetrics(){
   if(!body.configured)throw Error(body.error||'Falta autorizar GA4');
   googleReport=body;googleReportStatus='ready';googleError='';
  }catch(e){googleReport=null;googleReportStatus='pending';googleError=e?.message||'No se pudieron obtener métricas.';}
+ const gaNote=document.getElementById('gaLiveNotice');
+ if(gaNote)gaNote.textContent=googleReportStatus==='ready'?
+  'Datos reales de Google Analytics 4: propiedad 562792478 · últimos 30 días.':
+  'Reportes GA4 pendientes: '+(googleError||'Falta autorizar la lectura de datos desde Supabase')+'. El seguimiento G-LY7K0LHLTC ya está configurado en la web.';
  renderKpis();renderChart();status();
 }
 
