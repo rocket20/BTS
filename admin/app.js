@@ -38,7 +38,7 @@ function localGet(key,fallback){try{const v=localStorage.getItem(key);return v?J
 function localSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{notify('No hay espacio disponible para este borrador. Exportá el JSON para respaldarlo.');return false;}}
 function normalize(x){const d=copy(blank);if(!x||typeof x!=='object')return d;d.brand={...d.brand,...(x.brand||{})};for(const k of ['events','brands','packages','services','testimonials'])d[k]=Array.isArray(x[k])?x[k]:[];d.updatedAt=x.updatedAt||null;return d;}
 function storeDraft(){localSet(LS_DRAFT,content);notify('Borrador guardado en este navegador. Usá Publicar en GitHub para hacerlo visible a todos.');}
-async function reloadLeads(){leads=await BTSLeads.load();renderOverview();renderLeads();}
+async function reloadLeads(){leads=await BTSLeads.load();renderOverview();renderLeads();await updateGoogleMetrics();}
 function storeLeads(){renderOverview();renderLeads();}
 function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc'){const frame=$('#btsNfcModuleFrame');if(frame&&!frame.src)frame.src=frame.dataset.src;}window.BTSAdminAudit?.open(name);}
 function status(){const configured=true,connected=!!window.BTSLeads?.invokePublisher;$('#modePill').textContent=connected?'● SUPABASE CONFIGURADO':'● MODO BORRADOR';$('#modePill').style.color=connected?'#72daa5':'';$('#connectionLabel').textContent=connected?'Supabase protege la publicación':'Modo de preparación';$('#repoStatus').textContent=connected?'Verificar función':'No conectado';$('#cmsStatus').textContent=connected?'Pendiente de prueba':'Pendiente';$('#gaStatus').textContent=googleReportStatus==='ready'?'GA4 conectado':content.brand.analyticsId?'ID configurado · informes pendientes':'Sin ID';$('#navLeadCount').textContent=leads.filter(l=>l.status==='Pendiente').length;}
@@ -193,6 +193,6 @@ $('#resetDraft').addEventListener('click',async()=>{if(!confirm('¿Descartar los
 $('#loadPublished').addEventListener('click',loadPublished);
 }
 async function init(){repo=localGet(LS_REPO,repo);if(!repo.owner&&!repo.name)repo={owner:'rocket20',name:'BTS',branch:'main'};leads=[];const draft=localGet(LS_DRAFT,null);if(draft){content=normalize(draft);}else{try{const r=await fetch('../data/bts-content.json?t='+Date.now(),{cache:'no-store'});if(r.ok)content=normalize(await r.json());}catch{content=normalize(blank);}}
-bind();$('#todayLabel').textContent=new Intl.DateTimeFormat('es-NI',{dateStyle:'long'}).format(new Date());renderAll();fillRepo();await BTSLeads.bootstrap(reloadLeads);await updateGoogleMetrics();}
+bind();$('#todayLabel').textContent=new Intl.DateTimeFormat('es-NI',{dateStyle:'long'}).format(new Date());renderAll();fillRepo();await BTSLeads.bootstrap(reloadLeads);}
 init();
 })();
