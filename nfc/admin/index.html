@@ -10,7 +10,7 @@ h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin
 @media(max-width:960px){.layout{grid-template-columns:1fr}.shell{padding:18px 14px 50px}.top{align-items:flex-start}.actions{flex-wrap:wrap}.panel{padding:18px}.cards{max-height:none}}@media(max-width:430px){.link-row{grid-template-columns:86px 1fr 32px}.cols{grid-template-columns:1fr 94px}.btn{padding:10px 12px}.card{align-items:flex-start;flex-direction:column}.card-buttons{width:100%;justify-content:flex-start}}
 </style></head>
 <body><main class="shell">
-<header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/#panel-bts">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
+<header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
 <h1>Tarjetas digitales NFC.</h1><p class="hint">Administrá las páginas y redes sociales de tus clientes desde el mismo dominio, sin publicarlas en el sitio corporativo.</p>
 <div id="notice" class="notice" role="status"></div>
 <div class="layout"><section class="panel"><div class="linkhead"><h2 style="flex:1">Negocios registrados</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><input type="search" class="search" id="search" placeholder="Buscar negocio o enlace" aria-label="Buscar negocios"><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Los enlaces NFC funcionan independientemente de la navegación de la web BTS Studio. Usá <code>Copiar link</code> para programar la tarjeta física.</div></section>
@@ -31,12 +31,12 @@ h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co';
 const KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const ROOT='https://www.btsstudio.net/nfc/?slug=';
-const ADMIN_ROOT='https://www.btsstudio.net/';
+const ADMIN_ROOT='https://www.btsstudio.net/admin/';
 const types=['instagram','facebook','tiktok','whatsapp','website','youtube','linkedin','x','telegram','maps','other'];
 const typeNames={instagram:'Instagram',facebook:'Facebook',tiktok:'TikTok',whatsapp:'WhatsApp',website:'Web',youtube:'YouTube',linkedin:'LinkedIn',x:'X',telegram:'Telegram',maps:'Google Maps',other:'Otro'};
 const $=id=>document.getElementById(id),notify=(s,error=false)=>{$('notice').textContent=s||'';$('notice').classList.toggle('error',error);};
 let cards=[],editing=null,session;
-try{session=JSON.parse(sessionStorage.getItem('bts_panel_session_v1')||'null')}catch{session=null}
+try{session=JSON.parse(sessionStorage.getItem('bts-admin-sb-session-v1')||'null')}catch{session=null}
 function fail(s){notify(s,true)}
 const safeUrl=v=>{try{const u=new URL(String(v||''));return ['https:','http:'].includes(u.protocol)?u.href:'';}catch{return '';}}
 const normalized=v=>String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
@@ -46,10 +46,10 @@ async function refreshSession(){
  const resp=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
  const data=await resp.json();if(!resp.ok||!data.access_token)throw Error('Volvé a iniciar sesión en el dashboard.');
  session={...session,...data,expires_at:data.expires_at||Math.floor(Date.now()/1000)+(data.expires_in||3600)};
- sessionStorage.setItem('bts_panel_session_v1',JSON.stringify(session));
+ sessionStorage.setItem('bts-admin-sb-session-v1',JSON.stringify(session));
 }
 async function api(endpoint,options={},retry=true){
- if(!sessionReady())throw Error('Ingresá primero al dashboard de BTS Studio.');
+ if(!sessionReady())throw Error('Iniciá sesión en el dashboard /admin/ de BTS Studio.');
  if((session.expires_at||0)*1000-Date.now()<60000)await refreshSession();
  const res=await fetch(BASE+endpoint,{...options,headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}});
  if(res.status===401&&retry){await refreshSession();return api(endpoint,options,false)}
@@ -130,7 +130,7 @@ $('slug').addEventListener('input',preview);$('add').addEventListener('click',()
 $('search').addEventListener('input',render);$('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
 async function init(){
  reset();
- if(!sessionReady()){fail('Iniciá sesión en el dashboard BTS Studio y luego ingresá nuevamente a este módulo.');return;}
+ if(!sessionReady()){fail('Iniciá sesión en /admin/ y luego abrí Tarjetas NFC desde el menú lateral.');return;}
  try{await verifyAdmin();await load();}catch(e){fail('Acceso restringido: '+e.message)}
 }
 init();
