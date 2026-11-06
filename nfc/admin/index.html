@@ -9,6 +9,7 @@ if(window.self !== window.top || new URLSearchParams(location.search).get('embed
 .shell{max-width:1240px;margin:0 auto;padding:28px 23px 60px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:4px 0 25px;border-bottom:1px solid var(--line)}.brand b{display:block;font-size:17px;letter-spacing:-.04em}.brand small{color:var(--muted);font-size:11px;letter-spacing:.12em}.actions{display:flex;gap:10px;align-items:center}
 .btn{border:1px solid var(--line);background:#24242d;color:white;border-radius:11px;padding:11px 17px;font-weight:700}.btn.primary{background:var(--red);border-color:var(--red)}.btn.soft{background:transparent}.btn:disabled{opacity:.55;cursor:wait}
 h1{font-size:clamp(27px,4vw,37px);line-height:1.08;letter-spacing:-.055em;margin:31px 0 8px}.hint{color:var(--muted);margin:0 0 24px}.layout{display:grid;grid-template-columns:1fr 415px;gap:20px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:23px}.panel h2{font-size:19px;letter-spacing:-.03em;margin:0 0 19px}
+.slug-conflict{border:1px solid #8a4a45;background:#28191b;padding:15px;border-radius:13px;margin:14px 0;display:grid;gap:9px}.slug-conflict[hidden]{display:none!important}.slug-conflict strong{font-size:14px;color:#ffd3b7}.slug-conflict p{font-size:12px;color:#d7c9cb;line-height:1.5;margin:0}.slug-conflict-actions{display:flex;gap:8px;flex-wrap:wrap}.slug-conflict-actions .mini{border-color:#76525b}
 .history-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-6px 0 16px}.history-intro p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}.history-count{flex:none;border:1px solid #43303a;padding:5px 10px;border-radius:20px;color:#f7b3c4;background:#281922;font-size:11px;font-weight:750}
 .history-group{display:flex;align-items:center;gap:10px;margin:19px 0 8px;color:#aaa9b6;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.history-group::after{content:"";flex:1;height:1px;background:#34303c}
 .history-entry{display:flex;align-items:center;justify-content:space-between;gap:13px;padding:16px 12px;border:1px solid #36333d;background:#111117;border-radius:13px}.history-entry+.history-entry{margin-top:8px}.history-avatar{flex:none;display:grid;place-items:center;width:43px;height:43px;border-radius:12px;font-size:17px;font-weight:800;color:#fff;background:#532637;background-size:cover;background-position:center}.history-info{flex:1;min-width:0}.history-info b{display:block;font-size:14px;overflow-wrap:anywhere;line-height:1.35}.history-info small{display:block;color:#aaa7b3;font-size:11px;margin-top:4px;overflow-wrap:anywhere}.history-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:8px;font-size:10px;color:#90909c}
@@ -45,6 +46,11 @@ html.nfc-embedded .layout{gap:16px}
 <div class="cols"><div class="field"><label>Color de marca</label><input id="color" type="color" class="color" value="#ff0037"></div><div class="field"><label>Visibilidad</label><label class="switch"><input type="checkbox" id="active" checked> Activa</label></div></div>
 <div class="sectionTitle"><b>Botones de redes sociales</b><button type="button" class="mini" id="add">+ Botón</button></div>
 <div id="links"></div>
+<div id="slugConflict" class="slug-conflict" hidden aria-live="polite">
+  <strong>Esta página NFC ya existe</strong>
+  <p id="slugConflictText"></p>
+  <div class="slug-conflict-actions"><button type="button" class="mini" id="editExisting">Editar página existente</button><button type="button" class="mini" id="copyExisting">Copiar URL actual</button></div>
+</div>
 <div class="footerBtns"><button class="btn primary" id="save" type="submit">Guardar y generar enlace</button><button class="btn" type="button" id="reset">Nuevo negocio</button></div>
 </form>
 <div id="linkOutput" class="generated-link" hidden aria-live="polite">
@@ -92,7 +98,7 @@ async function api(endpoint,options={},retry=true){
  if((session.expires_at||0)*1000-Date.now()<60000)await refreshSession();
  const res=await fetch(BASE+endpoint,{...options,headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,...(options.headers||{})}});
  if(res.status===401&&retry){await refreshSession();return api(endpoint,options,false)}
- if(!res.ok){let v={};try{v=await res.json()}catch{};throw Error(v.message||v.error_description||'No se completó la operación ('+res.status+').');}
+ if(!res.ok){let v={};try{v=await res.json()}catch{};const err=new Error(v.message||v.error_description||'No se completó la operación ('+res.status+').');err.code=v.code||null;err.status=res.status;throw err;}
  return res;
 }
 async function verifyAdmin(){
@@ -182,6 +188,30 @@ for(const [id,field] of [['clearAvatar','avatar'],['clearBackground','background
  $(id).addEventListener('click',()=>{if(previewBlobs[field])URL.revokeObjectURL(previewBlobs[field]);previewBlobs[field]=null;$(field).value='';$(field+'File').value='';imageThumb(field,'');syncLivePreview();});
 }
 $('copyGenerated').addEventListener('click',async()=>{const url=$('generatedUrl').value;if(!url||!isPublished())return;try{await navigator.clipboard.writeText(url);notify('Enlace publicado copiado: '+url)}catch{notify('Copiá este enlace: '+url)}});
+let existingConflict=null;
+function clearConflict(){existingConflict=null;$('slugConflict').hidden=true;$('slugConflictText').textContent='';}
+function revealConflict(c){
+ existingConflict=c;
+ $('slugConflict').hidden=false;
+ $('slugConflictText').textContent='La URL «'+ROOT+c.slug+'» ya está asignada a «'+c.business_name+'». No se creó otra tarjeta. Podés editar la página existente sin cambiar su dirección.';
+ $('slugConflict').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function getExistingBySlug(slug){
+ const r=await api('/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&select=*&limit=1');
+ const result=await r.json();
+ return Array.isArray(result)?(result[0]||null):null;
+}
+$('editExisting').addEventListener('click',()=>{
+ if(!existingConflict)return;
+ showCard(existingConflict);
+ notify('Página existente abierta. Editá sus datos y presioná Guardar cambios; la URL se mantiene.');
+});
+$('copyExisting').addEventListener('click',async()=>{
+ if(!existingConflict||!existingConflict.is_active)return;
+ const url=ROOT+existingConflict.slug;
+ try{await navigator.clipboard.writeText(url);notify('Enlace NFC existente copiado: '+url);}
+ catch{notify('Copiá este enlace: '+url);}
+});
 function isPublished(){const slug=normalized($('slug').value);return Boolean(slug&&editing&&cards.some(c=>c.id===editing&&c.slug===slug&&c.is_active));}
 function preview(){
  const slug=normalized($('slug').value),published=isPublished()&&$('active').checked;
@@ -197,12 +227,14 @@ function preview(){
 }
 function clearPreviewBlobs(){for(const key of ['avatar','background']){if(previewBlobs[key])URL.revokeObjectURL(previewBlobs[key]);previewBlobs[key]=null;}}
 function reset(){
+ clearConflict();
  clearPreviewBlobs();
  editing=null;$('editor').reset();$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
 }
 function showCard(c){
+ clearConflict();
  clearPreviewBlobs();
  editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=true;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';$('active').checked=c.is_active;
  for(const id of ['avatar','background']){$(id+'File').value='';imageThumb(id,$(id).value);}
@@ -252,12 +284,20 @@ function render(){
  }
 }
 async function load(){
- notify('Cargando negocios…');
+ notify('Cargando historial…');
  try{
   const r=await api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500');
-  cards=await r.json();if(!Array.isArray(cards))throw Error('Respuesta inválida');
-  render();preview();notify(cards.length+' negocio(s) cargados.');
- }catch(e){fail('No se pudo cargar: '+e.message+'. Comprobá que se haya ejecutado supabase/bts-nfc-cards.sql en Supabase.');}
+  const data=await r.json();if(!Array.isArray(data))throw Error('Respuesta inesperada de Supabase');
+  cards=data;render();preview();notify(cards.length+' negocio(s) registrado(s).');
+  return true;
+ }catch(e){
+  cards=[];render();
+  const p=document.createElement('p');p.className='empty';
+  p.textContent='No se pudo cargar el historial: '+e.message+'. Usá «Actualizar» para intentar de nuevo.';
+  $('cards').replaceChildren(p);
+  fail('No se pudo cargar el historial: '+e.message);
+  return false;
+ }
 }
 async function save(e){
  e.preventDefault();
@@ -274,6 +314,16 @@ async function save(e){
  if(!editing)data.slug=slug;
  const btn=$('save');btn.disabled=true;notify('Guardando…');
  try{
+  // La URL es única: no subimos fotos ni intentamos INSERT cuando ya existe.
+  if(!editing){
+   const duplicate=await getExistingBySlug(slug);
+   if(duplicate){
+    revealConflict(duplicate);
+    notify('Este enlace ya pertenece a una página NFC. Elegí «Editar página existente» o usá otro nombre.',true);
+    return;
+   }
+  }
+  clearConflict();
   const selectedAvatar=$('avatarFile').files[0],selectedBackground=$('backgroundFile').files[0];
   if(selectedAvatar)data.avatar_url=await uploadImage(selectedAvatar,'perfil');
   if(selectedBackground)data.background_url=await uploadImage(selectedBackground,'fondo');
@@ -286,19 +336,38 @@ async function save(e){
     if(saved.is_active){$('linkOutput').scrollIntoView({behavior:'smooth',block:'center'});}
   }else{reset();}
   notify(data.is_active?'Página guardada. Copiá la URL final para usarla en tu activador NFC.':'Negocio guardado como inactivo. Activá su página cuando esté lista.');
- }catch(error){fail('No se pudo guardar: '+error.message)}
+ }catch(error){
+  if(!editing&&(error.code==='23505'||/bts_nfc_cards_slug_key|duplicate key/i.test(error.message))){
+   try{
+    const duplicate=await getExistingBySlug(slug);
+    if(duplicate){revealConflict(duplicate);notify('Esa URL ya existe. Abrí la página existente para editarla.',true);}
+    else fail('Ese identificador ya está utilizado. Cambiá el nombre del enlace.');
+   }catch(e){fail('Esa URL ya existe. Actualizá el historial antes de continuar: '+e.message);}
+  }else fail('No se pudo guardar: '+error.message);
+ }
  finally{btn.disabled=false;}
 }
 $('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);}preview();});
-$('slug').addEventListener('input',preview);
+$('slug').addEventListener('input',()=>{clearConflict();preview();});
 for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syncLivePreview);
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
 $('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
 async function init(){
  reset();
- if(!sessionReady()){fail('Iniciá sesión en /admin/ y luego abrí Tarjetas NFC desde el menú lateral.');return;}
- try{await verifyAdmin();await load();}catch(e){fail('Acceso restringido: '+e.message)}
+ if(!sessionReady()){
+  $('cards').textContent='Iniciá sesión en /admin/ para recuperar el historial de tarjetas.';
+  fail('Tu sesión no está disponible en este módulo. Volvé a ingresar al dashboard.');
+  return;
+ }
+ // Mostrar el historial primero, sin bloquearlo por una consulta de roles.
+ const loaded=await load();
+ if(!loaded)return;
+ try{await verifyAdmin();}
+ catch(e){
+  fail('No se pudo validar tu acceso administrativo: '+e.message);
+  $('save').disabled=true;
+ }
 }
 init();
 })();
