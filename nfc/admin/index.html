@@ -145,9 +145,9 @@ function imageThumb(field,url){
 function selectImage(field,file){
  if(!file)return;
  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4*1024*1024){fail('Elegí una imagen PNG, JPG o WEBP de hasta 4 MB.');$(field+'File').value='';return;}
- const temporary=URL.createObjectURL(file);imageThumb(field,temporary);
- const previewEl=$(field==='avatar'?'avatarThumb':'backgroundThumb');
- previewEl.addEventListener('load',()=>URL.revokeObjectURL(temporary),{once:true});
+ if(previewBlobs[field])URL.revokeObjectURL(previewBlobs[field]);
+ previewBlobs[field]=URL.createObjectURL(file);
+ imageThumb(field,previewBlobs[field]);syncLivePreview();
  notify('Imagen seleccionada. Se subirá cuando guardés el negocio.');
 }
 async function uploadImage(file,kind){
@@ -163,16 +163,30 @@ async function uploadImage(file,kind){
 $('avatarFile').addEventListener('change',e=>selectImage('avatar',e.target.files[0]));
 $('backgroundFile').addEventListener('change',e=>selectImage('background',e.target.files[0]));
 for(const [id,field] of [['clearAvatar','avatar'],['clearBackground','background']]){
- $(id).addEventListener('click',()=>{$(field).value='';$(field+'File').value='';imageThumb(field,'');});
+ $(id).addEventListener('click',()=>{if(previewBlobs[field])URL.revokeObjectURL(previewBlobs[field]);previewBlobs[field]=null;$(field).value='';$(field+'File').value='';imageThumb(field,'');syncLivePreview();});
 }
-$('copyGenerated').addEventListener('click',async()=>{const url=$('generatedUrl').value;if(!url)return;try{await navigator.clipboard.writeText(url);notify('Enlace copiado: '+url)}catch{notify('Copiá este enlace: '+url)}});
-function preview(){const slug=normalized($('slug').value);const url=slug?ROOT+slug:'';$('urlPreview').textContent=slug?'URL: '+url:'';$('generatedUrl').value=url;$('openGenerated').href=url||'#';$('openGenerated').style.pointerEvents=url?'':'none';}
+$('copyGenerated').addEventListener('click',async()=>{const url=$('generatedUrl').value;if(!url||!isPublished())return;try{await navigator.clipboard.writeText(url);notify('Enlace publicado copiado: '+url)}catch{notify('Copiá este enlace: '+url)}});
+function isPublished(){const slug=normalized($('slug').value);return Boolean(slug&&cards.some(c=>c.slug===slug&&c.is_active&&(editing===c.id||!editing)));}
+function preview(){
+ const slug=normalized($('slug').value);const url=slug?ROOT+slug:'',published=isPublished();
+ $('urlPreview').textContent=slug?'URL sugerida: '+url:'';
+ $('generatedUrl').value=url;
+ $('copyGenerated').disabled=!published;
+ $('openGenerated').href=published?url:'#';
+ $('openGenerated').style.pointerEvents=published?'':'none';
+ $('openGenerated').style.opacity=published?'1':'.45';
+ $('nfcLinkState').textContent=published?'Página publicada. Copiá este enlace para programar la tarjeta NFC.':'Enlace de vista previa. Guardá y activá el negocio antes de compartirlo.';
+ syncLivePreview();
+}
+function clearPreviewBlobs(){for(const key of ['avatar','background']){if(previewBlobs[key])URL.revokeObjectURL(previewBlobs[key]);previewBlobs[key]=null;}}
 function reset(){
+ clearPreviewBlobs();
  editing=null;$('editor').reset();$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar negocio';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
 }
 function showCard(c){
+ clearPreviewBlobs();
  editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=true;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';$('active').checked=c.is_active;
  for(const id of ['avatar','background']){$(id+'File').value='';imageThumb(id,$(id).value);}
  $('links').replaceChildren();(Array.isArray(c.links)?c.links:[]).forEach(l=>row(l.type,l.url));
@@ -200,7 +214,7 @@ async function load(){
  try{
   const r=await api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500');
   cards=await r.json();if(!Array.isArray(cards))throw Error('Respuesta inválida');
-  render();notify(cards.length+' negocio(s) cargados.');
+  render();preview();notify(cards.length+' negocio(s) cargados.');
  }catch(e){fail('No se pudo cargar: '+e.message+'. Comprobá que se haya ejecutado supabase/bts-nfc-cards.sql en Supabase.');}
 }
 async function save(e){
@@ -227,8 +241,11 @@ async function save(e){
  }catch(error){fail('No se pudo guardar: '+error.message)}
  finally{btn.disabled=false;}
 }
-$('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);preview();}});
-$('slug').addEventListener('input',preview);$('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
+$('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);}preview();});
+$('slug').addEventListener('input',preview);
+for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syncLivePreview);
+$('active').addEventListener('change',preview);
+$('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
 $('search').addEventListener('input',render);$('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
 async function init(){
  reset();
