@@ -54,7 +54,7 @@ html.nfc-embedded .layout{gap:16px}
   <p id="slugConflictText"></p>
   <div class="slug-conflict-actions"><button type="button" class="mini" id="editExisting">Editar página existente</button><button type="button" class="mini" id="copyExisting">Copiar URL actual</button></div>
 </div>
-<div class="footerBtns"><button class="btn primary" id="save" type="submit">Guardar y generar enlace</button><button class="btn" type="button" id="reset">Nuevo negocio</button></div>
+<div class="footerBtns"><button class="btn primary" id="save" type="submit">Guardar y generar enlace</button><button class="btn" type="button" id="resetEditor">Nuevo negocio</button></div>
 </form>
 <div id="linkOutput" class="generated-link" hidden aria-live="polite">
   <div class="generated-title"><span class="generated-check" aria-hidden="true">✓</span><div><strong>URL del negocio lista</strong><small>Copiá esta dirección exacta en tu activador NFC.</small></div></div>
@@ -265,7 +265,7 @@ function clearPreviewBlobs(){for(const key of ['avatar','background']){if(previe
 function reset(){
  clearConflict();
  clearPreviewBlobs();
- editing=null;$('editor').reset();$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
+ editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
 }
@@ -441,7 +441,7 @@ $('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized(
 $('slug').addEventListener('input',()=>{clearConflict();preview();});
 for(const id of ['tagline','color','bgColor'])$(id).addEventListener('input',syncLivePreview);
 $('active').addEventListener('change',preview);
-$('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('reset').addEventListener('click',reset);
+$('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('resetEditor').addEventListener('click',reset);
 $('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
 let deletingCard=null;
  function openDeleteDialog(card){
