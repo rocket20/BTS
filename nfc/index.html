@@ -141,13 +141,14 @@ function buildExecutiveCard(company,executive){
  const extra=Array.isArray(executive.extra_links)?executive.extra_links:[];
  const socials=[{type:'whatsapp',label:'WhatsApp de '+executive.full_name,url:'https://wa.me/'+number},...extra,...companyLinks].slice(0,15);
  return {...company,slug:company.slug,business_name:executive.full_name,tagline:executive.job_title?executive.job_title+' · '+company.business_name:company.business_name,
- avatar_url:executive.avatar_url||company.avatar_url,links:socials,theme_options:{...opt,role:executive.job_title||opt.role||'',phone:executive.phone_number||executive.whatsapp_number,email:executive.email||'',tags:opt.tags||''}};
+ avatar_url:executive.avatar_url||'',is_executive:true,links:socials,theme_options:{...opt,role:executive.job_title||opt.role||'',phone:executive.phone_number||executive.whatsapp_number,email:executive.email||'',tags:opt.tags||''}};
 }
 function applyCard(c){
  if(!c||typeof c!=='object')return;
  const template=ALLOWED.includes(c.template_id)?c.template_id:'classic';
  const opt=c.theme_options&&typeof c.theme_options==='object'&&!Array.isArray(c.theme_options)?c.theme_options:{};
  document.documentElement.dataset.nfcTemplate=template;
+ document.documentElement.dataset.nfcExecutive=c.is_executive?'true':'false';
  document.documentElement.dataset.nfcShape=['pill','square','soft'].includes(opt.shape)?opt.shape:'soft';
  document.documentElement.dataset.nfcFont=['modern','serif','editorial'].includes(opt.font)?opt.font:'modern';
  document.documentElement.dataset.nfcAlign=['center','left'].includes(opt.align)?opt.align:'left';
@@ -173,8 +174,22 @@ function applyCard(c){
  $('name').textContent=String(c.business_name||'Negocio').slice(0,90);
  $('tagline').textContent=String(c.tagline||'').slice(0,180);
  $('about').textContent=String(c.tagline||'Comunicate con nosotros y conocé más de nuestros servicios.').slice(0,180);
- const avatar=safeUrl(c.avatar_url),cont=$('avatar');cont.replaceChildren();cont.hidden=!avatar;
- if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='';img.onerror=()=>{cont.hidden=true};cont.append(img);}
+ const rawAvatar=String(c.avatar_url||'');
+ const draftImage=previewMode&&rawAvatar.length<400000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(rawAvatar);
+ const avatar=draftImage?rawAvatar:safeUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true;
+ cont.replaceChildren();cont.hidden=!avatar&&!isExecutive;
+ function showInitials(){
+  cont.replaceChildren();cont.hidden=!isExecutive;
+  if(isExecutive){
+   const parts=String(c.business_name||'Ejecutivo').trim().split(/\s+/).filter(Boolean);
+   const initials=parts.slice(0,2).map(part=>part[0]?.toUpperCase()||'').join('')||'EX';
+   const fallback=document.createElement('span');fallback.textContent=initials;cont.append(fallback);
+  }
+ }
+ if(avatar){
+  const img=document.createElement('img');img.src=avatar;img.alt=String(c.business_name||'Perfil');
+  img.onerror=showInitials;cont.append(img);
+ }else if(isExecutive){showInitials();}
  const links=Array.isArray(c.links)?c.links:[];
  const nav=$('links'),social=$('socials'),featured=$('featured');nav.replaceChildren();social.replaceChildren();featured.replaceChildren();
  const socialTypes=new Set(['instagram','facebook','tiktok','whatsapp','youtube','linkedin','x','telegram','pinterest','spotify','threads','snapchat','behance','github']);

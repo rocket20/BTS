@@ -24,6 +24,7 @@
 @media(max-width:680px){.wrapper{padding:16px 13px 45px}.top{align-items:flex-start}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:13px}.metric strong{font-size:21px}.panel{padding:15px}.employee{grid-template-columns:38px minmax(0,1fr)}.employee-actions{grid-column:2;justify-content:flex-start}.toolbar{width:100%}.toolbar input{width:100%}.formgrid{grid-template-columns:1fr}.formgrid .span2{grid-column:1}.hero{padding:18px 0}.company-picker{width:100%}}
 </style>
 <link rel="stylesheet" href="./preview.css?v=20261109a">
+<link rel="stylesheet" href="./portraits.css?v=20261109a">
 </head>
 <body><main class="wrapper">
 <header class="top"><div class="brand">BTS <span>STUDIO</span> <small style="font-size:11px;letter-spacing:0;color:#a3a3ae;font-weight:600">/ EMPRESAS NFC</small></div><span class="top-context">Gestión corporativa · BTS Studio</span></header>
@@ -84,7 +85,23 @@
     <label>WhatsApp individual *<input id="whatsapp" required inputmode="tel" placeholder="+505 8888 8888"></label>
     <label>Teléfono de trabajo<input id="phone" inputmode="tel" placeholder="+505 8888 8888"></label>
     <label class="span2">Correo corporativo<input id="email" type="email" maxlength="150" placeholder="maria@empresa.com"></label>
-    <label class="span2">URL foto de perfil (opcional)<input id="avatar" type="url" maxlength="1000" placeholder="https://..."></label>
+    <div class="span2" id="executivePortrait">
+ <div class="portrait-circle" id="portraitCircle" aria-label="Vista previa de retrato ejecutivo"><span id="portraitInitials">EX</span><img id="portraitExisting" src="" alt="" hidden><canvas id="portraitCanvas" width="256" height="256" hidden></canvas></div>
+ <div class="portrait-details">
+  <strong style="font-size:13px">Fotografía del ejecutivo</strong>
+  <span class="portrait-hint">Se mostrará en el perfil NFC de este ejecutivo, sin cambiar el logo ni el diseño de la empresa. Imagen cuadrada, retrato centrado y ajustable.</span>
+  <div class="portrait-actions"><label class="portrait-select" for="portraitFile">Elegir fotografía</label><input class="portrait-file" type="file" id="portraitFile" accept="image/jpeg,image/png,image/webp"><button type="button" class="btn small" id="portraitRemove">Quitar foto</button></div>
+  <span id="portraitStatus" role="status">JPG, PNG o WEBP · máximo 4 MB</span>
+  <input id="avatar" type="hidden" maxlength="1000">
+  <div class="portrait-adjustments" id="portraitAdjustments" hidden>
+   <div class="portrait-sliders">
+    <label>Horizontal <output id="portraitXValue">50%</output><input id="portraitX" type="range" min="0" max="100" value="50"></label>
+    <label>Vertical <output id="portraitYValue">50%</output><input id="portraitY" type="range" min="0" max="100" value="50"></label>
+    <label>Acercamiento <output id="portraitZoomValue">100%</output><input id="portraitZoom" type="range" min="100" max="220" value="100"></label>
+   </div>
+  </div>
+ </div>
+</div>
     <label class="span2">Enlaces individuales adicionales, uno por línea (opcional)<textarea id="extraLinks" rows="3" placeholder="https://linkedin.com/in/ejemplo&#10;https://instagram.com/ejemplo"></textarea><span class="hint">Máximo 6 enlaces propios; también se conservarán los enlaces generales de la empresa.</span></label>
     <div class="span2 form-footer"><button id="saveExec" type="submit" class="btn primary">Guardar ejecutivo</button><button id="cancelEdit" type="button" class="btn ghost">Limpiar</button></div>
    </form>
@@ -142,7 +159,12 @@ async function api(path,options={},repeat=true){
 }
 async function checkAdmin(){const s=getSession();const v=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(s.user.id)+'&select=user_id&limit=1');if(!v?.length)throw Error('No tenés permisos para administrar Empresas NFC.');}
 function currentCompany(){return companies.find(x=>x.id===$('company').value)||null;}
-window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pricing});
+window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pricing,draftExecutive:window.BTSExecutivePortrait?{
+ id:editingId||'draft',full_name:$('fullName').value.trim()||'Ejecutivo',
+ job_title:$('jobTitle').value.trim(),whatsapp_number:$('whatsapp').value,
+ phone_number:$('phone').value,email:$('email').value,
+ avatar_url:window.BTSExecutivePortrait.previewUrl(),extra_links:[]
+}:null});
 function notifyPreview(){window.dispatchEvent(new Event('bts-nfc-corporate-data'));}
 function whatsAppNumber(links){return Array.isArray(links)?(links.find(x=>x.type==='whatsapp')?.url||'').replace(/^https?:\/\/(?:www\.)?wa\.me\//,'').replace(/[^+\d]/g,''):'';}
 function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
@@ -200,12 +222,12 @@ async function createCompany(e){
 function showEmpty(id,text){const p=document.createElement('div');p.className='empty';p.textContent=text;$(id).replaceChildren(p);}
 async function copyText(t){try{await navigator.clipboard.writeText(t);notice('URL copiada al portapapeles.');}catch{window.prompt('Copiá la URL de esta tarjeta',t);}}
 function resetForm(){
- editingId=null;$('executiveForm').reset();$('formHeading').textContent='Nuevo ejecutivo';$('formHint').textContent='Creá una tarjeta individual vinculada a la empresa.';$('saveExec').textContent='Guardar ejecutivo';
+ editingId=null;$('executiveForm').reset();window.BTSExecutivePortrait?.reset('','');notifyPreview();$('formHeading').textContent='Nuevo ejecutivo';$('formHint').textContent='Creá una tarjeta individual vinculada a la empresa.';$('saveExec').textContent='Guardar ejecutivo';
 }
 function fillForm(p){
  editingId=p.id;$('fullName').value=p.full_name;$('jobTitle').value=p.job_title;$('cardLabel').value=p.card_label;
  $('whatsapp').value=p.whatsapp_number;$('phone').value=p.phone_number;$('email').value=p.email;$('avatar').value=p.avatar_url;
- $('extraLinks').value=(Array.isArray(p.extra_links)?p.extra_links:[]).map(x=>x.url).join('\n');
+ $('extraLinks').value=(Array.isArray(p.extra_links)?p.extra_links:[]).map(x=>x.url).join('\n');window.BTSExecutivePortrait?.reset(p.avatar_url||'',p.full_name);notifyPreview();
  $('formHeading').textContent='Editar · '+p.full_name;$('formHint').textContent='Si reasignás esta tarjeta, el código NFC seguirá siendo el mismo.';$('saveExec').textContent='Guardar cambios';
  $('employeeEditor').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -309,6 +331,9 @@ async function saveExecutive(event){
  if(payload.avatar_url&&!safeUrl(payload.avatar_url))return notice('La URL de la foto es inválida.',true);
  const submit=$('saveExec');submit.disabled=true;
  try{
+  if(window.BTSExecutivePortrait?.hasPending()){
+   payload.avatar_url=await window.BTSExecutivePortrait.upload(getSession,authRefresh,BASE,KEY);
+  }
   if(editingId){
    const {company_id,...changes}=payload;
    await api('/rest/v1/bts_nfc_executives?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(changes)});
@@ -355,6 +380,10 @@ $('companyForm').addEventListener('submit',createCompany);
 $('settingsForm').addEventListener('submit',saveSettings);
 $('companyName').addEventListener('input',()=>{if(!$('companySlug').dataset.custom){$('companySlug').value=normalizedSlug($('companyName').value);}});
 $('companySlug').addEventListener('input',()=>{$('companySlug').dataset.custom=$('companySlug').value?'1':'';});
+window.addEventListener('bts-nfc-executive-portrait-changed',notifyPreview);
+for(const id of ['jobTitle','whatsapp','phone','email']){
+ $(id).addEventListener('input',notifyPreview);
+}
 $('company').addEventListener('change',loadCompany);
 $('filter').addEventListener('input',renderPeople);
 $('executiveForm').addEventListener('submit',saveExecutive);
@@ -365,5 +394,6 @@ $('cancelEdit').addEventListener('click',resetForm);
 init();
 })();
 </script>
-<script src="./preview.js?v=20261109a" defer></script>
+<script src="./portraits.js?v=20261109a" defer></script>
+<script src="./preview.js?v=20261109b" defer></script>
 </body></html>
