@@ -147,8 +147,12 @@ function renderMetrics(){
  $('kActive').textContent=people.filter(p=>p.is_active).length;
  $('kViews').textContent=events.filter(e=>e.event_type==='visit').length.toLocaleString('es-NI');
  $('kClicks').textContent=events.filter(e=>e.event_type==='whatsapp_click').length.toLocaleString('es-NI');
- $('kPaid').textContent=money(payments.filter(p=>p.status==='paid').reduce((a,p)=>a+Number(p.amount),0));
- $('kCurrency').textContent=pricing?.currency||'USD';
+ const totals={USD:0,NIO:0};
+ for(const p of payments.filter(p=>p.status==='paid')){const currency=['USD','NIO'].includes(p.currency)?p.currency:'USD';totals[currency]+=Number(p.amount);}
+ const paidCurrencies=Object.keys(totals).filter(currency=>totals[currency]>0);
+ $('kPaid').textContent=paidCurrencies.length?paidCurrencies.map(currency=>(currency==='NIO'?'C$':'$')+money(totals[currency])).join(' / '):'0.00';
+ $('kPaid').style.fontSize=paidCurrencies.length>1?'15px':'';
+ $('kCurrency').textContent=paidCurrencies.length>1?'Montos separados por moneda':pricing?.currency||'USD';
 }
 function renderPayments(){
  const area=$('payments');area.replaceChildren();
@@ -157,7 +161,7 @@ function renderPayments(){
   const card=document.createElement('article');card.className='entry';
   const line=document.createElement('div');line.className='entryline';
   const label=document.createElement('strong');label.textContent=p.concept;
-  const val=document.createElement('em');val.textContent=(pricing?.currency||'USD')+' '+money(p.amount);
+  const val=document.createElement('em');val.textContent=(p.currency==='NIO'?'C$':'$')+money(p.amount);
   const sub=document.createElement('small');sub.textContent=(p.status==='paid'?'Pagado':'Pendiente')+' · '+new Date(p.created_at).toLocaleDateString('es-NI');
   line.append(label,val);card.append(line,sub);
   if(p.status==='pending'){const b=document.createElement('button');b.className='btn small good';b.textContent='Marcar pagado';b.style.marginTop='8px';b.onclick=async()=>{try{await api('/rest/v1/bts_nfc_payments?id=eq.'+p.id,{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({status:'paid',paid_on:new Date().toISOString().slice(0,10)})});await loadCompany();}catch(e){notice(e.message,true)}};card.append(b);}
@@ -230,7 +234,7 @@ async function savePayment(e){
  e.preventDefault();if(!selectedCompany)return notice('Seleccioná una empresa.',true);
  const status=$('paymentStatus').value,amount=Number($('amount').value);
  if(!Number.isFinite(amount)||amount<=0)return notice('Monto inválido.',true);
- const payload={company_id:selectedCompany.id,concept:$('concept').value.trim(),amount,status,paid_on:status==='paid'?new Date().toISOString().slice(0,10):null};
+ const payload={company_id:selectedCompany.id,concept:$('concept').value.trim(),amount,currency:pricing?.currency||'USD',status,paid_on:status==='paid'?new Date().toISOString().slice(0,10):null};
  try{await api('/rest/v1/bts_nfc_payments',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});$('paymentForm').reset();notice('Movimiento financiero guardado.');await loadCompany();}
  catch(e){notice(e.message,true);}
 }
