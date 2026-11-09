@@ -1,0 +1,29 @@
+/* BTS Studio NFC · retrato ejecutivo dentro del diseño corporativo limpio */
+#executivePortrait{border:1px solid #43434c;border-radius:15px;background:linear-gradient(140deg,#181b21,#15161c);padding:17px;display:flex;gap:17px;align-items:center;flex-wrap:wrap}
+#executivePortrait .portrait-circle{position:relative;width:112px;height:112px;border-radius:50%;overflow:hidden;flex:0 0 112px;background:linear-gradient(135deg,#2b3036,#171a1f);border:2px solid #565b61;display:grid;place-items:center;color:#dadee3;font-size:29px;font-weight:780;letter-spacing:-.05em}
+#executivePortrait canvas,#executivePortrait #portraitExisting{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#executivePortrait canvas[hidden],#executivePortrait #portraitExisting[hidden]{display:none!important}
+#executivePortrait .portrait-details{flex:1;min-width:220px;display:grid;gap:9px}
+#executivePortrait .portrait-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#executivePortrait .portrait-select{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 12px;border:1px solid #5f535f;background:#2c252d;border-radius:9px;font-size:12px;font-weight:730;color:#fff;cursor:pointer}
+#executivePortrait .portrait-select:hover{background:#3a2c37}
+#executivePortrait .portrait-file{position:absolute;left:-9999px;opacity:0;width:1px;height:1px}
+#executivePortrait .portrait-adjustments{display:grid;gap:9px;border-top:1px solid #383941;padding-top:12px}
+#executivePortrait .portrait-adjustments[hidden]{display:none!important}
+#executivePortrait .portrait-sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#executivePortrait .portrait-sliders label{font-size:10px;font-weight:650;color:#afb2bc;gap:5px}
+#executivePortrait .portrait-sliders input[type=range]{padding:0;accent-color:#bd597b;border:0;background:transparent;min-height:25px}
+#executivePortrait .portrait-hint{font-size:10px;line-height:1.5;color:#aab0b8}
+#executivePortrait #portraitStatus{font-size:11px;color:#cfc2ce}
+html[data-nfc-template=business][data-nfc-executive=true] .nfc-hero .avatar{
+ width:64px!important;height:64px!important;min-width:64px!important;
+ border:1px solid #636b71!important;box-shadow:0 5px 16px #0004;
+}
+html[data-nfc-template=business][data-nfc-executive=true] .nfc-hero .avatar img{object-fit:cover}
+html[data-nfc-template=business][data-nfc-executive=true] .nfc-hero .avatar span{font-size:20px!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+@media(max-width:640px){
+ #executivePortrait{padding:12px;gap:12px}
+ #executivePortrait .portrait-circle{width:88px;height:88px;flex-basis:88px}
+ #executivePortrait .portrait-details{min-width:160px}
+ #executivePortrait .portrait-sliders{grid-template-columns:1fr}
+}
