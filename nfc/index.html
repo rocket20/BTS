@@ -43,6 +43,7 @@ const PUBLISHABLE_KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const $=id=>document.getElementById(id);
 const qs=new URLSearchParams(location.search),previewMode=qs.get('preview')==='1';
 const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
+const cardCode=String(qs.get('card')||'').toLowerCase().trim();
 const status=$('message');
 const ALLOWED=['classic','glass','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
@@ -52,6 +53,7 @@ function numberClamp(v,min,max,fall){const n=Number(v);return Number.isFinite(n)
 function setIcon(el,t){if(window.BTSIcons)window.BTSIcons.set(el,t);else el.textContent='↗';}
 let contactObjectUrl='';
 let contactShareUrl='';
+let currentExecutiveId=null;
 function plainText(s,max=140){return String(s||'').replace(/[\r\n\t]+/g,' ').trim().slice(0,max);}
 function vcardEscape(v){return plainText(v,200).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,');}
 function makeUiGlyph(span,kind){
@@ -101,7 +103,7 @@ function configureCorporate(c,opt){
  const email=plainText(opt.email,150),validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:'';
  const name=plainText(c.business_name||'Contacto',90);
  const cardSlug=plainText(c.slug||slug,48);
- const publicUrl=/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cardSlug)?location.origin+'/nfc/?slug='+encodeURIComponent(cardSlug):'';
+ const publicUrl=/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cardSlug)?location.origin+'/nfc/?slug='+encodeURIComponent(cardSlug)+(cardCode?'&card='+encodeURIComponent(cardCode):''):'';
  contactShareUrl=publicUrl;
  const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+vcardEscape(name),'N:;'+vcardEscape(name)+';;;'];
  if(title)lines.push('TITLE:'+vcardEscape(title));
@@ -126,6 +128,21 @@ $('nfcContactShare').addEventListener('click',async()=>{
  }catch(e){if(e?.name!=='AbortError')window.prompt('Copiar enlace',contactShareUrl);}
 });
 window.addEventListener('pagehide',()=>{if(contactObjectUrl)URL.revokeObjectURL(contactObjectUrl);});
+function recordEvent(eventType,linkType=''){
+ if(!currentExecutiveId)return;
+ const payload={executive_id:currentExecutiveId,event_type:eventType,link_type:String(linkType||'').slice(0,35)};
+ fetch(ENDPOINT+'/rest/v1/bts_nfc_events',{method:'POST',headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload),keepalive:true}).catch(()=>{});
+}
+$('nfcSaveContact').addEventListener('click',()=>recordEvent('contact_download'));
+function buildExecutiveCard(company,executive){
+ const opt=company.theme_options&&typeof company.theme_options==='object'&&!Array.isArray(company.theme_options)?company.theme_options:{};
+ const number=executive.whatsapp_number.replace(/[^0-9]/g,'');
+ const companyLinks=Array.isArray(company.links)?company.links.filter(x=>x.type!=='whatsapp'):[];
+ const extra=Array.isArray(executive.extra_links)?executive.extra_links:[];
+ const socials=[{type:'whatsapp',label:'WhatsApp de '+executive.full_name,url:'https://wa.me/'+number},...extra,...companyLinks].slice(0,15);
+ return {...company,slug:company.slug,business_name:executive.full_name,tagline:executive.job_title?executive.job_title+' · '+company.business_name:company.business_name,
+ avatar_url:executive.avatar_url||company.avatar_url,links:socials,theme_options:{...opt,role:executive.job_title||opt.role||'',phone:executive.phone_number||executive.whatsapp_number,email:executive.email||'',tags:opt.tags||''}};
+}
 function applyCard(c){
  if(!c||typeof c!=='object')return;
  const template=ALLOWED.includes(c.template_id)?c.template_id:'classic';
@@ -172,7 +189,7 @@ function applyCard(c){
   const subtitle=document.createElement('small');subtitle.className='nfc-link-subtitle';subtitle.textContent=businessUrlDetail(url);
   const copy=document.createElement('span');copy.className='nfc-link-copy';copy.append(title,subtitle);
   const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
-  a.append(badge,copy,arrow);nav.append(a);
+  a.append(badge,copy,arrow);nav.append(a);if(currentExecutiveId){a.addEventListener('click',()=>recordEvent(type==='whatsapp'?'whatsapp_click':'link_click',type));}
   if(socialTypes.has(type)){
    const s=document.createElement('a');s.href=url;s.target='_blank';s.rel='noopener noreferrer nofollow';s.title=label;s.setAttribute('aria-label',label);setIcon(s,type);social.append(s);
   }
@@ -201,11 +218,20 @@ if(previewMode){
  (async()=>{
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
   try{
-   const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=slug,business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links,template_id,theme_options&limit=1';
+   const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=id,slug,business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links,template_id,theme_options&limit=1';
    const r=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
    if(!r.ok)throw Error('Servicio no disponible');const rows=await r.json(),c=Array.isArray(rows)?rows[0]:null;
    if(!c){unavailable('Esta tarjeta digital no está disponible.');return;}
-   applyCard(c);
+   if(cardCode){
+     if(!/^[a-f0-9]{20}$/.test(cardCode)){unavailable('Esta tarjeta no es válida.');return;}
+     const execUrl=ENDPOINT+'/rest/v1/rpc/bts_nfc_public_executive';
+     const er=await fetch(execUrl,{method:'POST',headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_company_slug:slug,p_card_code:cardCode}),cache:'no-store'});
+     if(!er.ok)throw Error('No se pudo cargar el ejecutivo.');
+     const exes=await er.json(),exec=Array.isArray(exes)?exes[0]:null;
+     if(!exec){unavailable('Esta tarjeta ejecutiva está suspendida o no existe.');return;}
+     currentExecutiveId=exec.id;
+     applyCard(buildExecutiveCard(c,exec));recordEvent('visit');
+   }else{currentExecutiveId=null;applyCard(c);}
   }catch(e){unavailable('No se pudo cargar esta tarjeta. Intentá nuevamente.');}
  })();
 }
