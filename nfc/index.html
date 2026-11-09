@@ -103,7 +103,7 @@ function configureCorporate(c,opt){
  const email=plainText(opt.email,150),validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:'';
  const name=plainText(c.business_name||'Contacto',90);
  const cardSlug=plainText(c.slug||slug,48);
- const publicUrl=/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cardSlug)?location.origin+'/nfc/?slug='+encodeURIComponent(cardSlug):'';
+ const publicUrl=/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cardSlug)?location.origin+'/nfc/?slug='+encodeURIComponent(cardSlug)+(cardCode?'&card='+encodeURIComponent(cardCode):''):'';
  contactShareUrl=publicUrl;
  const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+vcardEscape(name),'N:;'+vcardEscape(name)+';;;'];
  if(title)lines.push('TITLE:'+vcardEscape(title));
