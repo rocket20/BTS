@@ -174,7 +174,9 @@ function applyCard(c){
  $('name').textContent=String(c.business_name||'Negocio').slice(0,90);
  $('tagline').textContent=String(c.tagline||'').slice(0,180);
  $('about').textContent=String(c.tagline||'Comunicate con nosotros y conocé más de nuestros servicios.').slice(0,180);
- const avatar=safeUrl(c.avatar_url),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true;
+ const rawAvatar=String(c.avatar_url||'');
+ const draftImage=previewMode&&rawAvatar.length<400000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(rawAvatar);
+ const avatar=draftImage?rawAvatar:safeUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true;
  cont.replaceChildren();cont.hidden=!avatar&&!isExecutive;
  function showInitials(){
   cont.replaceChildren();cont.hidden=!isExecutive;
