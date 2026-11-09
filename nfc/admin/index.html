@@ -311,7 +311,11 @@ function clearConflict(){existingConflict=null;$('slugConflict').hidden=true;$('
 function revealConflict(c){
  existingConflict=c;
  $('slugConflict').hidden=false;
- $('slugConflictText').textContent='La URL «'+ROOT+c.slug+'» ya está asignada a «'+c.business_name+'». No se creó otra tarjeta. Podés editar la página existente sin cambiar su dirección.';
+ const corporate=c.nfc_category==='corporate';
+  $('slugConflictText').textContent=corporate
+   ?'Esta URL pertenece a «'+c.business_name+'», una empresa corporativa. Administrala desde la pestaña NFC corporativo; no se permite modificarla aquí.'
+   :'La URL «'+ROOT+c.slug+'» ya está asignada a «'+c.business_name+'». No se creó otra tarjeta. Podés editar la página existente sin cambiar su dirección.';
+  $('editExisting').disabled=corporate;
  $('slugConflict').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 async function getExistingBySlug(slug){
@@ -320,7 +324,7 @@ async function getExistingBySlug(slug){
  return Array.isArray(result)?(result[0]||null):null;
 }
 $('editExisting').addEventListener('click',()=>{
- if(!existingConflict)return;
+ if(!existingConflict||existingConflict.nfc_category==='corporate')return;
  showCard(existingConflict);
  notify('Página existente abierta. Editá sus datos y presioná Guardar cambios; la URL se mantiene.');
 });
