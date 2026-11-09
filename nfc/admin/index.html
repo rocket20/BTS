@@ -479,7 +479,7 @@ async function save(e){
   const type=box.querySelector('select').value,url=box.querySelector('input').value.trim();
   if(!url)continue;
   const clean=safeUrl(url);if(!clean){fail('Revisá los enlaces: usá una URL http o https válida.');return;}
-  const customName=type==='other'?box.querySelector('.custom-link-input').value.trim():'';
+  const customName=box.querySelector('.custom-link-input').value.trim();
   if(type==='other'&&!customName){fail('Escribí el nombre del enlace personalizado, por ejemplo «Reseñas de Google».');box.querySelector('.custom-link-input').focus();return;}
   links.push({type,label:customName||(typeNames[type]||'Enlace'),url:clean});
  }
