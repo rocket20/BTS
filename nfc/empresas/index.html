@@ -12,7 +12,7 @@
 .wrapper{max-width:1420px;margin:0 auto;padding:27px 26px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--line)}.brand{font-weight:850;letter-spacing:-.05em;font-size:18px}.brand span{color:#f06687}.top-actions{display:flex;gap:9px;flex-wrap:wrap}
 .btn{border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:10px 14px;border-radius:11px;font-weight:700}.btn:hover:not(:disabled){border-color:#a5536c}.btn.primary{background:var(--wine);border-color:var(--wine)}.btn.small{font-size:12px;padding:7px 10px}.btn.ghost{background:transparent}.btn.warning{color:#ffbcc3}.btn.good{color:#b5efce}
 .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:28px 0 18px}.eyebrow{color:#d98da1;font-size:10px;letter-spacing:.18em;font-weight:850}.hero h1{margin:3px 0 4px;font-size:clamp(28px,3.7vw,39px);line-height:1.1;letter-spacing:-.05em}.hero p{margin:6px 0;color:var(--muted);max-width:660px}
-.company-picker{display:flex;flex-direction:column;gap:7px;min-width:min(100%,310px)}#companyCreator[hidden]{display:none!important}#companyCreator{border-color:#735060;background:linear-gradient(155deg,#201a23,#191b22)}select,input,textarea{outline:none;background:#111219;border:1px solid #484955;border-radius:10px;color:var(--ink);padding:11px 12px;width:100%;min-width:0}select:focus,input:focus,textarea:focus{border-color:var(--accent)}label{display:grid;gap:6px;font-size:12px;font-weight:650}.hint{font-size:11px;color:var(--muted);font-weight:400}
+#companySettings[hidden]{display:none!important}.company-picker{display:flex;flex-direction:column;gap:7px;min-width:min(100%,310px)}#companyCreator[hidden]{display:none!important}#companyCreator{border-color:#735060;background:linear-gradient(155deg,#201a23,#191b22)}select,input,textarea{outline:none;background:#111219;border:1px solid #484955;border-radius:10px;color:var(--ink);padding:11px 12px;width:100%;min-width:0}select:focus,input:focus,textarea:focus{border-color:var(--accent)}label{display:grid;gap:6px;font-size:12px;font-weight:650}.hint{font-size:11px;color:var(--muted);font-weight:400}
 #notice{min-height:26px;margin:8px 0;color:#b7d7c8;font-size:13px}#notice.error{color:#ff9ead}
 .metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:17px 0 21px}.metric{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}.metric strong{font-size:25px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.metric em{display:block;color:#b6aeb9;font-style:normal;font-size:11px}
 .content{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr);gap:16px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:21px;min-width:0;margin-bottom:16px}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}.panelhead h2{font-size:17px;margin:0;letter-spacing:-.03em}.panelhead p{margin:5px 0 0;color:var(--muted);font-size:12px}.toolbar{display:flex;align-items:center;gap:10px}.toolbar input{width:200px}
@@ -39,6 +39,16 @@
  </form>
 </section>
 <p id="notice" role="status" aria-live="polite"></p>
+<section id="companySettings" class="panel" hidden>
+ <div class="panelhead"><div><h2>Configuración de la empresa</h2><p>Actualizá la identidad compartida por todos sus ejecutivos, sin tocar sus tarjetas físicas.</p></div><a class="btn small" id="openCompanyPage" href="#" target="_blank" rel="noopener noreferrer">Ver página madre ↗</a></div>
+ <form id="settingsForm" class="formgrid">
+  <label>Nombre corporativo<input id="settingsName" minlength="2" maxlength="90" required></label>
+  <label>WhatsApp general (opcional)<input id="settingsWhatsapp" inputmode="tel" placeholder="+505 8888 8888"></label>
+  <label class="span2">Descripción de la empresa<input id="settingsTagline" maxlength="180"></label>
+  <label class="span2">Logotipo (URL) <input type="url" id="settingsLogo" maxlength="1000" placeholder="https://..."></label>
+  <div class="span2 form-footer"><button type="submit" class="btn primary" id="saveSettings">Guardar datos corporativos</button><span class="hint">El identificador de la empresa permanece fijo para proteger las tarjetas NFC.</span></div>
+ </form>
+</section>
 <div class="metrics" aria-label="Indicadores">
  <div class="metric"><small>Tarjetas registradas</small><strong id="kTotal">0</strong><em>Empresa seleccionada</em></div>
  <div class="metric"><small>Tarjetas activas</small><strong id="kActive">0</strong><em>Con WhatsApp individual</em></div>
@@ -112,12 +122,32 @@ async function api(path,options={},repeat=true){
 }
 async function checkAdmin(){const s=getSession();const v=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(s.user.id)+'&select=user_id&limit=1');if(!v?.length)throw Error('No tenés permisos para administrar Empresas NFC.');}
 function currentCompany(){return companies.find(x=>x.id===$('company').value)||null;}
+function whatsAppNumber(links){return Array.isArray(links)?(links.find(x=>x.type==='whatsapp')?.url||'').replace(/^https?:\/\/(?:www\.)?wa\.me\//,'').replace(/[^+\d]/g,''):'';}
+function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
 function normalizedSlug(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);}
 function companyUrl(p){return ROOT+encodeURIComponent(selectedCompany.slug)+'&card='+p.card_code;}
 function money(value){return new Intl.NumberFormat('es-NI',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));}
 function setCompanyCreator(visible){
  $('companyCreator').hidden=!visible;
  if(visible){$('companyCreator').scrollIntoView({behavior:'smooth',block:'start'});$('companyName').focus();}
+}
+async function saveSettings(e){
+ e.preventDefault();
+ const company=currentCompany();if(!company)return notice('Seleccioná una empresa.',true);
+ const logo=$('settingsLogo').value.trim();if(logo&&!safeUrl(logo))return notice('La URL del logotipo no es válida.',true);
+ const rawPhone=$('settingsWhatsapp').value.trim(),number=rawPhone?cleanPhone(rawPhone):'';
+ if(rawPhone&&!number)return notice('El WhatsApp general debe tener entre 7 y 15 dígitos.',true);
+ const name=$('settingsName').value.trim();if(name.length<2)return notice('El nombre es demasiado corto.',true);
+ const existing=Array.isArray(company.links)?company.links:[];
+ const links=existing.filter(x=>x.type!=='whatsapp');
+ if(number)links.unshift({type:'whatsapp',label:'WhatsApp general',url:'https://wa.me/'+number.replace(/[^0-9]/g,'')});
+ const payload={business_name:name,tagline:$('settingsTagline').value.trim(),avatar_url:logo,links};
+ const btn=$('saveSettings');btn.disabled=true;
+ try{
+  await api('/rest/v1/bts_nfc_cards?id=eq.'+encodeURIComponent(company.id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
+  Object.assign(company,payload);$('company').selectedOptions[0].textContent=company.business_name+' · '+company.slug;
+  notice('Empresa actualizada. El mismo enlace NFC continúa funcionando.');renderSettings();
+ }catch(err){notice('No se pudo guardar la empresa: '+err.message,true);}finally{btn.disabled=false;}
 }
 async function createCompany(e){
  e.preventDefault();
@@ -221,7 +251,7 @@ function renderAudit(){
  }
 }
 async function loadCompany(){
- selectedCompany=currentCompany();people=[];events=[];payments=[];audit=[];pricing=null;resetForm();
+ selectedCompany=currentCompany();people=[];events=[];payments=[];audit=[];pricing=null;resetForm();renderSettings();
  if(!selectedCompany){renderPeople();renderPayments();renderAudit();renderMetrics();return;}
  notice('Cargando '+selectedCompany.business_name+'…');
  try{
@@ -284,7 +314,7 @@ async function init(){
  for(const id of ['newExecutive','saveExec'])$(id).disabled=true;
  try{
   await checkAdmin();
-  const rows=await api('/rest/v1/bts_nfc_cards?nfc_category=eq.corporate&select=id,slug,business_name,is_active&order=created_at.desc&limit=500');
+  const rows=await api('/rest/v1/bts_nfc_cards?nfc_category=eq.corporate&select=id,slug,business_name,tagline,avatar_url,links,is_active&order=created_at.desc&limit=500');
   companies=rows||[];
   const select=$('company');for(const c of companies){const option=document.createElement('option');option.value=c.id;option.textContent=c.business_name+' · '+c.slug;select.append(option);}
   $('newExecutive').disabled=false;$('saveExec').disabled=false;
@@ -298,6 +328,7 @@ async function init(){
 $('newCompany').addEventListener('click',()=>setCompanyCreator(true));
 $('cancelCompany').addEventListener('click',()=>setCompanyCreator(false));
 $('companyForm').addEventListener('submit',createCompany);
+$('settingsForm').addEventListener('submit',saveSettings);
 $('companyName').addEventListener('input',()=>{if(!$('companySlug').dataset.custom){$('companySlug').value=normalizedSlug($('companyName').value);}});
 $('companySlug').addEventListener('input',()=>{$('companySlug').dataset.custom=$('companySlug').value?'1':'';});
 $('company').addEventListener('change',loadCompany);
