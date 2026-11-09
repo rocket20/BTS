@@ -1,0 +1,52 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#11131a"><title>Mi tarjeta digital · BTS Studio</title><style>
+:root{color-scheme:dark;--accent:#af4568;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{min-height:100svh;margin:0;background:radial-gradient(circle at 60% -5%,#74345046,transparent 38%),linear-gradient(145deg,#101015,#1a1820);color:#f8f5f7}
+.wrapper{width:min(430px,calc(100% - 34px));margin:auto;padding:36px 0 42px;text-align:center}.brand{color:#c6bac2;font-size:10px;letter-spacing:.2em;font-weight:850;margin-bottom:29px}
+.card{position:relative;background:linear-gradient(145deg,#22242f,#16171f);border:1px solid #54515b;border-radius:21px;aspect-ratio:85.6/53.98;padding:21px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left;box-shadow:0 23px 60px #0007;overflow:hidden}
+.card:before{content:"";position:absolute;width:200px;height:200px;background:var(--accent);right:-90px;top:-100px;opacity:.16;border-radius:50%}.card[data-theme=wine]{background:linear-gradient(145deg,#300d23,#611937)}.card[data-theme=champagne]{background:linear-gradient(145deg,#28242a,#625544);color:#fff1d6}.card[data-theme=forest]{background:linear-gradient(145deg,#102c23,#34604a)}.card[data-theme=ivory]{background:linear-gradient(145deg,#f8f5eb,#e9e5db);color:#20232c;border-color:#d4d0ca}
+.card-top,.card-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;font-size:11px}.card-top b{max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-center{position:relative;z-index:1;display:grid;gap:5px}.card-center small{font-size:10px;opacity:.75;letter-spacing:.14em}.card-center strong{font-size:clamp(22px,5vw,30px);letter-spacing:-.04em;line-height:1.12}.card-center span{opacity:.8;font-size:12px}.card-bottom{font-size:10px;opacity:.76}
+.info{margin:24px 0 0;text-align:left;background:#1f1f27;border:1px solid #3c3b46;border-radius:17px;padding:20px}.info h1{font-size:20px;letter-spacing:-.04em;margin:0 0 7px}.info p{font-size:13px;line-height:1.6;color:#c8c2cc;margin:7px 0}.progress{height:10px;background:#36343f;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;width:0%;background:var(--accent);transition:width .2s}.stats{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.stats strong{font-size:29px}.stats small{font-size:11px;color:#bdb6bf}.state{padding:10px 12px;background:#33313b;border-radius:10px;font-size:12px}.state.invalid{color:#ffb7c2}.footer{font-size:10px;color:#827f8b;margin-top:24px}.name{color:#f3e7ec;font-weight:780}
+[hidden]{display:none!important}
+</style></head><body><main class="wrapper"><div class="brand">BTS STUDIO · TARJETA DIGITAL</div>
+<div id="card" class="card" data-theme="midnight" hidden><div class="card-top"><b id="brand"></b><span>NFC ◉</span></div><div class="card-center"><small id="kind"></small><strong id="memberName"></strong><span id="subtitle"></span></div><div class="card-bottom"><span id="cardLabel"></span><span id="tier"></span></div></div>
+<div id="info" class="info" hidden><h1 id="program"></h1><p id="description"></p><div id="loyaltyDetails"><div class="stats"><strong id="balance"></strong><small id="units"></small></div><div class="progress"><span id="progress"></span></div><p id="reward"></p><p id="lifetime"></p></div><div id="vipDetails" hidden><p id="benefits"></p><div id="expiry" class="state"></div></div><p class="state" id="status"></p></div>
+<p id="loading" class="state" role="status">Buscando tu tarjeta digital…</p><div class="footer">TARJETA DIGITAL ADMINISTRADA POR BTS STUDIO</div></main>
+<script>
+(()=>{'use strict';
+const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
+const $=id=>document.getElementById(id),code=String(new URLSearchParams(location.search).get('card')||'').trim().toLowerCase();
+function error(msg){$('loading').textContent=msg;$('loading').classList.add('invalid')}
+async function load(){
+ if(!/^[a-f0-9]{20}$/.test(code))return error('El enlace de esta tarjeta NFC no es válido.');
+ try{
+ const r=await fetch(BASE+'/rest/v1/rpc/bts_reward_public_card',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_card_code:code}),cache:'no-store'});
+ if(!r.ok)throw Error('Servicio no disponible');
+ const rows=await r.json(),c=Array.isArray(rows)?rows[0]:null;
+ if(!c)return error('Esta tarjeta no está disponible o fue desactivada.');
+ document.title=c.member_name+' · '+c.brand_name+' | BTS Studio';
+ document.documentElement.style.setProperty('--accent',/^#[0-9a-f]{6}$/i.test(c.accent_color||'')?c.accent_color:'#af4568');
+ $('card').dataset.theme=c.card_theme||'midnight';
+ $('brand').textContent=c.brand_name;$('memberName').textContent=c.member_name;$('cardLabel').textContent=c.card_label;
+ $('kind').textContent=c.kind==='vip'?'MEMBRESÍA VIP':'FIDELIZACIÓN';$('tier').textContent=c.kind==='vip'?c.vip_tier:'CLUB REWARDS';
+ $('subtitle').textContent=c.program_title;$('program').textContent=c.program_title;$('description').textContent=c.program_description;
+ $('loyaltyDetails').hidden=c.kind==='vip';$('vipDetails').hidden=c.kind!=='vip';
+ if(c.kind==='vip'){
+  $('benefits').textContent=c.vip_benefits;
+  const expired=!!(c.expires_at&&c.expires_at<new Date().toISOString().slice(0,10));
+  $('expiry').textContent='Nivel '+c.vip_tier+' · '+(c.expires_at?'Válida hasta '+new Date(c.expires_at+'T12:00:00').toLocaleDateString('es-NI'):'Sin fecha de vencimiento')+(expired?' · Vencida':'');
+  $('status').textContent=expired?'Membresía vencida. Consultá al negocio para renovarla.':c.member_active?'Membresía activa':'Membresía suspendida';
+ }else{
+  const goal=Math.max(1,Number(c.goal_units)||6),current=Number(c.current_units)||0;
+  $('balance').textContent=current+' / '+goal;
+  $('units').textContent=c.unit_name||'compras';
+  $('progress').style.width=Math.min(100,current/goal*100)+'%';
+  $('reward').textContent=current>=goal?'¡Alcanzaste tu premio! Consultá al negocio para canjear '+c.reward_label+'.':'Premio al llegar a la meta: '+c.reward_label;
+  $('lifetime').textContent='Acumulación histórica: '+c.lifetime_units+' · Premios canjeados: '+c.redeemed_count;
+  $('status').textContent=c.member_active?'Tarjeta activa':'Tarjeta suspendida';
+ }
+ $('loading').hidden=true;$('card').hidden=false;$('info').hidden=false;
+ }catch(e){error('No se pudo cargar la tarjeta. Probá nuevamente.')}
+}
+load();
+})();
+</script></body></html>
