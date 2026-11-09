@@ -21,78 +21,111 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 @media(max-width:450px){main{padding-left:22px;padding-right:22px}.avatar{width:98px;height:98px;border-radius:50%}}
 @media(prefers-reduced-motion:reduce){.links a{transition:none}}
 </style>
+<link rel="stylesheet" href="./skins.css">
 </head>
 <body>
-<main>
+<main class="nfc-page">
 <section id="profile" hidden>
- <div class="avatar" id="avatar" aria-hidden="true" hidden></div>
- <h1 id="name"></h1><p class="tagline" id="tagline"></p>
- <div class="pill">Conectá con nosotros</div>
- <nav class="links" id="links" aria-label="Redes sociales del negocio"></nav>
+ <header class="nfc-hero"><div class="avatar" id="avatar" aria-hidden="true" hidden></div><div class="nfc-intro"><h1 id="name"></h1><p class="tagline" id="tagline"></p><div class="pill">Conectá con nosotros</div></div></header>
+ <nav class="nfc-socials" id="socials" aria-label="Redes sociales"></nav>
+ <div class="nfc-content"><section class="nfc-card nfc-primary"><div class="nfc-section-header"><h2>Explorá nuestros enlaces</h2><span>ENLACES</span></div><nav class="links" id="links" aria-label="Enlaces del negocio"></nav></section><aside class="nfc-card nfc-featured"><div class="nfc-section-header"><h2>Contacto y destacados</h2></div><div id="featured" class="nfc-featured-list"></div><div class="nfc-about"><strong>Acerca de nosotros</strong><span id="about"></span></div></aside></div>
 </section>
 <div id="message" class="state" role="status">Preparando tarjeta digital…</div>
 <footer class="foot">TARJETA DIGITAL · <b>BTS STUDIO</b></footer>
 </main>
+<script src="./brand-icons.js"></script>
 <script>
 (()=>{'use strict';
 const ENDPOINT='https://xwehejgwufwhpkpzjzyt.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const $=id=>document.getElementById(id);
-const types={instagram:'IG',facebook:'f',tiktok:'♪',whatsapp:'WA',website:'↗',youtube:'▶',linkedin:'in',x:'X',telegram:'TG',maps:'⌖',other:'↗'};
-const display={instagram:'Instagram',facebook:'Facebook',tiktok:'TikTok',whatsapp:'WhatsApp',website:'Sitio web',youtube:'YouTube',linkedin:'LinkedIn',x:'X',telegram:'Telegram',maps:'Ubicación',other:'Enlace'};
-const qs=new URLSearchParams(location.search);
+const qs=new URLSearchParams(location.search),previewMode=qs.get('preview')==='1';
 const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
 const status=$('message');
-function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
+const ALLOWED=['classic','glass','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
-function makeLinks(links){
- const nav=$('links');nav.replaceChildren();
- for(const l of Array.isArray(links)?links:[]){
-  if(!l || typeof l!=='object')continue;
+function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
+function validHex(v,fallback){return /^#[a-f\d]{6}$/i.test(String(v||''))?v:fallback;}
+function numberClamp(v,min,max,fall){const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fall;}
+function setIcon(el,t){if(window.BTSIcons)window.BTSIcons.set(el,t);else el.textContent='↗';}
+function applyCard(c){
+ if(!c||typeof c!=='object')return;
+ const template=ALLOWED.includes(c.template_id)?c.template_id:'classic';
+ const opt=c.theme_options&&typeof c.theme_options==='object'&&!Array.isArray(c.theme_options)?c.theme_options:{};
+ document.documentElement.dataset.nfcTemplate=template;
+ document.documentElement.dataset.nfcShape=['pill','square','soft'].includes(opt.shape)?opt.shape:'soft';
+ document.documentElement.dataset.nfcFont=['modern','serif','editorial'].includes(opt.font)?opt.font:'modern';
+ document.documentElement.dataset.nfcAlign=['center','left'].includes(opt.align)?opt.align:'left';
+ document.documentElement.dataset.nfcIcons=opt.icons==='mono'?'mono':'brand';
+ document.documentElement.style.setProperty('--nfc-glass',numberClamp(opt.blur,0,40,18)+'px');
+ const root=document.documentElement.style;
+ root.setProperty('--accent',validHex(c.accent_color,'#ff0037'));
+ root.setProperty('--bg',validHex(c.background_color,'#0a0a10'));
+ root.setProperty('--ink',validHex(opt.textColor, ['business','food','beauty','wellness'].includes(template)?'#243244':'#f8f7fb'));
+ root.setProperty('--muted',validHex(opt.mutedColor,['business','food','beauty','wellness'].includes(template)?'#617082':'#b9b3c8'));
+ root.setProperty('--surface',validHex(opt.surfaceColor,['business','food','beauty','wellness'].includes(template)?'#ffffff':'#17171f'));
+ root.setProperty('--nfc-button-bg',validHex(c.button_bg_color,['business','food','beauty','wellness'].includes(template)?'#ffffff':'#181820'));
+ root.setProperty('--nfc-button-text',validHex(c.button_text_color,['business','food','beauty','wellness'].includes(template)?'#223344':'#ffffff'));
+ root.setProperty('--nfc-button-border',validHex(c.button_border_color,'#42404b'));
+ root.setProperty('--nfc-avatar-x',numberClamp(c.avatar_position_x,0,100,50)+'%');
+ root.setProperty('--nfc-avatar-y',numberClamp(c.avatar_position_y,0,100,50)+'%');
+ root.setProperty('--nfc-avatar-zoom',String(numberClamp(c.avatar_zoom,100,200,100)/100));
+ const cover=safeUrl(c.background_url);
+ root.setProperty('--nfc-cover',cover?'url("'+cover.replace(/["\\]/g,'')+'")':'none');
+ document.body.dataset.cover=cover?'yes':'no';
+ $('name').textContent=String(c.business_name||'Negocio').slice(0,90);
+ $('tagline').textContent=String(c.tagline||'').slice(0,180);
+ $('about').textContent=String(c.tagline||'Comunicate con nosotros y conocé más de nuestros servicios.').slice(0,180);
+ const avatar=safeUrl(c.avatar_url),cont=$('avatar');cont.replaceChildren();cont.hidden=!avatar;
+ if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='';img.onerror=()=>{cont.hidden=true};cont.append(img);}
+ const links=Array.isArray(c.links)?c.links:[];
+ const nav=$('links'),social=$('socials'),featured=$('featured');nav.replaceChildren();social.replaceChildren();featured.replaceChildren();
+ const socialTypes=new Set(['instagram','facebook','tiktok','whatsapp','youtube','linkedin','x','telegram','pinterest','spotify','threads','snapchat','behance','github']);
+ for(const l of links){
+  if(!l||typeof l!=='object')continue;
+  const url=safeUrl(l.url);if(!url)continue;
   const type=String(l.type||'other').toLowerCase();
-  let url=safeUrl(l.url);
-  if(!url)continue;
-  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+String(l.label||display[type]||'Enlace'));
-  const badge=document.createElement('span');badge.className='glyph';badge.textContent=types[type]||'↗';
-  const label=document.createElement('strong');label.textContent=String(l.label||display[type]||'Enlace').slice(0,55);
+  const label=String(l.label||window.BTSIcons?.names?.[type]||'Enlace').slice(0,55);
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+label);
+  const badge=document.createElement('span');badge.className='glyph';setIcon(badge,type);
+  const title=document.createElement('strong');title.textContent=label;
   const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
-  a.append(badge,label,arrow);nav.append(a);
+  a.append(badge,title,arrow);nav.append(a);
+  if(socialTypes.has(type)){
+   const s=document.createElement('a');s.href=url;s.target='_blank';s.rel='noopener noreferrer nofollow';s.title=label;s.setAttribute('aria-label',label);setIcon(s,type);social.append(s);
+  }
+  if(featured.children.length<4){
+   const f=document.createElement('a');f.className='nfc-feature';f.href=url;f.target='_blank';f.rel='noopener noreferrer nofollow';
+   const fi=document.createElement('span');setIcon(fi,type);
+   const t=document.createElement('b');t.textContent=label;
+   const arr=document.createElement('span');arr.textContent='↗';
+   f.append(fi,t,arr);featured.append(f);
+  }
  }
- if(!nav.children.length){const p=document.createElement('p');p.className='state';p.textContent='Este negocio todavía no agregó sus redes sociales.';nav.append(p);}
+ if(!nav.children.length){const p=document.createElement('p');p.className='state';p.textContent='Este negocio todavía no agregó enlaces.';nav.append(p);}
+ if(!featured.children.length){const p=document.createElement('p');p.textContent='Próximamente';featured.append(p);}
+ document.title=String(c.business_name||'Tarjeta digital')+' | BTS Studio';
+ $('profile').hidden=false;status.hidden=true;
 }
-async function boot(){
- if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
- try{
-  const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links&limit=1';
-  const response=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
-  if(!response.ok)throw Error('Servicio no disponible');
-  const rows=await response.json();const card=Array.isArray(rows)?rows[0]:null;
-  if(!card){unavailable('Esta tarjeta digital no está disponible.');return;}
-  document.documentElement.style.setProperty('--accent',/^#[a-f\d]{6}$/i.test(card.accent_color||'')?card.accent_color:'#ff0037');
-  document.documentElement.style.setProperty('--bg',/^#[a-f\d]{6}$/i.test(card.background_color||'')?card.background_color:'#0a0a10');
-  const isHex=value=>/^#[0-9a-f]{6}$/i.test(String(value||''));
-  document.documentElement.style.setProperty('--nfc-button-bg',isHex(card.button_bg_color)?card.button_bg_color:'#181820');
-  document.documentElement.style.setProperty('--nfc-button-text',isHex(card.button_text_color)?card.button_text_color:'#ffffff');
-  document.documentElement.style.setProperty('--nfc-button-border',isHex(card.button_border_color)?card.button_border_color:'#42404b');
-  const clipped=(value,min,max,fallback)=>{
-   const number=Number(value);return Number.isFinite(number)?Math.min(max,Math.max(min,number)):fallback;
-  };
-  document.documentElement.style.setProperty('--nfc-avatar-x',clipped(card.avatar_position_x,0,100,50)+'%');
-  document.documentElement.style.setProperty('--nfc-avatar-y',clipped(card.avatar_position_y,0,100,50)+'%');
-  document.documentElement.style.setProperty('--nfc-avatar-zoom',String(clipped(card.avatar_zoom,100,200,100)/100));
-  const cover=safeUrl(card.background_url);
-  if(cover)document.documentElement.style.setProperty('--nfc-cover','url("'+cover.replace(/["\\]/g,'')+'")');
-  $('name').textContent=String(card.business_name||'Negocio');
-  $('tagline').textContent=String(card.tagline||'').slice(0,180);
-  const avatar=safeUrl(card.avatar_url);
-  const avatarContainer=$('avatar');avatarContainer.replaceChildren();avatarContainer.hidden=!avatar;
-  if(avatar){const img=document.createElement('img');img.alt='';img.src=avatar;img.onerror=()=>{img.remove();avatarContainer.hidden=true;};avatarContainer.append(img);}
-  makeLinks(card.links);
-  document.title=String(card.business_name||'Tarjeta digital')+' | Tarjeta digital';
-  $('profile').hidden=false;status.hidden=true;
- }catch(e){unavailable('No se pudo cargar esta tarjeta. Intentá nuevamente.');}
+if(previewMode){
+ status.textContent='Vista previa lista para editar';
+ window.addEventListener('message',event=>{
+  if(event.origin!==location.origin || event.data?.source!=='bts-nfc-editor-preview')return;
+  applyCard(event.data.card);
+ });
+ window.parent?.postMessage({source:'bts-nfc-preview-ready'},location.origin);
+}else{
+ (async()=>{
+  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
+  try{
+   const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links,template_id,theme_options&limit=1';
+   const r=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
+   if(!r.ok)throw Error('Servicio no disponible');const rows=await r.json(),c=Array.isArray(rows)?rows[0]:null;
+   if(!c){unavailable('Esta tarjeta digital no está disponible.');return;}
+   applyCard(c);
+  }catch(e){unavailable('No se pudo cargar esta tarjeta. Intentá nuevamente.');}
+ })();
 }
-boot();
 })();
 </script>
 </body>
