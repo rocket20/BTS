@@ -50,7 +50,14 @@ html.nfc-embedded .layout{gap:16px}
  .nfc-delete-dialog{border:1px solid #71404a;border-radius:18px;padding:26px;background:#19171e;color:#f6f4f7;width:min(450px,calc(100vw - 30px));box-shadow:0 25px 100px #000b}.nfc-delete-dialog::backdrop{background:#000b;backdrop-filter:blur(5px)}.nfc-delete-dialog h2{font-size:23px;margin:0 0 12px;letter-spacing:-.04em}.nfc-delete-dialog p{font-size:13px;color:#d7c9cc;line-height:1.55}.nfc-delete-dialog label{display:block;font-size:12px;margin:18px 0 8px;font-weight:700}.nfc-delete-dialog input{width:100%;border:1px solid #77515a;background:#101017;color:white;padding:13px;border-radius:10px}.delete-dialog-buttons{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.nfc-delete-dialog .btn.danger{background:#bc2945;border-color:#bc2945}.nfc-delete-dialog .btn.danger:disabled{opacity:.45;cursor:not-allowed}.history-entry .card-buttons .mini.delete{border-color:#704653;color:#ffa8ba}.history-entry .card-buttons .mini.delete:hover{background:#4b222b}
  @media(max-width:620px){.media-fields{grid-template-columns:1fr}}
 @media(max-width:960px){.layout{grid-template-columns:1fr}.shell{padding:18px 14px 50px}.top{align-items:flex-start}.actions{flex-wrap:wrap}.panel{padding:18px}.cards{max-height:none}}@media(max-width:430px){.link-row{grid-template-columns:76px minmax(0,1fr) repeat(3,25px)}.cols{grid-template-columns:1fr 94px}.btn{padding:10px 12px}.card{align-items:flex-start;flex-direction:column}.card-buttons{width:100%;justify-content:flex-start}}
-.nfc-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}.nfc-template-option{min-height:90px;display:flex;flex-direction:column;text-align:left;gap:5px;padding:12px;border:2px solid #55475a;background:linear-gradient(135deg,var(--sw1),var(--sw2));color:var(--ink,#fff);border-radius:14px}.nfc-template-option.selected{outline:2px solid #ff6490;outline-offset:2px;border-color:#fff}.nfc-template-option strong{font-size:13px}.nfc-template-option small{opacity:.82;font-size:11px}.nfc-custom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.nfc-custom-grid .field{margin:0}.nfc-custom-grid input[type=range]{width:100%;accent-color:#e35a79}.nfc-preview-comparison{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:15px;margin:16px 0}.nfc-preview-device{min-width:0}.nfc-preview-device>b{display:block;font-size:12px;margin-bottom:7px}.nfc-preview-screen{overflow:hidden;border:7px solid #08090e;border-radius:17px;height:470px;background:#181923;box-shadow:0 15px 35px #0006}.nfc-preview-device.mobile .nfc-preview-screen{height:550px;border-radius:32px}.nfc-browser-head{height:27px;background:#222530;display:flex;align-items:center;padding:0 10px;gap:5px;color:#bac0cd;font-size:10px}.nfc-browser-head i{display:block;background:#f47783;width:7px;height:7px;border-radius:50%}.nfc-browser-head i:nth-child(2){background:#e6c15f}.nfc-browser-head i:nth-child(3){background:#58bf8d}.nfc-preview-screen iframe{width:100%;height:100%;border:0}.nfc-preview-device.desktop iframe{height:calc(100% - 27px)}.nfc-preview-note{font-size:11px;color:#a8a3b3}@media(max-width:850px){.nfc-preview-comparison{grid-template-columns:1fr}.nfc-preview-device.mobile{width:min(300px,100%);margin:auto}.nfc-custom-grid,.nfc-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}</style></head>
+.nfc-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}.nfc-template-option{min-height:90px;display:flex;flex-direction:column;text-align:left;gap:5px;padding:12px;border:2px solid #55475a;background:linear-gradient(135deg,var(--sw1),var(--sw2));color:var(--ink,#fff);border-radius:14px}.nfc-template-option.selected{outline:2px solid #ff6490;outline-offset:2px;border-color:#fff}.nfc-template-option strong{font-size:13px}.nfc-template-option small{opacity:.82;font-size:11px}.nfc-custom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.nfc-custom-grid .field{margin:0}.nfc-custom-grid input[type=range]{width:100%;accent-color:#e35a79}.nfc-preview-comparison{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:15px;margin:16px 0}.nfc-preview-device{min-width:0}.nfc-preview-device>b{display:block;font-size:12px;margin-bottom:7px}.nfc-preview-screen{overflow:hidden;border:7px solid #08090e;border-radius:17px;height:470px;background:#181923;box-shadow:0 15px 35px #0006}.nfc-preview-device.mobile .nfc-preview-screen{height:550px;border-radius:32px}.nfc-browser-head{height:27px;background:#222530;display:flex;align-items:center;padding:0 10px;gap:5px;color:#bac0cd;font-size:10px}.nfc-browser-head i{display:block;background:#f47783;width:7px;height:7px;border-radius:50%}.nfc-browser-head i:nth-child(2){background:#e6c15f}.nfc-browser-head i:nth-child(3){background:#58bf8d}.nfc-preview-screen iframe{width:100%;height:100%;border:0}.nfc-preview-device.desktop iframe{height:calc(100% - 27px)}.nfc-preview-note{font-size:11px;color:#a8a3b3}@media(max-width:850px){.nfc-preview-comparison{grid-template-columns:1fr}.nfc-preview-device.mobile{width:min(300px,100%);margin:auto}.nfc-custom-grid,.nfc-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#nfcCorporateFields[hidden]{display:none!important}
+#nfcCorporateFields{background:#121519;border-color:#4d535a}
+#nfcCorporateFields .nfc-custom-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#nfcCorporateFields input{width:100%;min-width:0;background:#101216;color:#f5f6f8;border:1px solid #44494f;border-radius:9px;padding:10px 12px}
+#nfcCorporateFields .field small{display:block;color:#aeb6be;font-size:11px;margin-top:4px}
+@media(max-width:540px){#nfcCorporateFields .nfc-custom-grid{grid-template-columns:1fr}}
+</style></head>
 <body><main class="shell">
 <header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
 <h1>Micrositios para negocios.</h1><p class="hint">Personalizá la página de un negocio y, al finalizar, generá su URL para copiarla en tu activador NFC. Las tarjetas físicas se configuran fuera de este dashboard.</p>
@@ -66,6 +73,18 @@ html.nfc-embedded .layout{gap:16px}
 <div class="field"><label for="backgroundFile">Imagen de fondo</label><label class="upload-tile" for="backgroundFile"><span class="upload-image cover-image" id="backgroundThumb">▧</span><span><b>Subir fondo</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="background" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearBackground">Quitar fondo</button></div></div>
 
 <fieldset class="nfc-design-controls"><legend>Plantillas por rubro</legend><p class="design-hint">Seleccioná un diseño; podés cambiarlo después sin alterar la URL NFC.</p><div id="nfcTemplateGrid" class="nfc-template-grid" role="group" aria-label="Diseños NFC"></div><input type="hidden" id="nfcTemplate" value="classic"></fieldset>
+
+<fieldset class="nfc-design-controls" id="nfcCorporateFields" hidden>
+ <legend>Tarjeta corporativa · Perfil profesional</legend>
+ <p class="design-hint">Como la referencia: foto, nombre, cargo, ubicación y contacto directo. Datos opcionales para guardar en el contacto del teléfono.</p>
+ <div class="nfc-custom-grid">
+  <div class="field"><label for="nfcRole">Cargo o profesión</label><input type="text" id="nfcRole" maxlength="65" placeholder="Directora comercial"></div>
+  <div class="field"><label for="nfcLocation">Ciudad y ubicación</label><input type="text" id="nfcLocation" maxlength="85" placeholder="Managua, Nicaragua"></div>
+  <div class="field"><label for="nfcPhone">Teléfono profesional</label><input type="tel" id="nfcPhone" maxlength="35" placeholder="+505 8888 8888"></div>
+  <div class="field"><label for="nfcEmail">Correo de trabajo</label><input type="email" id="nfcEmail" maxlength="150" placeholder="contacto@empresa.com"></div>
+  <div class="field" style="grid-column:1/-1"><label for="nfcTags">Etiquetas (separadas por coma)</label><input type="text" id="nfcTags" maxlength="140" placeholder="Ventas, Consultoría, Estrategia"><small>Hasta 5 etiquetas.</small></div>
+ </div>
+</fieldset>
 <fieldset class="nfc-design-controls"><legend>Personalización avanzada</legend><p class="design-hint">Edición simultánea en web y móvil, usando iconos SVG de las marcas.</p><div class="nfc-custom-grid">
 <div class="field"><label for="nfcShape">Forma de botones</label><select id="nfcShape"><option value="soft">Redondeado</option><option value="pill">Cápsula</option><option value="square">Rectangular</option></select></div>
 <div class="field"><label for="nfcFont">Tipografía</label><select id="nfcFont"><option value="modern">Moderna</option><option value="serif">Serif</option><option value="editorial">Creativa</option></select></div>
@@ -184,19 +203,19 @@ const TEMPLATES=[
 ['classic','Clásica BTS','Minimalista','#17111e','#7e3148','#fff'],
 ['glass','Glass Premium','Cristal y tecnología','#244d91','#a275cf','#fff'],
 ['creator','Creator Neon','Artistas y creativos','#190b34','#9f157d','#fff'],
-['business','Business Clean','Empresas','#e8f5ff','#b8dbeb','#112538'],
+['business','Corporate Executive','Tarjeta corporativa oscura','#1a1d20','#373c40','#fff'],
 ['food','Food & Services','Restaurantes','#f9ebd7','#c58b62','#382218'],
 ['beauty','Beauty & Style','Belleza','#fde8ec','#eab9c8','#49313f'],
 ['portfolio','Portfolio Noir','Fotografía','#14141b','#47434e','#fff'],
 ['realestate','Estate Luxury','Inmobiliarias','#101f2a','#806c4e','#fff'],
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
-const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#f5faff','#126779','#ffffff','#16354b','#b0d0dc','#14263e','#ffffff'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
+const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
-function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value};}
+function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim()};}
 function chooseTemplate(id,apply=true){
- if(!COLORS[id])id='classic';$('nfcTemplate').value=id;
+ if(!COLORS[id])id='classic';$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
- $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=id==='classic'?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';}
+ $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=id==='classic'?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(id==='business')$('nfcIconStyle').value='mono';}
  for(const b of $('nfcTemplateGrid').querySelectorAll('button')){b.classList.toggle('selected',b.dataset.template===id);b.setAttribute('aria-pressed',String(b.dataset.template===id));}
  syncLivePreview();
 }
@@ -249,7 +268,7 @@ function row(type='instagram',url='',customLabel=''){
 }
 function currentPreviewCard(){
  const links=[];for(const item of allRows()){const type=item.querySelector('select').value,url=item.querySelector('input[type=url]').value.trim();if(url)links.push({type,label:item.querySelector('.custom-link-input').value.trim()||typeNames[type]||'Enlace',url});}
- return {business_name:$('name').value.trim()||'Nombre del negocio',tagline:$('tagline').value.trim()||'Tus servicios y redes en un lugar.',avatar_url:previewBlobs.avatar||$('avatar').value,background_url:previewBlobs.background||$('background').value,
+ return {slug:normalized($('slug').value),business_name:$('name').value.trim()||'Nombre del negocio',tagline:$('tagline').value.trim()||'Tus servicios y redes en un lugar.',avatar_url:previewBlobs.avatar||$('avatar').value,background_url:previewBlobs.background||$('background').value,
  background_color:$('bgColor').value,accent_color:$('color').value,avatar_position_x:Number($('avatarX').value),avatar_position_y:Number($('avatarY').value),avatar_zoom:Number($('avatarZoom').value),
  button_bg_color:$('buttonBg').value,button_text_color:$('buttonText').value,button_border_color:$('buttonBorder').value,template_id:chosenTemplate(),theme_options:selectedOptions(),links};
 }
@@ -338,7 +357,7 @@ function reset(){
  editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';
  $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;
  $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';
- chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
+ for(const id of ['nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).value='';chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
 }
@@ -358,7 +377,7 @@ function showCard(c){
  $('nfcIconStyle').value=o.icons==='mono'?'mono':'brand';
  $('nfcBlur').value=Number.isFinite(Number(o.blur))?Math.max(0,Math.min(40,Number(o.blur))):18;
  $('nfcTextColor').value=/^#[0-9a-f]{6}$/i.test(o.textColor||'')?o.textColor:COLORS[chosenTemplate()][5];
- $('nfcSurfaceColor').value=/^#[0-9a-f]{6}$/i.test(o.surfaceColor||'')?o.surfaceColor:COLORS[chosenTemplate()][6];
+ $('nfcSurfaceColor').value=/^#[0-9a-f]{6}$/i.test(o.surfaceColor||'')?o.surfaceColor:COLORS[chosenTemplate()][6];for(const [id,key] of [['nfcRole','role'],['nfcLocation','location'],['nfcPhone','phone'],['nfcEmail','email'],['nfcTags','tags']])$(id).value=String(o[key]||'');
  $('active').checked=c.is_active;
  for(const id of ['avatar','background']){$(id+'File').value='';imageThumb(id,$(id).value);}
  $('links').replaceChildren();(Array.isArray(c.links)?c.links:[]).forEach(l=>row(l.type,l.url,l.label&&l.label!==typeNames[l.type]?l.label:''));
@@ -535,7 +554,7 @@ async function save(e){
 }
 $('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);}preview();});
 $('slug').addEventListener('input',()=>{clearConflict();preview();});
-for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','buttonBg','buttonText','buttonBorder','nfcShape','nfcFont','nfcAlign','nfcIconStyle','nfcTextColor','nfcSurfaceColor','nfcBlur'])$(id).addEventListener('input',syncLivePreview);
+for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','buttonBg','buttonText','buttonBorder','nfcShape','nfcFont','nfcAlign','nfcIconStyle','nfcTextColor','nfcSurfaceColor','nfcBlur','nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).addEventListener('input',syncLivePreview);
  $('centerAvatar').addEventListener('click',()=>{
   $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;syncLivePreview();
  });
