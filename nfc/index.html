@@ -224,8 +224,8 @@ if(previewMode){
    if(!c){unavailable('Esta tarjeta digital no está disponible.');return;}
    if(cardCode){
      if(!/^[a-f0-9]{20}$/.test(cardCode)){unavailable('Esta tarjeta no es válida.');return;}
-     const execUrl=ENDPOINT+'/rest/v1/bts_nfc_executives?company_id=eq.'+encodeURIComponent(c.id)+'&card_code=eq.'+encodeURIComponent(cardCode)+'&is_active=eq.true&select=id,full_name,job_title,whatsapp_number,phone_number,email,avatar_url,extra_links&limit=1';
-     const er=await fetch(execUrl,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
+     const execUrl=ENDPOINT+'/rest/v1/rpc/bts_nfc_public_executive';
+     const er=await fetch(execUrl,{method:'POST',headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_company_slug:slug,p_card_code:cardCode}),cache:'no-store'});
      if(!er.ok)throw Error('No se pudo cargar el ejecutivo.');
      const exes=await er.json(),exec=Array.isArray(exes)?exes[0]:null;
      if(!exec){unavailable('Esta tarjeta ejecutiva está suspendida o no existe.');return;}
