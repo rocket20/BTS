@@ -159,7 +159,12 @@ async function api(path,options={},repeat=true){
 }
 async function checkAdmin(){const s=getSession();const v=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(s.user.id)+'&select=user_id&limit=1');if(!v?.length)throw Error('No tenés permisos para administrar Empresas NFC.');}
 function currentCompany(){return companies.find(x=>x.id===$('company').value)||null;}
-window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pricing});
+window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pricing,draftExecutive:window.BTSExecutivePortrait?{
+ id:editingId||'draft',full_name:$('fullName').value.trim()||'Ejecutivo',
+ job_title:$('jobTitle').value.trim(),whatsapp_number:$('whatsapp').value,
+ phone_number:$('phone').value,email:$('email').value,
+ avatar_url:window.BTSExecutivePortrait.previewUrl(),extra_links:[]
+}:null});
 function notifyPreview(){window.dispatchEvent(new Event('bts-nfc-corporate-data'));}
 function whatsAppNumber(links){return Array.isArray(links)?(links.find(x=>x.type==='whatsapp')?.url||'').replace(/^https?:\/\/(?:www\.)?wa\.me\//,'').replace(/[^+\d]/g,''):'';}
 function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
@@ -217,12 +222,12 @@ async function createCompany(e){
 function showEmpty(id,text){const p=document.createElement('div');p.className='empty';p.textContent=text;$(id).replaceChildren(p);}
 async function copyText(t){try{await navigator.clipboard.writeText(t);notice('URL copiada al portapapeles.');}catch{window.prompt('Copiá la URL de esta tarjeta',t);}}
 function resetForm(){
- editingId=null;$('executiveForm').reset();$('formHeading').textContent='Nuevo ejecutivo';$('formHint').textContent='Creá una tarjeta individual vinculada a la empresa.';$('saveExec').textContent='Guardar ejecutivo';
+ editingId=null;$('executiveForm').reset();window.BTSExecutivePortrait?.reset('','');notifyPreview();$('formHeading').textContent='Nuevo ejecutivo';$('formHint').textContent='Creá una tarjeta individual vinculada a la empresa.';$('saveExec').textContent='Guardar ejecutivo';
 }
 function fillForm(p){
  editingId=p.id;$('fullName').value=p.full_name;$('jobTitle').value=p.job_title;$('cardLabel').value=p.card_label;
  $('whatsapp').value=p.whatsapp_number;$('phone').value=p.phone_number;$('email').value=p.email;$('avatar').value=p.avatar_url;
- $('extraLinks').value=(Array.isArray(p.extra_links)?p.extra_links:[]).map(x=>x.url).join('\n');
+ $('extraLinks').value=(Array.isArray(p.extra_links)?p.extra_links:[]).map(x=>x.url).join('\n');window.BTSExecutivePortrait?.reset(p.avatar_url||'',p.full_name);notifyPreview();
  $('formHeading').textContent='Editar · '+p.full_name;$('formHint').textContent='Si reasignás esta tarjeta, el código NFC seguirá siendo el mismo.';$('saveExec').textContent='Guardar cambios';
  $('employeeEditor').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -326,6 +331,9 @@ async function saveExecutive(event){
  if(payload.avatar_url&&!safeUrl(payload.avatar_url))return notice('La URL de la foto es inválida.',true);
  const submit=$('saveExec');submit.disabled=true;
  try{
+  if(window.BTSExecutivePortrait?.hasPending()){
+   payload.avatar_url=await window.BTSExecutivePortrait.upload(getSession,authRefresh,BASE,KEY);
+  }
   if(editingId){
    const {company_id,...changes}=payload;
    await api('/rest/v1/bts_nfc_executives?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(changes)});
@@ -372,6 +380,10 @@ $('companyForm').addEventListener('submit',createCompany);
 $('settingsForm').addEventListener('submit',saveSettings);
 $('companyName').addEventListener('input',()=>{if(!$('companySlug').dataset.custom){$('companySlug').value=normalizedSlug($('companyName').value);}});
 $('companySlug').addEventListener('input',()=>{$('companySlug').dataset.custom=$('companySlug').value?'1':'';});
+window.addEventListener('bts-nfc-executive-portrait-changed',notifyPreview);
+for(const id of ['jobTitle','whatsapp','phone','email']){
+ $(id).addEventListener('input',notifyPreview);
+}
 $('company').addEventListener('change',loadCompany);
 $('filter').addEventListener('input',renderPeople);
 $('executiveForm').addEventListener('submit',saveExecutive);
