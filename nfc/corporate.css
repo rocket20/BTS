@@ -183,3 +183,8 @@ html[data-nfc-template="business"] .nfc-business-meta{display:grid}
  html[data-nfc-template="business"] .nfc-save-contact,
  html[data-nfc-template="business"] .links a{transition:none}
 }
+
+/* Respetar campos opcionales vacíos y la visibilidad nativa. */
+html[data-nfc-template="business"] .nfc-business-meta[hidden],
+html[data-nfc-template="business"] .nfc-business-role[hidden],
+html[data-nfc-template="business"] .nfc-business-location[hidden]{display:none!important}
