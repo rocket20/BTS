@@ -23,9 +23,10 @@
 @media(max-width:1080px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.content{grid-template-columns:1fr}}
 @media(max-width:680px){.wrapper{padding:16px 13px 45px}.top{align-items:flex-start}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:13px}.metric strong{font-size:21px}.panel{padding:15px}.employee{grid-template-columns:38px minmax(0,1fr)}.employee-actions{grid-column:2;justify-content:flex-start}.toolbar{width:100%}.toolbar input{width:100%}.formgrid{grid-template-columns:1fr}.formgrid .span2{grid-column:1}.hero{padding:18px 0}.company-picker{width:100%}}
 </style>
+<link rel="stylesheet" href="./preview.css?v=20261109a">
 </head>
 <body><main class="wrapper">
-<header class="top"><div class="brand">BTS <span>STUDIO</span> <small style="font-size:11px;letter-spacing:0;color:#a3a3ae;font-weight:600">/ EMPRESAS NFC</small></div><nav class="top-actions"><a class="btn ghost" href="../admin/" title="Editor de micrositios">Micrositios NFC</a><a class="btn" href="/admin/">← Dashboard</a></nav></header>
+<header class="top"><div class="brand">BTS <span>STUDIO</span> <small style="font-size:11px;letter-spacing:0;color:#a3a3ae;font-weight:600">/ EMPRESAS NFC</small></div><span class="top-context">Gestión corporativa · BTS Studio</span></header>
 <div class="hero"><div><div class="eyebrow">BTS STUDIO / CARPETA CORPORATIVA</div><h1>NFC corporativo.</h1><p>Creá una empresa, administrá su identidad y asigná tarjetas permanentes a sus ejecutivos.</p></div><div class="company-picker"><label for="company">Empresa a administrar</label><select id="company"><option value="">Seleccioná una empresa...</option></select><button type="button" id="newCompany" class="btn primary">+ Nueva empresa</button></div></div>
 <section id="companyCreator" class="panel" hidden>
  <div class="panelhead"><div><h2>Crear empresa corporativa</h2><p>Una página madre de empresa con tarjetas NFC para su equipo. No aparecerá entre los NFC normales.</p></div><button id="cancelCompany" type="button" class="btn ghost small">Cancelar</button></div>
@@ -48,6 +49,19 @@
   <label class="span2">Logotipo (URL) <input type="url" id="settingsLogo" maxlength="1000" placeholder="https://..."></label>
   <div class="span2 form-footer"><button type="submit" class="btn primary" id="saveSettings">Guardar datos corporativos</button><span class="hint">El identificador de la empresa permanece fijo para proteger las tarjetas NFC.</span></div>
  </form>
+</section>
+
+<section class="panel corporate-preview-panel" id="designPreview">
+ <div class="panelhead">
+  <div><h2>Vista previa de diseño</h2><p>Misma plantilla publicada: página de empresa y tarjeta personalizada de cada ejecutivo.</p></div>
+  <label class="preview-picker">Mostrar <select id="designFor"><option value="company">Empresa principal</option><option value="demo">Ejecutivo de ejemplo</option></select></label>
+ </div>
+ <p id="designStatus" class="fine">Demostración de estilo; seleccioná una empresa para previsualizar sus datos.</p>
+ <div class="preview-dual">
+  <div class="preview-device"><div class="preview-device-heading"><b>Escritorio</b><span>Miniweb corporativa</span></div><div class="preview-window" id="designDesktop"><iframe id="designDesktopFrame" title="Vista previa de empresa o ejecutivo en web" src="../?preview=1" loading="lazy" tabindex="-1"></iframe></div></div>
+  <div class="preview-device preview-phone"><div class="preview-device-heading"><b>Celular</b><span>Tarjeta NFC</span></div><div class="preview-window" id="designMobile"><iframe id="designMobileFrame" title="Vista previa de empresa o ejecutivo en teléfono" src="../?preview=1" loading="lazy" tabindex="-1"></iframe></div></div>
+ </div>
+ <p class="fine">Esta vista no abre enlaces ni crea datos. Los perfiles públicos aparecen al guardar la empresa y sus ejecutivos.</p>
 </section>
 <div class="metrics" aria-label="Indicadores">
  <div class="metric"><small>Tarjetas registradas</small><strong id="kTotal">0</strong><em>Empresa seleccionada</em></div>
@@ -75,7 +89,13 @@
     <div class="span2 form-footer"><button id="saveExec" type="submit" class="btn primary">Guardar ejecutivo</button><button id="cancelEdit" type="button" class="btn ghost">Limpiar</button></div>
    </form>
   </section>
-  <section class="panel"><div class="panelhead"><div><h2>Finanzas del proyecto</h2><p>Precios pactados y pagos ingresados por BTS Studio.</p></div></div>
+  <section class="panel"><div class="panelhead"><div><h2>Finanzas del proyecto</h2><p>Registro administrativo manual en Supabase. No cobra tarjetas, no consulta bancos ni genera facturas automáticamente.</p></div><span class="finance-tag">Control interno · Supabase</span></div>
+ <div id="nfcEstimate" class="estimate">
+  <small>Presupuesto orientativo: precio del diseño + tarifa por NFC × tarjetas registradas</small>
+  <strong id="nfcEstimatedTotal">—</strong>
+  <span id="nfcEstimateDetail">Configurá los precios para calcular la proyección.</span>
+  <p>Esta proyección no es una factura ni un saldo por cobrar. Los movimientos reales se registran por separado.</p>
+ </div>
    <form id="pricingForm" class="formgrid">
     <label>Moneda<select id="currency"><option value="USD">USD · Dólares</option><option value="NIO">NIO · Córdobas</option></select></label>
     <label>Precio del diseño<input id="designFee" type="number" min="0" step="0.01" value="0"></label>
@@ -122,6 +142,8 @@ async function api(path,options={},repeat=true){
 }
 async function checkAdmin(){const s=getSession();const v=await api('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(s.user.id)+'&select=user_id&limit=1');if(!v?.length)throw Error('No tenés permisos para administrar Empresas NFC.');}
 function currentCompany(){return companies.find(x=>x.id===$('company').value)||null;}
+window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pricing});
+function notifyPreview(){window.dispatchEvent(new Event('bts-nfc-corporate-data'));}
 function whatsAppNumber(links){return Array.isArray(links)?(links.find(x=>x.type==='whatsapp')?.url||'').replace(/^https?:\/\/(?:www\.)?wa\.me\//,'').replace(/[^+\d]/g,''):'';}
 function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
 function normalizedSlug(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);}
@@ -146,7 +168,7 @@ async function saveSettings(e){
  try{
   await api('/rest/v1/bts_nfc_cards?id=eq.'+encodeURIComponent(company.id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
   Object.assign(company,payload);$('company').selectedOptions[0].textContent=company.business_name+' · '+company.slug;
-  notice('Empresa actualizada. El mismo enlace NFC continúa funcionando.');renderSettings();
+  notice('Empresa actualizada. El mismo enlace NFC continúa funcionando.');renderSettings();notifyPreview();
  }catch(err){notice('No se pudo guardar la empresa: '+err.message,true);}finally{btn.disabled=false;}
 }
 async function createCompany(e){
@@ -208,10 +230,12 @@ function renderPeople(){
   info.append(title,role,ref,state);
   const action=document.createElement('div');action.className='employee-actions';
   const edit=document.createElement('button');edit.className='btn small';edit.textContent='Editar';edit.onclick=()=>fillForm(p);
+  const previewButton=document.createElement('button');previewButton.type='button';previewButton.className='btn small';previewButton.textContent='Ver diseño';
+  previewButton.onclick=()=>{document.getElementById('designFor').value=p.id;notifyPreview();document.getElementById('designPreview').scrollIntoView({behavior:'smooth',block:'start'});};
   const copy=document.createElement('button');copy.className='btn small';copy.textContent='Copiar URL';copy.onclick=()=>copyText(companyUrl(p));
   const open=document.createElement('a');open.className='btn small';open.textContent='Abrir';open.href=companyUrl(p);open.target='_blank';open.rel='noopener noreferrer';if(!p.is_active)open.style.opacity='.5';
   const toggle=document.createElement('button');toggle.className='btn small '+(p.is_active?'warning':'good');toggle.textContent=p.is_active?'Suspender':'Reactivar';toggle.onclick=()=>changeStatus(p);
-  action.append(edit,copy,open,toggle);item.append(avatar,info,action);target.append(item);
+  action.append(previewButton,edit,copy,open,toggle);item.append(avatar,info,action);target.append(item);
  }
 }
 function renderMetrics(){
@@ -251,7 +275,7 @@ function renderAudit(){
  }
 }
 async function loadCompany(){
- selectedCompany=currentCompany();people=[];events=[];payments=[];audit=[];pricing=null;resetForm();renderSettings();
+ selectedCompany=currentCompany();people=[];events=[];payments=[];audit=[];pricing=null;resetForm();renderSettings();notifyPreview();
  if(!selectedCompany){renderPeople();renderPayments();renderAudit();renderMetrics();return;}
  notice('Cargando '+selectedCompany.business_name+'…');
  try{
@@ -262,7 +286,7 @@ async function loadCompany(){
    api('/rest/v1/bts_nfc_payments?company_id=eq.'+id+'&select=*&order=created_at.desc&limit=100'),
    api('/rest/v1/bts_nfc_executive_audit?company_id=eq.'+id+'&select=operation,after_data,before_data,occurred_at&order=occurred_at.desc&limit=30')
   ]);
-  people=persons||[];pricing=prices?.[0]||null;payments=pays||[];audit=history||[];
+  people=persons||[];pricing=prices?.[0]||null;payments=pays||[];audit=history||[];notifyPreview();
   $('currency').value=pricing?.currency||'USD';$('designFee').value=pricing?.design_fee??0;$('cardPrice').value=pricing?.price_per_card??0;
   if(people.length){
    const ids='('+people.map(p=>p.id).join(',')+')';
@@ -314,7 +338,7 @@ async function init(){
  for(const id of ['newExecutive','saveExec'])$(id).disabled=true;
  try{
   await checkAdmin();
-  const rows=await api('/rest/v1/bts_nfc_cards?nfc_category=eq.corporate&select=id,slug,business_name,tagline,avatar_url,links,is_active&order=created_at.desc&limit=500');
+  const rows=await api('/rest/v1/bts_nfc_cards?nfc_category=eq.corporate&select=*&order=created_at.desc&limit=500');
   companies=rows||[];
   const select=$('company');for(const c of companies){const option=document.createElement('option');option.value=c.id;option.textContent=c.business_name+' · '+c.slug;select.append(option);}
   $('newExecutive').disabled=false;$('saveExec').disabled=false;
@@ -341,4 +365,5 @@ $('cancelEdit').addEventListener('click',resetForm);
 init();
 })();
 </script>
+<script src="./preview.js?v=20261109a" defer></script>
 </body></html>
