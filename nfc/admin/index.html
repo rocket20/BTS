@@ -60,7 +60,7 @@ html.nfc-embedded .layout{gap:16px}
 </style></head>
 <body><main class="shell">
 <header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
-<h1>Micrositios para negocios.</h1><p class="hint">Personalizá la página de un negocio y, al finalizar, generá su URL para copiarla en tu activador NFC. Las tarjetas físicas se configuran fuera de este dashboard.</p>
+<h1>NFC normal.</h1><p class="hint">Diseñá una tarjeta individual para restaurantes, fotógrafos, tiendas, profesionales y otros negocios. Los perfiles corporativos con ejecutivos se gestionan en la otra pestaña. Las tarjetas físicas se configuran fuera de este dashboard.</p>
 <div id="notice" class="notice" role="status"></div>
 <div class="layout"><section class="panel history-panel"><div class="linkhead"><h2 style="flex:1">Páginas NFC registradas</h2><button id="new" class="btn primary">+ Nuevo negocio</button></div><div class="history-intro"><p>Administrá todas las páginas: editar, cambiar URL o eliminar registro.</p><span class="history-count" id="historyCount">0 tarjetas</span></div><p class="registry-status" id="registryStatus" role="status">Consultando negocios…</p><div class="cards" id="cards"><p class="empty">Cargando tarjetas…</p></div><div class="help">Cada negocio tiene una URL permanente. Una vez creada, podés editar su foto, fondo y enlaces sociales sin volver a grabar la tarjeta NFC.</div></section>
 <section class="panel editor-panel"><h2 id="formTitle">Crear negocio</h2>
@@ -311,7 +311,11 @@ function clearConflict(){existingConflict=null;$('slugConflict').hidden=true;$('
 function revealConflict(c){
  existingConflict=c;
  $('slugConflict').hidden=false;
- $('slugConflictText').textContent='La URL «'+ROOT+c.slug+'» ya está asignada a «'+c.business_name+'». No se creó otra tarjeta. Podés editar la página existente sin cambiar su dirección.';
+ const corporate=c.nfc_category==='corporate';
+  $('slugConflictText').textContent=corporate
+   ?'Esta URL pertenece a «'+c.business_name+'», una empresa corporativa. Administrala desde la pestaña NFC corporativo; no se permite modificarla aquí.'
+   :'La URL «'+ROOT+c.slug+'» ya está asignada a «'+c.business_name+'». No se creó otra tarjeta. Podés editar la página existente sin cambiar su dirección.';
+  $('editExisting').disabled=corporate;
  $('slugConflict').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 async function getExistingBySlug(slug){
@@ -320,7 +324,7 @@ async function getExistingBySlug(slug){
  return Array.isArray(result)?(result[0]||null):null;
 }
 $('editExisting').addEventListener('click',()=>{
- if(!existingConflict)return;
+ if(!existingConflict||existingConflict.nfc_category==='corporate')return;
  showCard(existingConflict);
  notify('Página existente abierta. Editá sus datos y presioná Guardar cambios; la URL se mantiene.');
 });
@@ -442,7 +446,7 @@ async function load(){
  status('Recuperando las páginas activas…');
  // Lanzar la lectura administrativa simultáneamente, pero no bloquear el historial público.
  const adminPromise=sessionReady()
-  ?api('/rest/v1/bts_nfc_cards?select=*&order=created_at.desc&limit=500')
+  ?api('/rest/v1/bts_nfc_cards?nfc_category=eq.normal&select=*&order=created_at.desc&limit=500')
     .then(r=>r.json())
     .then(rows=>{if(!Array.isArray(rows))throw Error('Respuesta administrativa inválida.');return {rows};})
     .catch(error=>({error}))
@@ -450,7 +454,7 @@ async function load(){
  let publicRows=[],publicError=null;
  try{
   const response=await fetchTimed(
-   BASE+'/rest/v1/bts_nfc_cards?is_active=eq.true&select=*&order=created_at.desc&limit=500',
+   BASE+'/rest/v1/bts_nfc_cards?nfc_category=eq.normal&is_active=eq.true&select=*&order=created_at.desc&limit=500',
    {headers:{apikey:KEY,Accept:'application/json'}},6500
   );
   if(!response.ok)throw Error('Supabase respondió '+response.status+' al consultar las páginas activas.');
@@ -510,7 +514,7 @@ async function save(e){
  button_bg_color:$('buttonBg').value,
  button_text_color:$('buttonText').value,
  button_border_color:$('buttonBorder').value,
- links,is_active:$('active').checked,template_id:chosenTemplate(),theme_options:selectedOptions()};
+ links,is_active:$('active').checked,template_id:chosenTemplate(),theme_options:selectedOptions(),nfc_category:'normal'};
  if(data.avatar_url&&!safeUrl(data.avatar_url)){fail('La foto no es válida.');return;}
  data.slug=slug;
  const btn=$('save');btn.disabled=true;notify('Guardando…');

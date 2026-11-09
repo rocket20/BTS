@@ -50,7 +50,7 @@ async function updateGoogleMetrics(){
 }
 
 let content=copy(blank), leads=[], token='', repo={owner:'rocket20',name:'BTS',branch:'main'}, page='resumen', modalType='', modalId='',modalImageData='',modalGalleryData=[],activeToast;
-const labels={resumen:'Resumen',trafico:'Analítica web',cotizaciones:'Cotizaciones',eventos:'Eventos y proyectos',marcas:'Marcas y aliados',paquetes:'Paquetes',servicios:'Servicios',contenido:'Página y contacto',configuracion:'Configuración',nfc:'Tarjetas NFC',empresasnfc:'Empresas NFC',usuarios:'Usuarios y roles',historial:'Historial de movimientos'};
+const labels={resumen:'Resumen',trafico:'Analítica web',cotizaciones:'Cotizaciones',eventos:'Eventos y proyectos',marcas:'Marcas y aliados',paquetes:'Paquetes',servicios:'Servicios',contenido:'Página y contacto',configuracion:'Configuración',nfc:'Tarjetas NFC',usuarios:'Usuarios y roles',historial:'Historial de movimientos'};
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(activeToast);activeToast=setTimeout(()=>el.classList.remove('show'),4000);}
 function localGet(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback;}catch{return fallback;}}
 function localSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{notify('No hay espacio disponible para este borrador. Exportá el JSON para respaldarlo.');return false;}}
@@ -58,7 +58,31 @@ function normalize(x){const d=copy(blank);if(!x||typeof x!=='object')return d;d.
 function storeDraft(){localSet(LS_DRAFT,content);notify('Borrador guardado en este navegador. Usá Publicar en GitHub para hacerlo visible a todos.');}
 async function reloadLeads(){leads=await BTSLeads.load();renderOverview();renderLeads();await updateGoogleMetrics();}
 function storeLeads(){renderOverview();renderLeads();}
-function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc'){const frame=$('#btsNfcModuleFrame');if(frame&&!frame.src)frame.src=frame.dataset.src;}if(name==='empresasnfc'){const frame=$('#btsNfcEnterpriseFrame');if(frame&&!frame.src)frame.src=frame.dataset.src;}window.BTSAdminAudit?.open(name);}
+let currentNfcFolder='normal';
+function selectNfcFolder(folder){
+ if(folder!=='normal'&&folder!=='corporate')folder='normal';
+ currentNfcFolder=folder;
+ const normal=folder==='normal';
+ const a=$('#nfcTabNormal'),b=$('#nfcTabCorporate');
+ if(!a||!b)return;
+ a.classList.toggle('active',normal);b.classList.toggle('active',!normal);
+ a.setAttribute('aria-selected',String(normal));b.setAttribute('aria-selected',String(!normal));
+ a.tabIndex=normal?0:-1;b.tabIndex=normal?-1:0;
+ const n=$('#nfcFolderNormal'),c=$('#nfcFolderCorporate');n.hidden=!normal;c.hidden=normal;
+ const frame=normal?$('#btsNfcModuleFrame'):$('#btsNfcEnterpriseFrame');
+ if(frame&&!frame.getAttribute('src'))frame.src=frame.dataset.src;
+}
+$('#nfcTabNormal')?.addEventListener('click',()=>selectNfcFolder('normal'));
+$('#nfcTabCorporate')?.addEventListener('click',()=>selectNfcFolder('corporate'));
+for(const id of ['nfcTabNormal','nfcTabCorporate']){
+ $('#'+id)?.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();const to=currentNfcFolder==='normal'?'corporate':'normal';
+    selectNfcFolder(to);$('#'+(to==='normal'?'nfcTabNormal':'nfcTabCorporate')).focus();
+  }
+ });
+}
+function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc')selectNfcFolder(currentNfcFolder);window.BTSAdminAudit?.open(name);}
 function status(){const configured=true,connected=!!window.BTSLeads?.invokePublisher;$('#modePill').textContent=connected?'● SUPABASE CONFIGURADO':'● MODO BORRADOR';$('#modePill').style.color=connected?'#72daa5':'';$('#connectionLabel').textContent=connected?'Supabase protege la publicación':'Modo de preparación';$('#repoStatus').textContent=connected?'Verificar función':'No conectado';$('#cmsStatus').textContent=connected?'Pendiente de prueba':'Pendiente';$('#gaStatus').textContent=googleReportStatus==='ready'?'GA4 conectado':content.brand.analyticsId?'ID configurado · informes pendientes':'Sin ID';$('#navLeadCount').textContent=leads.filter(l=>l.status==='Pendiente').length;}
 function renderKpis(){
  const icon=(name)=>'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="icons/lucide-'+(name==='users-round'||name==='eye'?'ui':'content')+'.svg#'+name+'"></use></svg>';
