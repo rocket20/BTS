@@ -1,0 +1,93 @@
+/* BTS Studio NFC — layouts responsive por rubro */
+:root{--nfc-radius:18px;--nfc-glass:18px;--nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html{scroll-behavior:smooth}
+body{--bg-art:radial-gradient(circle at 88% 4%,color-mix(in srgb,var(--accent) 32%,transparent),transparent 45%);display:block!important;min-height:100svh;background:var(--bg-art),var(--bg)!important;background-attachment:fixed!important;color:var(--ink);font-family:var(--nfc-font)!important}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:var(--nfc-cover,none);background-size:cover;background-position:center;opacity:.35;z-index:0}
+body:has([data-cover="yes"])::before{opacity:.55}
+main.nfc-page{position:relative;isolation:isolate;box-sizing:border-box;width:min(1160px,calc(100% - 44px))!important;margin:0 auto;min-height:100svh;padding:clamp(35px,6vw,92px) clamp(20px,4vw,56px) 30px!important;align-items:stretch!important;background:transparent!important;backdrop-filter:none!important}
+#profile{width:100%;max-width:none;align-items:stretch!important;gap:30px}
+.nfc-hero{display:flex;align-items:center;gap:26px;min-height:140px;padding:10px 0}
+.nfc-intro{min-width:0;flex:1}
+.nfc-hero .avatar{flex:none;width:116px;height:116px;min-width:116px;margin:0;border-radius:var(--nfc-avatar-shape,50%);border:3px solid color-mix(in srgb,var(--accent) 58%,#fff)}
+.nfc-hero h1{margin:0 0 8px;text-align:left;font-size:clamp(30px,3.6vw,52px);line-height:1.12}
+.nfc-hero .tagline{margin:0 0 14px;text-align:left;font-size:15px;max-width:670px}
+.nfc-hero .pill{margin:0;border-color:color-mix(in srgb,var(--accent) 40%,transparent);color:var(--ink)}
+.nfc-socials{display:flex;flex-wrap:wrap;gap:10px;min-height:0}
+.nfc-socials:empty{display:none}
+.nfc-socials a{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--nfc-button-bg,#181820);border:1px solid var(--nfc-button-border,#42404b);transition:transform .18s ease,background .18s ease}
+.nfc-socials a:hover{transform:translateY(-3px)}
+.nfc-content{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:24px;align-items:start}
+.nfc-card{border:1px solid color-mix(in srgb,var(--nfc-button-border,#42404b) 70%,transparent);border-radius:26px;background:color-mix(in srgb,var(--surface) 93%,transparent);padding:28px;min-width:0;box-shadow:0 20px 60px #00000022}
+.nfc-section-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.nfc-section-header h2{font-size:20px;letter-spacing:-.04em;margin:0;font-weight:800}
+.nfc-section-header span{color:var(--muted);font-size:11px;letter-spacing:.05em}
+.links{width:100%}
+.links a{border-radius:var(--nfc-radius)!important;min-height:62px;grid-template-columns:40px minmax(0,1fr) 28px;box-shadow:0 10px 26px #00000012}
+.links a strong{text-align:left!important;font-size:14px}
+.links .glyph{width:36px;height:36px;border-radius:11px}
+.nfc-brand{display:grid;place-items:center;flex:none}
+.nfc-brand img{width:22px;height:22px;object-fit:contain;display:block}
+.nfc-brand img[src*="simpleicons.org"]{filter:none}
+.nfc-featured-list{display:grid;gap:11px}
+.nfc-feature{display:flex;align-items:center;gap:13px;padding:16px;border-radius:var(--nfc-radius);border:1px solid var(--nfc-button-border,#42404b);text-decoration:none;background:var(--nfc-button-bg,#181820);color:var(--nfc-button-text,#fff);min-height:68px;transition:transform .2s}
+.nfc-feature:hover{transform:translateY(-2px)}
+.nfc-feature .nfc-brand{width:37px;height:37px;border-radius:12px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.nfc-feature b{font-size:13px;line-height:1.2}
+.nfc-feature span:last-child{margin-left:auto;opacity:.68}
+.nfc-about{border-top:1px solid color-mix(in srgb,var(--muted) 20%,transparent);padding-top:20px;margin-top:23px;color:var(--muted);font-size:13px;line-height:1.7}
+.nfc-about strong{display:block;color:var(--ink);font-size:14px;margin-bottom:6px}
+.foot{color:var(--muted)!important;padding-top:50px!important}
+.foot b{color:var(--ink)!important}
+#message{margin:20px auto}
+[data-nfc-template="glass"]{--bg-art:radial-gradient(ellipse at 7% 0%,#8b8aff86,transparent 48%),radial-gradient(ellipse at 92% 88%,#cf8cff68,transparent 49%),linear-gradient(135deg,#091532,#252458 57%,#14294f);--nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+[data-nfc-template="glass"] body{--bg-art:radial-gradient(circle at 10% 12%,#437cff82,transparent 46%),radial-gradient(circle at 94% 80%,#b866fb84,transparent 42%),linear-gradient(130deg,#102342,#312257,#152950)}
+[data-nfc-template="glass"] .nfc-card,[data-nfc-template="glass"] .links a,[data-nfc-template="glass"] .nfc-socials a,[data-nfc-template="glass"] .nfc-feature{background:color-mix(in srgb,var(--nfc-button-bg,#2f3c7c) 52%,transparent)!important;backdrop-filter:blur(var(--nfc-glass)) saturate(1.3);-webkit-backdrop-filter:blur(var(--nfc-glass)) saturate(1.3);border:1px solid #ffffff60!important;box-shadow:inset 0 1px #ffffff35,0 20px 50px #090e3940}
+[data-nfc-template="glass"] .nfc-hero{padding:24px;border-radius:28px;background:#ffffff0d;backdrop-filter:blur(12px);border:1px solid #ffffff2a}
+[data-nfc-template="creator"] body{--bg-art:radial-gradient(circle at 10% 0%,#e32acb64,transparent 42%),radial-gradient(circle at 94% 70%,#7b26e680,transparent 43%),linear-gradient(145deg,#150723,#210d36 65%,#080718)}
+[data-nfc-template="creator"] .nfc-card{background:#240b36d8;border-color:#9f41bf80}
+[data-nfc-template="creator"] .links a,[data-nfc-template="creator"] .nfc-feature{box-shadow:0 10px 30px #a324aa25}
+[data-nfc-template="business"] body{--bg-art:radial-gradient(circle at 95% 0%,#abd0ec,transparent 48%),linear-gradient(135deg,#f9fcff,#edf5fa);--ink:#14263e;--muted:#526377;--surface:#ffffff}
+[data-nfc-template="business"] .nfc-card{background:#ffffffeb;border-color:#dae6ed}
+[data-nfc-template="business"] .nfc-hero{padding:15px 0;border-bottom:1px solid #dce7ef}
+[data-nfc-template="food"] body{--bg-art:radial-gradient(circle at 6% 0%,#f7d3a7,transparent 45%),linear-gradient(130deg,#fff8ed,#efdfc9);--ink:#382218;--muted:#805e4c;--surface:#fff9ef;--nfc-font:Georgia,serif}
+[data-nfc-template="food"] .nfc-card{background:#fff7e8e8;border-color:#caa58b5a}
+[data-nfc-template="beauty"] body{--bg-art:radial-gradient(circle at 80% 0%,#f8d0d7,transparent 50%),linear-gradient(135deg,#fff5f5,#f3e4df);--ink:#49313f;--muted:#836a75;--surface:#fff9f7}
+[data-nfc-template="beauty"] .nfc-card{background:#fff9f6df;border-color:#edcbd1}
+[data-nfc-template="portfolio"] body{--bg-art:radial-gradient(circle at 90% 0%,#6b697f80,transparent 44%),linear-gradient(120deg,#0b0b10,#23232e);--nfc-font:Georgia,serif}
+[data-nfc-template="portfolio"] .nfc-hero h1{font-weight:500;letter-spacing:-.04em}
+[data-nfc-template="portfolio"] .nfc-card{background:#171720cf;border-color:#64606d}
+[data-nfc-template="realestate"] body{--bg-art:radial-gradient(circle at 90% 0%,#9e8a5b55,transparent 44%),linear-gradient(135deg,#071624,#183044);--nfc-font:Georgia,serif}
+[data-nfc-template="realestate"] .nfc-card{background:#132939f0;border-color:#a18b63}
+[data-nfc-template="wellness"] body{--bg-art:radial-gradient(circle at 0% 0%,#d2f0d9,transparent 44%),linear-gradient(140deg,#f3f9ed,#e1e9d4);--ink:#2f4032;--muted:#66766b;--surface:#f8faf4}
+[data-nfc-template="wellness"] .nfc-card{background:#f7faf0e8;border-color:#d1dfca}
+[data-nfc-shape="pill"] .links a,[data-nfc-shape="pill"] .nfc-feature{--nfc-radius:999px}
+[data-nfc-shape="square"] .links a,[data-nfc-shape="square"] .nfc-feature{--nfc-radius:8px}
+[data-nfc-shape="soft"] .links a,[data-nfc-shape="soft"] .nfc-feature{--nfc-radius:18px}
+[data-nfc-font="modern"]{--nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+[data-nfc-font="serif"]{--nfc-font:Georgia,"Times New Roman",serif}
+[data-nfc-font="editorial"]{--nfc-font:"Trebuchet MS",Inter,sans-serif}
+[data-nfc-align="center"] .nfc-hero{flex-direction:column;justify-content:center;text-align:center}
+[data-nfc-align="center"] .nfc-hero h1,[data-nfc-align="center"] .nfc-hero .tagline{text-align:center}
+[data-nfc-align="center"] .nfc-hero .tagline{margin-inline:auto}
+[data-nfc-align="center"] .nfc-socials{justify-content:center}
+[data-nfc-icons="mono"] .nfc-brand img{filter:grayscale(1) brightness(2)}
+[data-nfc-template="business"][data-nfc-icons="mono"] .nfc-brand img,[data-nfc-template="food"][data-nfc-icons="mono"] .nfc-brand img,[data-nfc-template="beauty"][data-nfc-icons="mono"] .nfc-brand img,[data-nfc-template="wellness"][data-nfc-icons="mono"] .nfc-brand img{filter:grayscale(1) brightness(.2)}
+@media(max-width:750px){
+ main.nfc-page{width:100%!important;padding:38px 20px 28px!important}
+ #profile{gap:22px}
+ .nfc-hero{min-height:0;display:flex;flex-direction:column;text-align:center;gap:16px;padding:0 0 8px}
+ .nfc-hero .avatar{width:104px;height:104px;min-width:104px}
+ .nfc-hero h1{font-size:clamp(28px,8vw,37px);text-align:center!important;margin:0 0 8px}
+ .nfc-hero .tagline{text-align:center!important;font-size:14px;max-width:390px;margin:0 auto 12px}
+ .nfc-hero .pill{margin:0 auto}
+ .nfc-socials{justify-content:center}
+ .nfc-content{grid-template-columns:1fr}
+ .nfc-featured{display:none}
+ .nfc-card{padding:18px;border-radius:22px}
+ .nfc-section-header h2{font-size:17px}
+ .links a strong{text-align:center!important}
+ .links a{grid-template-columns:34px minmax(0,1fr) 24px;padding:12px 13px;min-height:58px}
+ .nfc-socials a{width:42px;height:42px}
+ [data-nfc-template="glass"] .nfc-hero{padding:21px 13px}
+}
+@media(prefers-reduced-motion:reduce){.nfc-socials a,.nfc-feature{transition:none}}
