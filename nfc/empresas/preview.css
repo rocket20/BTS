@@ -1,0 +1,36 @@
+/* Vista previa integrada: la página pública original en dos tamaños de pantalla. */
+.top-context{color:#9699a4;font-size:11px;font-weight:650}
+.corporate-preview-panel{padding-bottom:18px}
+.corporate-preview-panel .panelhead{align-items:center}
+.preview-picker{display:flex;align-items:center;gap:8px;color:#c5c4cd;font-size:12px;white-space:nowrap}
+.preview-picker select{min-width:180px;max-width:270px;width:auto;font-size:12px;padding:8px 11px;background:#111319}
+.preview-dual{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(210px,.75fr);gap:16px;align-items:start;margin:16px 0 8px}
+.preview-device{min-width:0}
+.preview-device-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 3px 9px}
+.preview-device-heading b{font-size:12px;font-weight:720;color:#f1edf0}
+.preview-device-heading span{font-size:10px;color:#a8a4af}
+.preview-window{position:relative;width:100%;height:470px;border-radius:14px;border:6px solid #090a0d;overflow:hidden;background:#101116;box-shadow:0 12px 26px #0003}
+.preview-window iframe{position:absolute;top:0;left:0;display:block;transform-origin:0 0;border:0;pointer-events:none;background:#121318;max-width:none}
+#designDesktop iframe{width:900px;height:770px}
+#designMobile{border-radius:27px;width:min(100%,322px);margin:0 auto}
+#designMobile iframe{width:360px;height:800px}
+.corporate-preview-panel .fine{font-size:11px;line-height:1.5}
+.finance-tag{border:1px solid #4b3440;background:#231a20;color:#e1b2c4;border-radius:99px;padding:5px 10px;font-size:10px;white-space:nowrap}
+.estimate{background:#14161c;border:1px solid #353741;border-radius:13px;margin-bottom:16px;padding:14px;display:grid;gap:4px}
+.estimate small{font-size:11px;color:#a7a4b0}
+.estimate strong{font-size:23px;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.estimate span{font-size:11px;color:#c6bec5}
+.estimate p{font-size:10px;color:#9b9aa5;margin:7px 0 0}
+@media(max-width:900px){
+.preview-dual{grid-template-columns:1fr}
+.preview-device:last-child{width:min(100%,350px);margin:0 auto}
+}
+@media(max-width:600px){
+.top-context{display:none}
+.corporate-preview-panel .panelhead{align-items:flex-start}
+.preview-picker{width:100%;white-space:normal;justify-content:space-between}
+.preview-picker select{min-width:0;flex:1;max-width:210px}
+.preview-window{border-width:5px}
+.preview-device-heading span{font-size:9px}
+.finance-tag{white-space:normal}
+}
