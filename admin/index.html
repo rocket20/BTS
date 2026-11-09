@@ -1,7 +1,18 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0b10"><title>BTS Studio — Panel de administración</title>
 <meta name="robots" content="noindex,nofollow"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="glass-premium.css"><link rel="stylesheet" href="sidebar-reference.css"><link rel="stylesheet" href="sidebar-polish.css"><link rel="stylesheet" href="sidebar-desktop-fade.css"><link rel="stylesheet" href="kpi-vino-hover.css"><link rel="stylesheet" href="sidebar-vino-active.css"><link rel="stylesheet" href="performance.css"><link rel="stylesheet" href="roles-audit.css"><style>body:not(.bts-authenticated) .shell{visibility:hidden}</style></head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="glass-premium.css"><link rel="stylesheet" href="sidebar-reference.css"><link rel="stylesheet" href="sidebar-polish.css"><link rel="stylesheet" href="sidebar-desktop-fade.css"><link rel="stylesheet" href="kpi-vino-hover.css"><link rel="stylesheet" href="sidebar-vino-active.css"><link rel="stylesheet" href="performance.css"><link rel="stylesheet" href="roles-audit.css"><style>body:not(.bts-authenticated) .shell{visibility:hidden}</style><style>
+.nfc-folder-tabs{display:flex;align-items:stretch;gap:7px;border-bottom:1px solid #49404a;margin:20px 0 0;padding:0 12px;}
+.nfc-folder-tab{position:relative;display:flex;align-items:center;gap:12px;min-width:200px;padding:13px 21px 15px;border:1px solid transparent;border-bottom:0;border-radius:15px 15px 0 0;background:transparent;color:#aaa6af;cursor:pointer;text-align:left;transition:color .16s,background .16s;font:inherit;}
+.nfc-folder-tab>span{display:grid;gap:2px}.nfc-folder-tab strong{font-size:13px;font-weight:750}.nfc-folder-tab small{font-size:11px;opacity:.73}
+.nfc-folder-tab.active{background:#17181e;color:#fff;border-color:#49404a;box-shadow:inset 0 2px #b13659;}
+.nfc-folder-tab.active:after{content:"";position:absolute;height:2px;background:#17181e;bottom:-2px;left:0;right:0}
+.nfc-folder-tab:hover:not(.active){background:#ffffff08;color:#f5eaf0}
+.nfc-folder-tab:focus-visible{outline:2px solid #e4698f;outline-offset:-3px}
+.nfc-folder-content{border:1px solid #49404a;border-top:0;border-radius:0 0 17px 17px;background:#101116;overflow:hidden;min-height:700px}
+.nfc-folder-content [role="tabpanel"][hidden]{display:none!important}
+@media(max-width:600px){.nfc-folder-tabs{gap:3px;padding:0 4px}.nfc-folder-tab{padding:11px 9px;min-width:0;flex:1;gap:7px}.nfc-folder-tab svg{width:16px}.nfc-folder-tab strong{font-size:12px}.nfc-folder-tab small{font-size:10px}}
+</style></head>
 <body>
 <div class="shell" id="shell">
 <aside class="sidebar" id="sidebar" aria-label="Menú administrativo">
@@ -25,7 +36,6 @@
     <button class="nav-item" data-page="contenido" aria-label="Página y contacto" title="Página y contacto"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="icons/lucide-nav.svg#file-cog"></use></svg></span><span class="nav-text">Página y contacto</span></button>
     <div class="sidebar-label sub">SERVICIOS DIGITALES</div>
     <button class="nav-item" data-page="nfc" aria-label="Tarjetas NFC" title="Tarjetas NFC"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span class="nav-text">Tarjetas NFC</span></button>
-    <button class="nav-item" data-page="empresasnfc" aria-label="Empresas NFC" title="Empresas NFC"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M7 7V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3M3 12h18"/></svg></span><span class="nav-text">Empresas NFC</span></button>
     <div class="sidebar-label sub">SISTEMA</div>
     <button class="nav-item" data-page="configuracion" aria-label="GitHub y conexiones" title="GitHub y conexiones"><span class="nav-ico"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="icons/lucide-ui.svg#settings"></use></svg></span><span class="nav-text">GitHub y conexiones</span></button>
   </nav>
@@ -59,20 +69,28 @@
 <section class="page" id="page-paquetes"><div class="page-intro"><div><div class="eyebrow">SERVICIOS / PROPUESTAS</div><h1>Paquetes comerciales.</h1><p>Editá textos y entregables sin tocar el HTML de la página pública.</p></div></div><div class="card-grid packages-grid" id="packageCards"></div><div class="notice compact-notice"><span>ⓘ</span><div><strong>Se respeta el cotizador existente.</strong><span>Los títulos y beneficios se actualizan visualmente. La lógica de recomendación original del cotizador conserva sus tres categorías hasta que se integre también al CMS.</span></div></div></section>
 <section class="page" id="page-contenido"><div class="page-intro"><div><div class="eyebrow">PÁGINA / IDENTIDAD</div><h1>Personalizá tu web.</h1><p>Modificá el mensaje principal y los datos públicos de BTS Studio.</p></div></div>
 <div class="panel form-panel"><form id="contentForm"><div class="eyebrow">PORTADA</div><div class="field"><label for="brandHeroTitle">Titular principal (opcional)</label><textarea rows="3" id="brandHeroTitle" placeholder="Dejá vacío para conservar el titular original"></textarea><small>Usá saltos de línea para separar ideas; el diseño del encabezado se mantendrá.</small></div><div class="field"><label for="brandHeroSubtitle">Texto debajo del titular</label><textarea rows="3" id="brandHeroSubtitle" placeholder="Dejá vacío para conservar el texto original"></textarea></div><div class="divider"></div><div class="eyebrow">CONTACTO PÚBLICO</div><div class="form-grid"><div class="field"><label for="brandEmail">Correo comercial</label><input id="brandEmail" type="email" placeholder="hola@tudominio.com"></div><div class="field"><label for="brandWhatsapp">WhatsApp (con código de país)</label><input id="brandWhatsapp" type="tel" placeholder="50588888888"></div></div><div class="field"><label for="brandInstagram">Instagram (URL completa)</label><input id="brandInstagram" type="url" placeholder="https://www.instagram.com/..."></div><div class="divider"></div><div class="eyebrow">ANALÍTICA OPCIONAL</div><div class="field"><label for="brandAnalytics">Measurement ID de Google Analytics 4</label><input id="brandAnalytics" placeholder="G-XXXXXXXXXX" pattern="G-[A-Z0-9]+"><small>El ID es público por diseño. Las claves privadas y cuentas de servicio nunca van aquí.</small></div><div class="form-actions"><button type="submit" class="btn btn-primary">Guardar cambios de contenido</button><span class="muted">Se guardará como borrador hasta publicarlo en GitHub.</span></div></form></div></section>
+
 <section class="page" id="page-nfc">
   <div class="page-intro">
-    <div><div class="eyebrow">SERVICIOS DIGITALES / NFC</div><h1>Tarjetas NFC.</h1><p>Historial de negocios, páginas personalizadas y enlace final para tu activador NFC.</p></div>
+    <div><div class="eyebrow">SERVICIOS DIGITALES / BTS STUDIO</div><h1>Tarjetas NFC.</h1><p>Organizá tus tarjetas por tipo de cliente. Dos paneles independientes, una sola administración.</p></div>
   </div>
-  <div class="panel" style="padding:0;overflow:hidden;min-height:790px">
-    <iframe id="btsNfcModuleFrame" title="Historial y editor de tarjetas NFC" data-src="../nfc/admin/?embed=1" loading="lazy" style="width:100%;height:max(940px,86vh);border:0;background:#0b0c11;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <div class="nfc-folder-tabs" role="tablist" aria-label="Tipos de tarjetas NFC">
+    <button type="button" id="nfcTabNormal" class="nfc-folder-tab active" role="tab" aria-selected="true" aria-controls="nfcFolderNormal" tabindex="0">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3z"/></svg>
+      <span><strong>NFC normal</strong><small>Negocios y profesionales</small></span>
+    </button>
+    <button type="button" id="nfcTabCorporate" class="nfc-folder-tab" role="tab" aria-selected="false" aria-controls="nfcFolderCorporate" tabindex="-1">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 21V6l8-3 8 3v15M9 9h.01M15 9h.01M9 13h.01M15 13h.01M10 21v-5h4v5M2 21h20"/></svg>
+      <span><strong>NFC corporativo</strong><small>Empresas y ejecutivos</small></span>
+    </button>
   </div>
-</section>
-<section class="page" id="page-empresasnfc">
-  <div class="page-intro">
-    <div><div class="eyebrow">SERVICIOS DIGITALES / NFC EMPRESARIAL</div><h1>Empresas NFC.</h1><p>Ejecutivos, tarjetas individuales, WhatsApp, historial y finanzas centralizados por empresa.</p></div>
-  </div>
-  <div class="panel" style="padding:0;overflow:hidden;min-height:810px">
-    <iframe id="btsNfcEnterpriseFrame" title="Administración empresarial de tarjetas NFC" data-src="../nfc/empresas/" loading="lazy" style="width:100%;height:max(950px,90vh);border:0;background:#101116;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <div class="nfc-folder-content">
+    <div id="nfcFolderNormal" role="tabpanel" aria-labelledby="nfcTabNormal">
+      <iframe id="btsNfcModuleFrame" title="NFC normal: negocios y profesionales" data-src="../nfc/admin/?embed=1" loading="lazy" style="width:100%;height:max(1050px,90vh);border:0;background:#0b0c11;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div id="nfcFolderCorporate" role="tabpanel" aria-labelledby="nfcTabCorporate" hidden>
+      <iframe id="btsNfcEnterpriseFrame" title="NFC corporativo: empresas y ejecutivos" data-src="../nfc/empresas/?embed=1" loading="lazy" style="width:100%;height:max(1050px,90vh);border:0;background:#101116;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
   </div>
 </section>
 <section class="page" id="page-configuracion"><div class="page-intro"><div><div class="eyebrow">SISTEMA / PUBLICACIÓN</div><h1>GitHub y conexiones.</h1><p>Publicá eventos, marcas, paquetes e imágenes directamente desde tu dashboard, utilizando Supabase.</p></div></div>
