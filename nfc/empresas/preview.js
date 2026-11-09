@@ -33,7 +33,7 @@ function cardForExecutive(company,employee){
  return {...c,
  business_name:p.full_name,
  tagline:[p.job_title,c.business_name].filter(Boolean).join(' · '),
- avatar_url:p.avatar_url||c.avatar_url,
+ avatar_url:p.avatar_url||'',is_executive:true,
  links:[whatsapp,...individual,...filtered].slice(0,15),
  theme_options:{...opt,role:p.job_title||'Asesor comercial',phone:p.phone_number||p.whatsapp_number||'',email:p.email||'',tags:opt.tags||''}
  };
@@ -51,9 +51,10 @@ function resizeFrames(){
  }
 }
 function sync(){
- const {company,people=[],pricing}=getData();
+ const {company,people=[],pricing,draftExecutive}=getData();
  const options=[{value:'company',text:'Empresa principal'}];
  if(!people.length)options.push({value:'sample',text:'Ejecutivo de ejemplo'});
+ if(draftExecutive)options.push({value:'draft',text:'Edición actual · '+(draftExecutive.full_name||'Ejecutivo')});
  else for(const p of people)options.push({value:p.id,text:p.full_name+(p.is_active?'':' (suspendido)')});
  const prev=selector.value;
  selector.replaceChildren();
@@ -63,7 +64,7 @@ function sync(){
   ?'Datos reales de '+company.business_name+'. Seleccioná un ejecutivo para comprobar su diseño.'
   :'Ejemplo visual ficticio. Todavía no hay una empresa seleccionada.';
  const original=cardBase(company);
- const selected=people.find(p=>p.id===selector.value);
+ const selected=selector.value==='draft'?draftExecutive:people.find(p=>p.id===selector.value);
  const card=selector.value==='company'?original:cardForExecutive(company,selected||EXAMPLE_PERSON);
  resizeFrames();
  for(const frame of [desktop,mobile]){
@@ -85,6 +86,10 @@ function sync(){
 }
 selector.addEventListener('change',sync);
 window.addEventListener('bts-nfc-corporate-data',sync);
+window.addEventListener('bts-nfc-executive-portrait-changed',()=>{
+ if(getData().draftExecutive)selector.value='draft';
+ sync();
+});
 for(const frame of [desktop,mobile]){
  frame.addEventListener('load',()=>{ready.add(frame);sync();});
 }
