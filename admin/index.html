@@ -2,8 +2,8 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0b10"><title>BTS Studio — Panel de administración</title>
 <meta name="robots" content="noindex,nofollow"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="glass-premium.css"><link rel="stylesheet" href="sidebar-reference.css"><link rel="stylesheet" href="sidebar-polish.css"><link rel="stylesheet" href="sidebar-desktop-fade.css"><link rel="stylesheet" href="kpi-vino-hover.css"><link rel="stylesheet" href="sidebar-vino-active.css"><link rel="stylesheet" href="performance.css"><link rel="stylesheet" href="roles-audit.css"><style>body:not(.bts-authenticated) .shell{visibility:hidden}</style><style>
-.nfc-folder-tabs{display:flex;align-items:stretch;gap:7px;border-bottom:1px solid #49404a;margin:20px 0 0;padding:0 12px;}
-.nfc-folder-tab{position:relative;display:flex;align-items:center;gap:12px;min-width:200px;padding:13px 21px 15px;border:1px solid transparent;border-bottom:0;border-radius:15px 15px 0 0;background:transparent;color:#aaa6af;cursor:pointer;text-align:left;transition:color .16s,background .16s;font:inherit;}
+.nfc-folder-tabs{display:flex;align-items:stretch;gap:6px;border-bottom:1px solid #49404a;margin:20px 0 0;padding:0 12px;flex-wrap:wrap}
+ .nfc-folder-tab{position:relative;display:flex;align-items:center;gap:10px;min-width:150px;flex:1;padding:13px 21px 15px;border:1px solid transparent;border-bottom:0;border-radius:15px 15px 0 0;background:transparent;color:#aaa6af;cursor:pointer;text-align:left;transition:color .16s,background .16s;font:inherit;}
 .nfc-folder-tab>span{display:grid;gap:2px}.nfc-folder-tab strong{font-size:13px;font-weight:750}.nfc-folder-tab small{font-size:11px;opacity:.73}
 .nfc-folder-tab.active{background:#17181e;color:#fff;border-color:#49404a;box-shadow:inset 0 2px #b13659;}
 .nfc-folder-tab.active:after{content:"";position:absolute;height:2px;background:#17181e;bottom:-2px;left:0;right:0}
@@ -11,7 +11,7 @@
 .nfc-folder-tab:focus-visible{outline:2px solid #e4698f;outline-offset:-3px}
 .nfc-folder-content{border:1px solid #49404a;border-top:0;border-radius:0 0 17px 17px;background:#101116;overflow:hidden;min-height:700px}
 .nfc-folder-content [role="tabpanel"][hidden]{display:none!important}
-@media(max-width:600px){.nfc-folder-tabs{gap:3px;padding:0 4px}.nfc-folder-tab{padding:11px 9px;min-width:0;flex:1;gap:7px}.nfc-folder-tab svg{width:16px}.nfc-folder-tab strong{font-size:12px}.nfc-folder-tab small{font-size:10px}}
+@media(max-width:600px){.nfc-folder-tabs{gap:3px;padding:0 4px;display:grid;grid-template-columns:1fr 1fr}.nfc-folder-tab{padding:11px 9px;min-width:0;flex:1;gap:7px}.nfc-folder-tab svg{width:16px}.nfc-folder-tab strong{font-size:12px}.nfc-folder-tab small{font-size:10px}}
 </style></head>
 <body>
 <div class="shell" id="shell">
@@ -83,6 +83,14 @@
       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 21V6l8-3 8 3v15M9 9h.01M15 9h.01M9 13h.01M15 13h.01M10 21v-5h4v5M2 21h20"/></svg>
       <span><strong>NFC corporativo</strong><small>Empresas y ejecutivos</small></span>
     </button>
+    <button type="button" id="nfcTabLoyalty" class="nfc-folder-tab" role="tab" aria-selected="false" aria-controls="nfcFolderLoyalty" tabindex="-1">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M8 15h.01M12 15h.01M16 15h.01"/></svg>
+      <span><strong>Fidelización</strong><small>Compras, puntos y premios</small></span>
+    </button>
+    <button type="button" id="nfcTabVip" class="nfc-folder-tab" role="tab" aria-selected="false" aria-controls="nfcFolderVip" tabindex="-1">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m2 9 5 3 5-8 5 8 5-3-3 11H5L2 9z"/></svg>
+      <span><strong>Tarjetas VIP</strong><small>Membresías y beneficios</small></span>
+    </button>
   </div>
   <div class="nfc-folder-content">
     <div id="nfcFolderNormal" role="tabpanel" aria-labelledby="nfcTabNormal">
@@ -90,6 +98,12 @@
     </div>
     <div id="nfcFolderCorporate" role="tabpanel" aria-labelledby="nfcTabCorporate" hidden>
       <iframe id="btsNfcEnterpriseFrame" title="NFC corporativo: empresas y ejecutivos" data-src="../nfc/empresas/?embed=1" loading="lazy" style="width:100%;height:max(1050px,90vh);border:0;background:#101116;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div id="nfcFolderLoyalty" role="tabpanel" aria-labelledby="nfcTabLoyalty" hidden>
+      <iframe id="btsNfcLoyaltyFrame" title="NFC fidelización: tarjetas y canjes" data-src="../nfc/recompensas/?kind=loyalty" loading="lazy" style="width:100%;height:max(1180px,95vh);border:0;background:#101116;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div id="nfcFolderVip" role="tabpanel" aria-labelledby="nfcTabVip" hidden>
+      <iframe id="btsNfcVipFrame" title="NFC VIP: membresías y beneficios" data-src="../nfc/recompensas/?kind=vip" loading="lazy" style="width:100%;height:max(1180px,95vh);border:0;background:#101116;display:block" referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
   </div>
 </section>
