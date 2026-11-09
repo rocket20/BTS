@@ -1,0 +1,190 @@
+/* BTS Studio NFC | Corporate Executive
+   Inspiración: tarjeta de contacto profesional minimalista, monocromática,
+   contenido apilado en móvil y composición editorial en escritorio. */
+html[data-nfc-template="business"] body{
+  --bg-art:linear-gradient(155deg,#151719 0%,#0c0e10 46%,#121518 100%);
+  --nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg-art)!important;
+  color:var(--ink,#f5f6f8);
+}
+html[data-nfc-template="business"] body::before{opacity:.10}
+html[data-nfc-template="business"] main.nfc-page{
+  width:min(1080px,calc(100% - 48px))!important;
+  padding:clamp(32px,6vw,70px) clamp(12px,3vw,32px) 34px!important;
+}
+html[data-nfc-template="business"] #profile{
+  display:grid!important;
+  grid-template-columns:minmax(275px,.84fr) minmax(0,1.16fr);
+  grid-template-areas:"hero content" "action content";
+  gap:14px 28px; align-items:start;
+}
+html[data-nfc-template="business"] .nfc-hero{
+  grid-area:hero;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:18px;align-items:flex-start;
+  padding:25px!important;margin:0;
+  background:linear-gradient(162deg,#24282cae 0%,#191c1f 53%,#15181a 100%);
+  border:1px solid #34383b!important;border-radius:23px;
+  text-align:left!important;box-shadow:0 20px 50px #0000002b;
+}
+html[data-nfc-template="business"] .nfc-hero .avatar{
+  display:grid;place-items:center;width:82px;height:82px;min-width:82px;
+  border:2px solid #5a6066;border-radius:50%;background:#30353a;
+  box-shadow:0 4px 19px #0005;
+}
+html[data-nfc-template="business"] .nfc-intro{width:100%}
+html[data-nfc-template="business"] .nfc-hero h1{
+  color:#f7f8fa!important;font-size:clamp(24px,3vw,31px)!important;
+  font-weight:750;letter-spacing:-.04em;text-align:left!important;
+  line-height:1.15;margin:0 0 5px;
+}
+html[data-nfc-template="business"] .nfc-hero .tagline{
+  color:#c0c6cd!important;font-size:13px!important;line-height:1.48;
+  text-align:left!important;max-width:100%;margin:0 0 7px!important;
+}
+html[data-nfc-template="business"] .nfc-hero .pill{display:none}
+html[data-nfc-template="business"] .nfc-business-meta{display:grid;gap:6px}
+html[data-nfc-template="business"] .nfc-business-role{
+  margin:2px 0 0;color:#e5e9ed;font-size:12px;font-weight:640
+}
+html[data-nfc-template="business"] .nfc-business-location{
+  display:flex;align-items:center;gap:6px;color:#929da6;font-size:12px;
+}
+html[data-nfc-template="business"] .nfc-business-location svg{
+  width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none
+}
+html[data-nfc-template="business"] .nfc-business-tags{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px
+}
+html[data-nfc-template="business"] .nfc-business-tags span{
+  display:inline-flex;align-items:center;background:#2a3034;
+  border:1px solid #343a3e;border-radius:999px;color:#c1c7cc;
+  padding:5px 9px;font-size:10px;line-height:1.1
+}
+html[data-nfc-template="business"] .nfc-corporate-actions{
+  grid-area:action;display:flex;gap:10px;margin-top:0;align-items:stretch;
+}
+html[data-nfc-template="business"] .nfc-save-contact{
+  display:flex;align-items:center;justify-content:center;gap:10px;flex:1;
+  background:#2a2e31;color:#f4f6f8;border:1px solid #40474c;
+  border-radius:13px;min-height:52px;padding:11px 14px;text-decoration:none;
+  font-weight:720;font-size:13px;transition:background .18s,transform .18s
+}
+html[data-nfc-template="business"] .nfc-save-contact:hover{
+  background:#383f44;transform:translateY(-1px)
+}
+html[data-nfc-template="business"] .nfc-save-contact svg,
+html[data-nfc-template="business"] .nfc-contact-share svg{
+  width:18px;height:18px;stroke:currentColor;stroke-width:1.8;fill:none;
+  stroke-linecap:round;stroke-linejoin:round
+}
+html[data-nfc-template="business"] .nfc-contact-share{
+  display:grid;place-items:center;min-width:52px;border:1px solid #40474c;
+  background:#262b2f;color:#f5f5f5;border-radius:13px;cursor:pointer
+}
+html[data-nfc-template="business"] .nfc-corporate-actions [hidden]{display:none!important}
+html[data-nfc-template="business"] .nfc-socials{display:none!important}
+html[data-nfc-template="business"] .nfc-content{
+  grid-area:content;display:block;min-width:0
+}
+html[data-nfc-template="business"] .nfc-card.nfc-primary{
+  padding:0;border:0;box-shadow:none;background:transparent
+}
+html[data-nfc-template="business"] .nfc-section-header{
+  margin:1px 0 13px;padding:0 2px 6px;
+}
+html[data-nfc-template="business"] .nfc-section-header h2{
+  color:#e3e7ea;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  font-weight:730
+}
+html[data-nfc-template="business"] .nfc-section-header span{
+  font-size:10px;color:#818991
+}
+html[data-nfc-template="business"] .links{gap:9px}
+html[data-nfc-template="business"] .links a{
+  display:grid;grid-template-columns:42px minmax(0,1fr) 18px;
+  gap:10px;align-items:center;min-height:70px;padding:10px 15px;
+  border:1px solid var(--nfc-button-border,#333b40)!important;
+  border-radius:var(--nfc-radius,14px)!important;
+  background:var(--nfc-button-bg,#1d2226)!important;
+  color:var(--nfc-button-text,#f5f7f9)!important;
+  box-shadow:0 4px 14px #0002;transition:border-color .15s,transform .15s
+}
+html[data-nfc-template="business"] .links a:hover{border-color:#737b83!important}
+html[data-nfc-template="business"] .links .glyph{
+  width:39px;height:39px;border-radius:11px;
+  background:#343a3e;border:1px solid #454b50
+}
+html[data-nfc-template="business"] .links .glyph img{
+  width:20px;height:20px;object-fit:contain
+}
+html[data-nfc-template="business"][data-nfc-icons="mono"] .nfc-brand img{
+  filter:grayscale(1) brightness(0) invert(1)!important
+}
+html[data-nfc-template="business"] .nfc-link-copy{min-width:0;display:grid;gap:3px}
+html[data-nfc-template="business"] .links a strong{
+  font-size:13px;font-weight:660;line-height:1.3;
+  text-align:left!important;letter-spacing:-.01em
+}
+html[data-nfc-template="business"] .nfc-link-subtitle{
+  color:#9ba5ad;font-size:11px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;min-width:0;line-height:1.3
+}
+html[data-nfc-template="business"] .links a .arrow{
+  font-size:17px;opacity:.7
+}
+html[data-nfc-template="business"] .nfc-featured{display:none!important}
+html[data-nfc-template="business"] .foot{color:#737d86!important;padding-top:40px!important}
+html[data-nfc-template="business"] .foot b{color:#a6aeb6!important}
+html[data-nfc-template="business"] .nfc-corporate-actions a:focus-visible,
+html[data-nfc-template="business"] .nfc-contact-share:focus-visible,
+html[data-nfc-template="business"] .links a:focus-visible{
+  outline:2px solid #ced7df;outline-offset:3px
+}
+/* Los controles corporativos no aparecen en los otros estilos. */
+.nfc-business-meta,.nfc-corporate-actions{display:none}
+html[data-nfc-template="business"] .nfc-business-meta,
+html[data-nfc-template="business"] .nfc-corporate-actions{display:flex}
+html[data-nfc-template="business"] .nfc-business-meta{display:grid}
+@media(max-width:750px){
+ html[data-nfc-template="business"] main.nfc-page{
+  width:100%!important;max-width:520px!important;padding:18px 17px 24px!important
+ }
+ html[data-nfc-template="business"] #profile{
+  display:flex!important;flex-direction:column;gap:13px
+ }
+ html[data-nfc-template="business"] .nfc-hero{
+  flex-direction:column!important;align-items:flex-start!important;
+  gap:14px;padding:20px!important;border-radius:20px;
+ }
+ html[data-nfc-template="business"] .nfc-hero .avatar{
+  width:74px;height:74px;min-width:74px
+ }
+ html[data-nfc-template="business"] .nfc-hero h1{
+  font-size:25px!important;text-align:left!important
+ }
+ html[data-nfc-template="business"] .nfc-hero .tagline{
+  font-size:12px!important;text-align:left!important
+ }
+ html[data-nfc-template="business"] .nfc-corporate-actions{
+  width:100%;margin:0;gap:8px
+ }
+ html[data-nfc-template="business"] .nfc-content{width:100%;display:block}
+ html[data-nfc-template="business"] .nfc-section-header{margin:6px 2px 11px}
+ html[data-nfc-template="business"] .links{gap:9px}
+ html[data-nfc-template="business"] .links a{
+  grid-template-columns:37px minmax(0,1fr) 16px;
+  gap:9px;padding:10px 12px;min-height:64px
+ }
+ html[data-nfc-template="business"] .links .glyph{width:36px;height:36px}
+ html[data-nfc-template="business"] .links a strong{text-align:left!important}
+ html[data-nfc-template="business"] .nfc-link-subtitle{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-nfc-template="business"] .nfc-save-contact,
+ html[data-nfc-template="business"] .links a{transition:none}
+}
+
+/* Respetar campos opcionales vacíos y la visibilidad nativa. */
+html[data-nfc-template="business"] .nfc-business-meta[hidden],
+html[data-nfc-template="business"] .nfc-business-role[hidden],
+html[data-nfc-template="business"] .nfc-business-location[hidden]{display:none!important}

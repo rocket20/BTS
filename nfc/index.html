@@ -22,11 +22,13 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 @media(prefers-reduced-motion:reduce){.links a{transition:none}}
 </style>
 <link rel="stylesheet" href="./skins.css">
+<link rel="stylesheet" href="./corporate.css">
 </head>
 <body>
 <main class="nfc-page">
 <section id="profile" hidden>
- <header class="nfc-hero"><div class="avatar" id="avatar" aria-hidden="true" hidden></div><div class="nfc-intro"><h1 id="name"></h1><p class="tagline" id="tagline"></p><div class="pill">Conectá con nosotros</div></div></header>
+ <header class="nfc-hero"><div class="avatar" id="avatar" aria-hidden="true" hidden></div><div class="nfc-intro"><h1 id="name"></h1><p class="tagline" id="tagline"></p><div class="nfc-business-meta" id="nfcBusinessMeta"><span class="nfc-business-role" id="nfcBusinessRole" hidden></span><span class="nfc-business-location" id="nfcBusinessLocation" hidden></span><div class="nfc-business-tags" id="nfcBusinessTags"></div></div><div class="pill">Conectá con nosotros</div></div></header>
+ <div class="nfc-corporate-actions" id="nfcCorporateActions"><a class="nfc-save-contact" id="nfcSaveContact" href="#" download="contacto.vcf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg> Guardar contacto</a><button class="nfc-contact-share" id="nfcContactShare" type="button" title="Compartir tarjeta" aria-label="Compartir tarjeta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 14v6h14v-6"/></svg></button></div>
  <nav class="nfc-socials" id="socials" aria-label="Redes sociales"></nav>
  <div class="nfc-content"><section class="nfc-card nfc-primary"><div class="nfc-section-header"><h2>Explorá nuestros enlaces</h2><span>ENLACES</span></div><nav class="links" id="links" aria-label="Enlaces del negocio"></nav></section><aside class="nfc-card nfc-featured"><div class="nfc-section-header"><h2>Contacto y destacados</h2></div><div id="featured" class="nfc-featured-list"></div><div class="nfc-about"><strong>Acerca de nosotros</strong><span id="about"></span></div></aside></div>
 </section>
@@ -48,6 +50,82 @@ function unavailable(message){status.hidden=false;status.textContent=message;$('
 function validHex(v,fallback){return /^#[a-f\d]{6}$/i.test(String(v||''))?v:fallback;}
 function numberClamp(v,min,max,fall){const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fall;}
 function setIcon(el,t){if(window.BTSIcons)window.BTSIcons.set(el,t);else el.textContent='↗';}
+let contactObjectUrl='';
+let contactShareUrl='';
+function plainText(s,max=140){return String(s||'').replace(/[\r\n\t]+/g,' ').trim().slice(0,max);}
+function vcardEscape(v){return plainText(v,200).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,');}
+function makeUiGlyph(span,kind){
+ span.classList.add('nfc-brand');
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('width','21');svg.setAttribute('height','21');
+ svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+ svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+ const paths=kind==='phone'?['M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.6 2.8a2 2 0 0 1-.5 2.1L7.4 10.4a16 16 0 0 0 6.2 6.2l1.8-1.8a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.8.6a2 2 0 0 1 1.7 2z']:['M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z','M22 7l-10 7L2 7'];
+ for(const d of paths){const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',d);svg.append(p);}
+ span.append(svg);
+}
+function addBusinessContact(nav,href,label,subtitle,kind){
+ const a=document.createElement('a');a.href=href;
+ a.setAttribute('aria-label',label+': '+subtitle);
+ const badge=document.createElement('span');badge.className='glyph';makeUiGlyph(badge,kind);
+ const copy=document.createElement('span');copy.className='nfc-link-copy';
+ const title=document.createElement('strong');title.textContent=label;
+ const sub=document.createElement('small');sub.className='nfc-link-subtitle';sub.textContent=subtitle;
+ copy.append(title,sub);
+ const arr=document.createElement('span');arr.className='arrow';arr.textContent='↗';
+ a.append(badge,copy,arr);nav.append(a);
+}
+function businessUrlDetail(value){
+ const u=safeUrl(value);
+ if(!u)return '';
+ try{const p=new URL(u);return plainText((p.hostname.replace(/^www\./,'')+p.pathname.replace(/\/$/,'')).replace(/\/{2,}/g,'/'),65);}
+ catch{return '';}
+}
+function configureCorporate(c,opt){
+ const meta=$('nfcBusinessMeta'),role=$('nfcBusinessRole'),loc=$('nfcBusinessLocation'),tags=$('nfcBusinessTags');
+ const title=plainText(opt.role,65),place=plainText(opt.location,85);
+ role.textContent=title;role.hidden=!title;
+ loc.replaceChildren();loc.hidden=!place;
+ if(place){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0zm-8 0a2 2 0 1 0 0 .01');svg.append(path);
+  const text=document.createElement('span');text.textContent=place;loc.append(svg,text);
+ }
+ tags.replaceChildren();
+ const values=String(opt.tags||'').split(',').map(x=>plainText(x,22)).filter(Boolean).slice(0,5);
+ for(const value of values){const tag=document.createElement('span');tag.textContent=value;tags.append(tag);}
+ meta.hidden=!title&&!place&&!values.length;
+ if(contactObjectUrl){URL.revokeObjectURL(contactObjectUrl);contactObjectUrl='';}
+ const phone=plainText(opt.phone,35),dial=phone.replace(/[^\d+]/g,''),validPhone=/^\+?\d{7,15}$/.test(dial)?dial:'';
+ const email=plainText(opt.email,150),validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:'';
+ const name=plainText(c.business_name||'Contacto',90);
+ const cardSlug=plainText(c.slug||slug,48);
+ const publicUrl=/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cardSlug)?location.origin+'/nfc/?slug='+encodeURIComponent(cardSlug):'';
+ contactShareUrl=publicUrl;
+ const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+vcardEscape(name),'N:;'+vcardEscape(name)+';;;'];
+ if(title)lines.push('TITLE:'+vcardEscape(title));
+ if(validPhone)lines.push('TEL;TYPE=WORK,VOICE:'+validPhone);
+ if(validEmail)lines.push('EMAIL;TYPE=WORK:'+validEmail);
+ if(place)lines.push('NOTE:'+vcardEscape('Ubicación: '+place));
+ if(publicUrl)lines.push('URL:'+publicUrl);
+ lines.push('END:VCARD');
+ contactObjectUrl=URL.createObjectURL(new Blob([lines.join('\r\n')+'\r\n'],{type:'text/vcard;charset=utf-8'}));
+ const button=$('nfcSaveContact');button.href=contactObjectUrl;
+ button.download=(cardSlug||'contacto').replace(/[^a-z0-9-]/g,'')+'.vcf';
+ const nav=$('links');
+ if(validPhone)addBusinessContact(nav,'tel:'+validPhone,'Teléfono de trabajo',phone,'phone');
+ if(validEmail)addBusinessContact(nav,'mailto:'+validEmail,'Enviar correo',validEmail,'mail');
+}
+$('nfcContactShare').addEventListener('click',async()=>{
+ if(!contactShareUrl)return;
+ try{
+  if(navigator.share)await navigator.share({title:document.title,url:contactShareUrl});
+  else if(navigator.clipboard){await navigator.clipboard.writeText(contactShareUrl);$('nfcContactShare').title='Enlace copiado';}
+  else window.prompt('Copiar enlace de la tarjeta',contactShareUrl);
+ }catch(e){if(e?.name!=='AbortError')window.prompt('Copiar enlace',contactShareUrl);}
+});
+window.addEventListener('pagehide',()=>{if(contactObjectUrl)URL.revokeObjectURL(contactObjectUrl);});
 function applyCard(c){
  if(!c||typeof c!=='object')return;
  const template=ALLOWED.includes(c.template_id)?c.template_id:'classic';
@@ -91,8 +169,10 @@ function applyCard(c){
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+label);
   const badge=document.createElement('span');badge.className='glyph';setIcon(badge,type);
   const title=document.createElement('strong');title.textContent=label;
+  const subtitle=document.createElement('small');subtitle.className='nfc-link-subtitle';subtitle.textContent=businessUrlDetail(url);
+  const copy=document.createElement('span');copy.className='nfc-link-copy';copy.append(title,subtitle);
   const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
-  a.append(badge,title,arrow);nav.append(a);
+  a.append(badge,copy,arrow);nav.append(a);
   if(socialTypes.has(type)){
    const s=document.createElement('a');s.href=url;s.target='_blank';s.rel='noopener noreferrer nofollow';s.title=label;s.setAttribute('aria-label',label);setIcon(s,type);social.append(s);
   }
@@ -104,6 +184,7 @@ function applyCard(c){
    f.append(fi,t,arr);featured.append(f);
   }
  }
+ if(template==='business')configureCorporate(c,opt);
  if(!nav.children.length){const p=document.createElement('p');p.className='state';p.textContent='Este negocio todavía no agregó enlaces.';nav.append(p);}
  if(!featured.children.length){const p=document.createElement('p');p.textContent='Próximamente';featured.append(p);}
  document.title=String(c.business_name||'Tarjeta digital')+' | BTS Studio';
@@ -120,7 +201,7 @@ if(previewMode){
  (async()=>{
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3){unavailable('Este enlace no corresponde a una tarjeta activa.');return;}
   try{
-   const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links,template_id,theme_options&limit=1';
+   const url=ENDPOINT+'/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=slug,business_name,tagline,avatar_url,accent_color,background_url,background_color,avatar_position_x,avatar_position_y,avatar_zoom,button_bg_color,button_text_color,button_border_color,links,template_id,theme_options&limit=1';
    const r=await fetch(url,{headers:{apikey:PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
    if(!r.ok)throw Error('Servicio no disponible');const rows=await r.json(),c=Array.isArray(rows)?rows[0]:null;
    if(!c){unavailable('Esta tarjeta digital no está disponible.');return;}
