@@ -64,6 +64,8 @@ function applyCard(c){
  root.setProperty('--ink',validHex(opt.textColor, ['business','food','beauty','wellness'].includes(template)?'#243244':'#f8f7fb'));
  root.setProperty('--muted',validHex(opt.mutedColor,['business','food','beauty','wellness'].includes(template)?'#617082':'#b9b3c8'));
  root.setProperty('--surface',validHex(opt.surfaceColor,['business','food','beauty','wellness'].includes(template)?'#ffffff':'#17171f'));
+ document.body.style.setProperty('--ink',validHex(opt.textColor,['business','food','beauty','wellness'].includes(template)?'#243244':'#f8f7fb'));
+ document.body.style.setProperty('--surface',validHex(opt.surfaceColor,['business','food','beauty','wellness'].includes(template)?'#ffffff':'#17171f'));
  root.setProperty('--nfc-button-bg',validHex(c.button_bg_color,['business','food','beauty','wellness'].includes(template)?'#ffffff':'#181820'));
  root.setProperty('--nfc-button-text',validHex(c.button_text_color,['business','food','beauty','wellness'].includes(template)?'#223344':'#ffffff'));
  root.setProperty('--nfc-button-border',validHex(c.button_border_color,'#42404b'));
