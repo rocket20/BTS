@@ -19,7 +19,7 @@
  <div id="loyaltyFields" class="wide form-grid">
   <label>Tipo de acumulación<select id="unitName"><option value="compras">Compras</option><option value="visitas">Visitas</option><option value="puntos">Puntos</option></select></label>
   <label>Meta para canjear<input type="number" min="1" max="10000" id="goalUnits" value="6" required></label>
-  <label class="wide">Premio al llegar a la meta<input id="rewardLabel" maxlength="130" value="Producto gratis" placeholder="Ej. Café gratis"></label>
+  <label class="wide">Premio al llegar a la meta<input id="rewardLabel" maxlength="130" value="Producto gratis" placeholder="Ej. Café gratis"></label><label class="wide">Cantidad acreditada por compra / visita<input type="number" id="unitsPerVisit" min="1" max="1000" value="1"><span class="subtle">Ejemplo: cada compra suma 1 sello o 10 puntos, según la configuración.</span></label>
  </div>
  <div id="vipFields" class="wide form-grid" hidden>
   <label>Nivel inicial<input id="vipTier" maxlength="40" value="Gold" placeholder="Gold / Platinum / Black"></label>
