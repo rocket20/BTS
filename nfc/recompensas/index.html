@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BTS Studio · Tarjetas de recompensas</title><link rel="stylesheet" href="./rewards.css"></head>
+<body><main class="shell">
+<header class="heading"><div><div class="eyebrow" id="eyebrow">BTS STUDIO / FIDELIZACIÓN</div><h1 id="title">Tarjetas de fidelización.</h1><p id="subtitle">Registrá compras, acumulaciones y canjes. Cada comercio tiene su propio programa y sus propias tarjetas.</p></div><label class="merchant-control"><span>Negocio asociado</span><select id="business"><option value="">Elegí un negocio...</option></select></label></header>
+<div class="notice" id="notice" role="status" aria-live="polite">Conectando con BTS Studio...</div>
+<section class="metrics">
+ <article><small>Tarjetas registradas</small><strong id="totalMembers">0</strong><span>Del programa elegido</span></article>
+ <article><small>Tarjetas activas</small><strong id="activeMembers">0</strong><span>Disponibles para usar</span></article>
+ <article><small id="unitKpi">Unidades acreditadas</small><strong id="totalEarned">0</strong><span>Acumulación histórica</span></article>
+ <article><small id="redeemedTitle">Premios entregados</small><strong id="totalRedeemed">0</strong><span id="redeemedDesc">Canjes registrados</span></article>
+</section>
+<div class="columns">
+<div class="left-col">
+<section class="panel">
+<div class="section-head"><div><h2>Configuración del programa</h2><p>Definí las reglas y el estilo que tendrá cada tarjeta.</p></div><span class="pill" id="programState">Sin configurar</span></div>
+<form id="programForm" class="form-grid">
+ <label class="wide">Nombre del programa<input id="programTitle" required minlength="2" maxlength="85" placeholder="Café Club · 6 compras y un regalo"></label>
+ <label class="wide">Descripción<input id="description" maxlength="200" placeholder="Acumulá y ganá beneficios por tus compras"></label>
+ <div id="loyaltyFields" class="wide form-grid">
+  <label>Tipo de acumulación<select id="unitName"><option value="compras">Compras</option><option value="visitas">Visitas</option><option value="puntos">Puntos</option></select></label>
+  <label>Meta para canjear<input type="number" min="1" max="10000" id="goalUnits" value="6" required></label>
+  <label class="wide">Premio al llegar a la meta<input id="rewardLabel" maxlength="130" value="Producto gratis" placeholder="Ej. Café gratis"></label><label class="wide">Cantidad acreditada por compra / visita<input type="number" id="unitsPerVisit" min="1" max="1000" value="1"><span class="subtle">Ejemplo: cada compra suma 1 sello o 10 puntos, según la configuración.</span></label>
+ </div>
+ <div id="vipFields" class="wide form-grid" hidden>
+  <label>Nivel inicial<input id="vipTier" maxlength="40" value="Gold" placeholder="Gold / Platinum / Black"></label>
+  <label>Vigencia por defecto (meses)<input id="vipMonths" type="number" min="1" max="60" value="12"></label>
+  <label class="wide">Beneficios incluidos<textarea id="vipBenefits" rows="3" maxlength="600" placeholder="Descuento del 10 %, acceso preferencial, promociones especiales"></textarea></label>
+ </div>
+ <label>Estilo de tarjeta<select id="theme"><option value="midnight">Executive Midnight</option><option value="wine">BTS Burgundy</option><option value="champagne">Champagne Gold</option><option value="forest">Emerald</option><option value="ivory">Minimal Ivory</option></select></label>
+ <label>Color de marca<input type="color" id="accent" value="#b03b60"></label>
+ <label class="toggle wide"><input type="checkbox" id="programActive" checked>Programa activo y tarjetas disponibles</label>
+ <div class="wide buttons"><button type="submit" id="saveProgram" class="button primary">Guardar programa</button><span class="subtle">Los cambios afectan a las tarjetas de este programa, no a otros negocios.</span></div>
+</form></section>
+<section class="panel">
+ <div class="section-head"><div><h2>Clientes y tarjetas</h2><p>Emití tarjetas nuevas o reasigná una existente sin cambiar su código NFC.</p></div><button class="button primary" id="newMember" type="button">+ Nueva tarjeta</button></div>
+ <input id="searchMember" class="search" type="search" placeholder="Buscar nombre o número de tarjeta">
+ <div id="members" class="member-list"><p class="empty">Seleccioná un negocio y guardá su programa.</p></div>
+</section>
+<section class="panel"><div class="section-head"><div><h2>Movimientos</h2><p>Historial de compras, puntos, canjes y ajustes registrados por BTS.</p></div></div><div id="movements" class="member-list"><p class="empty">Sin movimientos.</p></div></section>
+</div>
+<div class="right-col">
+<section class="panel">
+ <div class="section-head"><div><h2 id="memberHeading">Emitir tarjeta</h2><p>El código NFC se genera automáticamente y permanece fijo.</p></div></div>
+ <form id="memberForm" class="form-grid">
+  <label class="wide">Nombre del cliente<input id="memberName" required minlength="2" maxlength="100" placeholder="Ej. Ana López"></label>
+  <label>Teléfono opcional<input id="memberPhone" maxlength="25" placeholder="+505 8888 8888"></label>
+  <label>Identificador físico<input id="memberLabel" maxlength="80" placeholder="Tarjeta 001"></label>
+  <label class="wide">Correo opcional<input id="memberEmail" type="email" maxlength="150" placeholder="cliente@ejemplo.com"></label>
+  <label id="tierField" class="wide" hidden>Nivel VIP personalizado<input id="memberTier" maxlength="40" placeholder="Gold"></label>
+  <label class="wide">Notas internas<textarea id="memberNotes" maxlength="400" rows="2" placeholder="No aparecen en la tarjeta pública"></textarea></label>
+  <label class="toggle wide"><input type="checkbox" id="memberActive" checked>Tarjeta activa</label>
+  <div class="buttons wide"><button id="saveMember" class="button primary" type="submit">Guardar tarjeta</button><button id="resetMember" class="button" type="button">Limpiar</button></div>
+ </form>
+</section>
+<section class="panel">
+ <div class="section-head"><div><h2>Vista previa para impresión</h2><p>Tarjeta PVC estándar CR80 · 85,60 × 53,98 mm</p></div></div>
+ <div class="preview-label">ANVERSO</div><div class="physical-card" id="cardFront"><div class="physical-top"><b id="cardBrand">TU NEGOCIO</b><span class="physical-chip">NFC ◉</span></div><div class="physical-center"><small id="cardType">LOYALTY MEMBERSHIP</small><strong id="cardName">NOMBRE DEL CLIENTE</strong><span id="cardDetail">6 compras · 1 premio</span></div><div class="physical-bottom"><span id="cardNumber">BTS · TARJETA</span><span id="cardLevel">MEMBER</span></div></div>
+ <div class="preview-label">REVERSO</div><div class="physical-card back" id="cardBack"><div class="physical-top"><b id="backBrand">TU NEGOCIO</b><span>BTS STUDIO</span></div><div class="back-center"><strong id="backHeadline">Acumulá recompensas</strong><p id="backInstruction">Acercá esta tarjeta al lector para consultar el avance.</p><div class="stamp-track" id="stampTrack" aria-label="Progreso de fidelización"></div></div><div class="physical-bottom"><span id="backCode">CÓDIGO NFC PENDIENTE</span><span>85.60 × 53.98 mm</span></div></div>
+ <div class="buttons print-actions"><button id="printCard" type="button" class="button primary">Imprimir frente y reverso</button><button id="copyCardUrl" type="button" class="button">Copiar URL NFC</button></div>
+ <p class="subtle">La tarjeta digital y el diseño se actualizan desde Supabase. La impresión es una guía CR80; el archivo físico debe revisarse con el proveedor de impresión y el NFC se graba con la URL generada.</p>
+</section>
+<section class="panel" id="controlPanel">
+ <div class="section-head"><div><h2>Control de la tarjeta</h2><p id="controlHint">Seleccioná una tarjeta emitida para administrarla.</p></div></div>
+ <div id="controlEmpty" class="empty">Todavía no seleccionaste un cliente.</div>
+ <div id="controlBody" hidden>
+  <div class="balance"><small id="balanceCaption">Avance del cliente</small><strong id="balanceText">0 / 6</strong><div class="progress"><span id="progressFill" style="width:0%"></span></div><small id="balanceNote">Se reinicia luego de canjear</small></div>
+  <div id="loyaltyActions" class="buttons"><button id="addUnit" type="button" class="button primary">+ Acreditar compra</button><button id="redeem" type="button" class="button">Canjear premio</button></div>
+  <p class="subtle" id="vipState" hidden>La membresía VIP no acumula puntos en este módulo; se controla por nivel, beneficios y vencimiento.</p><div class="buttons" id="vipActions" hidden><button type="button" id="renewVip" class="button primary">Renovar membresía VIP</button></div>
+  <div class="field-label">Enlace de la tarjeta</div><input id="cardUrl" readonly aria-label="Enlace NFC de la tarjeta"><div class="buttons"><button id="copyNfc" class="button" type="button">Copiar enlace NFC</button><a id="openNfc" class="button" href="#" target="_blank" rel="noopener noreferrer">Abrir tarjeta pública</a></div>
+ </div>
+</section></div>
+</div></main><script src="./rewards.js"></script></body></html>

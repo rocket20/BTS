@@ -58,28 +58,34 @@ function normalize(x){const d=copy(blank);if(!x||typeof x!=='object')return d;d.
 function storeDraft(){localSet(LS_DRAFT,content);notify('Borrador guardado en este navegador. Usá Publicar en GitHub para hacerlo visible a todos.');}
 async function reloadLeads(){leads=await BTSLeads.load();renderOverview();renderLeads();await updateGoogleMetrics();}
 function storeLeads(){renderOverview();renderLeads();}
+const NFC_FOLDERS=[
+  {name:'normal',tab:'nfcTabNormal',panel:'nfcFolderNormal',frame:'btsNfcModuleFrame'},
+  {name:'corporate',tab:'nfcTabCorporate',panel:'nfcFolderCorporate',frame:'btsNfcEnterpriseFrame'},
+  {name:'loyalty',tab:'nfcTabLoyalty',panel:'nfcFolderLoyalty',frame:'btsNfcLoyaltyFrame'},
+  {name:'vip',tab:'nfcTabVip',panel:'nfcFolderVip',frame:'btsNfcVipFrame'}
+];
 let currentNfcFolder='normal';
 function selectNfcFolder(folder){
- if(folder!=='normal'&&folder!=='corporate')folder='normal';
- currentNfcFolder=folder;
- const normal=folder==='normal';
- const a=$('#nfcTabNormal'),b=$('#nfcTabCorporate');
- if(!a||!b)return;
- a.classList.toggle('active',normal);b.classList.toggle('active',!normal);
- a.setAttribute('aria-selected',String(normal));b.setAttribute('aria-selected',String(!normal));
- a.tabIndex=normal?0:-1;b.tabIndex=normal?-1:0;
- const n=$('#nfcFolderNormal'),c=$('#nfcFolderCorporate');n.hidden=!normal;c.hidden=normal;
- const frame=normal?$('#btsNfcModuleFrame'):$('#btsNfcEnterpriseFrame');
+ const found=NFC_FOLDERS.find(f=>f.name===folder)||NFC_FOLDERS[0];
+ currentNfcFolder=found.name;
+ for(const x of NFC_FOLDERS){
+  const active=x.name===found.name,t=$('#'+x.tab),p=$('#'+x.panel);
+  if(!t||!p)continue;
+  t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));
+  t.tabIndex=active?0:-1;p.hidden=!active;
+ }
+ const frame=$('#'+found.frame);
  if(frame&&!frame.getAttribute('src'))frame.src=frame.dataset.src;
 }
-$('#nfcTabNormal')?.addEventListener('click',()=>selectNfcFolder('normal'));
-$('#nfcTabCorporate')?.addEventListener('click',()=>selectNfcFolder('corporate'));
-for(const id of ['nfcTabNormal','nfcTabCorporate']){
- $('#'+id)?.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
-    e.preventDefault();const to=currentNfcFolder==='normal'?'corporate':'normal';
-    selectNfcFolder(to);$('#'+(to==='normal'?'nfcTabNormal':'nfcTabCorporate')).focus();
-  }
+for(const [i,folder] of NFC_FOLDERS.entries()){
+ const tab=$('#'+folder.tab);if(!tab)continue;
+ tab.addEventListener('click',()=>selectNfcFolder(folder.name));
+ tab.addEventListener('keydown',e=>{
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+  e.preventDefault();
+  let pos=e.key==='Home'?0:e.key==='End'?NFC_FOLDERS.length-1:
+    (NFC_FOLDERS.findIndex(x=>x.name===currentNfcFolder)+(e.key==='ArrowRight'?1:-1)+NFC_FOLDERS.length)%NFC_FOLDERS.length;
+  selectNfcFolder(NFC_FOLDERS[pos].name);$('#'+NFC_FOLDERS[pos].tab).focus();
  });
 }
 function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc')selectNfcFolder(currentNfcFolder);window.BTSAdminAudit?.open(name);}
