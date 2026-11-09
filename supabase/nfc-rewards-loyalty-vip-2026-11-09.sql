@@ -77,7 +77,7 @@ create policy bts_reward_movements_admin_select on public.bts_reward_movements
  for select to authenticated using (exists(select 1 from public.bts_admins a where a.user_id=(select auth.uid())));
 drop policy if exists bts_reward_movements_admin_insert on public.bts_reward_movements;
 create policy bts_reward_movements_admin_insert on public.bts_reward_movements
- for insert to authenticated with check (actor_id=(select auth.uid()) and exists(select 1 from public.bts_admins a where a.user_id=(select auth.uid()))));
+ for insert to authenticated with check (actor_id=(select auth.uid()) and exists(select 1 from public.bts_admins a where a.user_id=(select auth.uid())));
 revoke all on public.bts_reward_movements from anon,authenticated;
 grant select,insert on public.bts_reward_movements to authenticated;
 grant usage on sequence public.bts_reward_movements_id_seq to authenticated;
