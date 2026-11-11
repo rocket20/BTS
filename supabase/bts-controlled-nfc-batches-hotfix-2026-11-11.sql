@@ -30,9 +30,9 @@ begin
    values(p_program_id,'Pendiente de asignación','Tarjeta '||lpad(i::text,3,'0'),true,p.vip_default_tier,null)
    returning * into new_member;
    insert into public.bts_nfc_inventory(batch_id,business_id,program_id,member_id,number,reference)
-   values(batch,p_business_id,p_program_id,new_member.id,i,'BTS-'+left(replace(batch::text,'-',''),6)+'-'+lpad(i::text,3,'0'))
+   values(batch,p_business_id,p_program_id,new_member.id,i,'BTS-'||left(replace(batch::text,'-',''),6)||'-'||lpad(i::text,3,'0'))
    returning id into new_slot;
-   batch_id:=batch;slot_id:=new_slot;reference:='BTS-'+left(replace(batch::text,'-',''),6)+'-'+lpad(i::text,3,'0');card_code:=new_member.card_code;
+   batch_id:=batch;slot_id:=new_slot;reference:='BTS-'||left(replace(batch::text,'-',''),6)||'-'||lpad(i::text,3,'0');card_code:=new_member.card_code;
    return next;
  end loop;
 end $issue_batch$;
