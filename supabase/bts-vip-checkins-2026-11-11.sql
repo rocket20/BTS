@@ -34,7 +34,7 @@ declare v_member public.bts_reward_members%rowtype;
         v_code text;
 begin
   if (select auth.uid()) is null
-     or not exists(select 1 from public.bts_admins a where a.user_id=(select auth.uid()))) then
+     or not exists(select 1 from public.bts_admins a where a.user_id=(select auth.uid())) then
     raise exception 'No tenés permisos para validar membresías';
   end if;
   v_code := lower(trim(coalesce(p_card_code,'')));
