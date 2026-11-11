@@ -77,7 +77,7 @@ function render(){
  const programs=$('programRows');programs.replaceChildren();
  if(!state.programs.length)programs.append($node('p','Este negocio todavía no tiene programas configurados.','empty'));
  for(const p of state.programs)programs.append(entry(p.title,(p.kind==='vip'?'VIP · '+p.vip_validity_months+' meses':p.goal_units+' '+p.unit_name+' para '+p.reward_label),p.is_active?'Activo':'Suspendido',p.is_active));
- renderMembers();renderPromos();renderVIP();renderSupport();
+ renderMembers();renderLoyalty();renderPromos();renderVIP();renderSupport();
 }
 function renderMembers(){
  const host=$('memberRows'),q=$('memberSearch').value.trim().toLowerCase();host.replaceChildren();
@@ -104,6 +104,54 @@ function renderPromos(){
   }
   host.append(row);
  }
+}
+function renderLoyalty(){
+ const selector=$('loyaltyProgram'),old=selector.value;
+ selector.replaceChildren();const programs=state.programs.filter(p=>p.kind==='loyalty'&&p.is_active);
+ for(const p of programs)selector.add(new Option(p.title,p.id));
+ if(programs.some(p=>p.id===old))selector.value=old;
+ selector.disabled=!programs.length;
+ if(!programs.length)selector.add(new Option('No hay programas de fidelización',''));
+ renderLoyaltyMembers();
+ const allowed=['owner','manager','staff'].includes(state.role);
+ $('loyaltyForm').classList.toggle('hidden',!allowed);
+ const host=$('loyaltyRows');host.replaceChildren();
+ const recent=state.movements.filter(m=>programs.some(p=>p.id===m.program_id)).slice(0,30);
+ if(!recent.length)host.append($node('p','Todavía no hay operaciones de fidelización.','empty'));
+ for(const m of recent){
+   const member=state.members.find(x=>x.id===m.member_id);
+   host.append(entry((m.action==='redeem'?'Premio canjeado':'Compra acreditada')+' · '+(member?.full_name||'Cliente'),
+     new Date(m.created_at).toLocaleString('es-NI'),'Registrado',true));
+ }
+}
+function renderLoyaltyMembers(){
+ const id=$('loyaltyProgram').value,selector=$('loyaltyMember'),old=selector.value;
+ const members=state.members.filter(m=>m.program_id===id&&m.is_active);
+ selector.replaceChildren();
+ for(const m of members)selector.add(new Option(m.full_name+' · '+m.card_label+' ('+m.current_units+' puntos)',m.id));
+ if(members.some(m=>m.id===old))selector.value=old;
+ selector.disabled=!members.length;
+ if(!members.length)selector.add(new Option('Sin tarjetas activas',''));
+}
+async function loyaltyEvent(action){
+ if(!['owner','manager','staff'].includes(state.role))return msg('No tenés permisos para operar este programa.',true);
+ const program=$('loyaltyProgram').value,memberId=$('loyaltyMember').value,receipt=$('loyaltyReceipt').value.trim().toUpperCase();
+ const m=state.members.find(x=>x.id===memberId&&x.program_id===program);
+ if(!m)return msg('Seleccioná una tarjeta válida del negocio.',true);
+ if(action==='earn'&&(receipt.length<3||receipt.length>80))return msg('Ingresá una referencia de factura de 3 a 80 caracteres.',true);
+ if(action==='redeem'){
+  const p=state.programs.find(p=>p.id===program);
+  if(!p||m.current_units<p.goal_units)return msg('La tarjeta todavía no alcanza el premio.',true);
+ }
+ const description=action==='earn'?'¿Registrar la compra '+receipt+' para '+m.full_name+'?':'¿Confirmar la entrega del premio a '+m.full_name+'?';
+ if(!confirm(description))return;
+ const button=$(action==='earn'?'loyaltyEarn':'loyaltyRedeem');button.disabled=true;
+ try{
+   const response=await api('rpc/bts_business_loyalty_event','POST',{p_member_id:memberId,p_action:action,p_receipt_ref:action==='earn'?receipt:''});
+   if(!response?.length)throw Error('La operación no fue confirmada por el servidor.');
+   const message=action==='earn'?'Compra acreditada · saldo '+response[0].new_balance:'Premio canjeado y saldo reiniciado';
+   await loadBusiness();$('loyaltyReceipt').value='';$('loyaltyResult').textContent=message;msg(message);
+ }catch(e){$('loyaltyResult').textContent=e.message;msg(e.message,true)}finally{button.disabled=false}
 }
 function renderVIP(){
  const host=$('vipRows'),selector=$('vipProgram');host.replaceChildren();selector.replaceChildren();
@@ -170,12 +218,12 @@ async function submitVIP(e){
 function selectTab(tab){
  state.tab=tab;
  document.querySelectorAll('[data-tab]').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
- for(const name of ['programs','members','promotions','vip','support'])$('tab-'+name).classList.toggle('hidden',name!==tab);
+ for(const name of ['programs','members','loyalty','promotions','vip','support'])$('tab-'+name).classList.toggle('hidden',name!==tab);
 }
 async function boot(){
  $('loginForm').addEventListener('submit',login);$('logout').onclick=logout;
  $('reload').onclick=loadBusiness;$('businessSelect').onchange=e=>selectBusiness(e.target.value).catch(err=>msg(err.message,true));
- $('memberSearch').oninput=renderMembers;
+ $('memberSearch').oninput=renderMembers;$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');
  $('tabs').onclick=e=>{const x=e.target.closest('[data-tab]');if(x)selectTab(x.dataset.tab)};
  $('promoForm').addEventListener('submit',submitPromo);$('supportForm').addEventListener('submit',submitSupport);$('vipForm').addEventListener('submit',submitVIP);
  const s=getSaved();if(s){save(s);try{await verify()}catch(err){save(null);showLogin(err.message)}}else showLogin();
