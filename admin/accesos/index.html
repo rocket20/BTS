@@ -9,15 +9,18 @@
 </style></head><body><main class="wrap">
 <header><div class="eyebrow">BTS STUDIO / GESTIÓN DE ACCESOS</div><h1>Empresas y usuarios.</h1><p class="muted">Asigná cuentas existentes de Supabase Auth a negocios, sin darles acceso al dashboard general de BTS.</p></header>
 <div id="notice" role="status" class="status">Comprobando permisos...</div>
-<section class="panel"><h2>Asignar una cuenta</h2><p class="muted">Primero creá o invitá al usuario desde Supabase Authentication → Users. Copiá su UUID y asignalo al negocio correcto.</p>
-<form id="assignForm" class="controls">
-<label class="field">Empresa<select id="business" required></select></label>
-<label class="field">ID del usuario (UUID)<input id="userId" required pattern="[0-9a-fA-F-]{36}" placeholder="UUID de Supabase Auth"></label>
-<label class="field">Correo de referencia<input id="userEmail" type="email" maxlength="150" placeholder="empleado@empresa.com"></label>
-<label class="field">Permisos<select id="role"><option value="owner">Propietario</option><option value="manager">Encargado</option><option value="staff">Personal</option><option value="viewer">Solo lectura</option></select></label>
-<button class="btn primary" id="submit" type="submit">Asignar acceso</button>
-</form>
-</section>
+<section class="panel"><h2>Crear mini panel para una empresa</h2><p class="muted">BTS crea el panel y las credenciales. El negocio solo recibe su enlace, usuario y contraseña; nunca necesita entrar a Supabase.</p>
+<form id="provisionForm" class="controls">
+<label class="field">Modalidad<select id="provisionMode"><option value="create_company">Nueva empresa + mini panel</option><option value="create_access">Mini panel de empresa existente</option></select></label>
+<label class="field" id="newCompanyField">Nombre del negocio<input id="newCompanyName" maxlength="90" minlength="2" placeholder="Ej. Barbería Central"></label>
+<label class="field" id="newSlugField">Identificador del enlace<input id="newCompanySlug" maxlength="48" minlength="3" placeholder="barberia-central" pattern="[a-z0-9]+(-[a-z0-9]+)*"></label>
+<label class="field" id="existingCompanyField" style="display:none">Empresa existente<select id="provisionCompany"></select></label>
+<button class="btn primary" id="createPanel" type="submit">Crear mini panel y accesos</button></form>
+<div id="generatedAccess" hidden style="margin-top:18px;border:1px solid #59505e;border-radius:12px;padding:16px;background:#121218">
+<strong>Acceso generado para entregar a la empresa</strong><p class="muted">Copiá las credenciales ahora. La contraseña solo se mostrará al generarla.</p>
+<div class="controls"><label class="field">Enlace del mini panel<input id="generatedUrl" readonly></label><label class="field">Usuario<input id="generatedUsername" readonly></label><label class="field">Contraseña temporal<input id="generatedPassword" readonly></label><button class="btn" id="copyGenerated" type="button">Copiar acceso</button></div>
+</div></section>
+<section class="panel"><h2>Restablecer acceso de un negocio</h2><p class="muted">Si un cliente olvida su contraseña, BTS puede generar una nueva sin mostrar ni conocer la anterior.</p><div class="controls"><label class="field">Cuenta empresarial<select id="passwordUser"></select></label><button class="btn" type="button" id="resetBusinessPassword">Generar contraseña nueva</button></div></section>
 <section class="panel"><div class="toolbar"><div><h2>Cuentas asignadas</h2><p class="muted">Podés cambiar permisos o suspender una cuenta sin eliminarla.</p></div><button class="btn" id="reload" type="button">Actualizar</button></div>
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>USUARIO</th><th>ROL</th><th>ESTADO</th><th>ACCIONES</th></tr></thead><tbody id="rows"></tbody></table></div>
 </section>
