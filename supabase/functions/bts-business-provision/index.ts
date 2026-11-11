@@ -9,7 +9,7 @@ const allowedRole = new Set(["owner","admin"]);
 type Obj = Record<string,unknown>;
 function json(value:unknown,status=200,origin=""){return new Response(JSON.stringify(value),{status,headers:{"Content-Type":"application/json","Cache-Control":"no-store","Access-Control-Allow-Origin":origin||"https://www.btsstudio.net","Vary":"Origin","Access-Control-Allow-Headers":"authorization, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"}});}
 function randomHex(bytes:number){const b=crypto.getRandomValues(new Uint8Array(bytes));return Array.from(b,x=>x.toString(16).padStart(2,"0")).join("");}
-function makePassword(){const chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%&*-_";const array=crypto.getRandomValues(new Uint8Array(24));return Array.from(array,x=>chars[x%chars.length]).join("");}
+function makePassword(){const alphabet="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%&*-_";const b=crypto.getRandomValues(new Uint8Array(26));return Array.from(b,x=>alphabet[x%alphabet.length]).join("");}
 function errMessage(x:unknown){return x instanceof Error?x.message:String(x);}
 async function doRequest(path:string,{method="GET",body,auth=SERVICE,prefer="return=representation"}:{method?:string,body?:unknown,auth?:string,prefer?:string}={}):Promise<any>{
  const headers:Record<string,string>={"apikey":SERVICE,"Authorization":"Bearer "+auth,"Accept":"application/json"};
@@ -24,7 +24,7 @@ function panelUrl(slug:string){return "https://www.btsstudio.net/negocios/?empre
 Deno.serve(async(req:Request)=>{
  const requestOrigin=req.headers.get("origin")||"";
  const origin=ALLOWED.has(requestOrigin)?requestOrigin:"https://www.btsstudio.net";
- if(req.method==="OPTIONS")return ALLOWED.has(requestOrigin)?json({},204,origin):new Response(null,{status:403});
+ if(req.method==="OPTIONS")return ALLOWED.has(requestOrigin)?new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin,"Vary":"Origin","Access-Control-Allow-Headers":"authorization, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"}}):new Response(null,{status:403});
  if(req.method!=="POST")return json({error:"Método no permitido"},405,origin);
  if(requestOrigin&&!ALLOWED.has(requestOrigin))return json({error:"Origen no permitido"},403,origin);
  if(!URL||!SERVICE)return json({error:"Configuración interna pendiente"},503,origin);
