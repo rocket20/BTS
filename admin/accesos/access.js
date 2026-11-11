@@ -63,37 +63,86 @@ async function loadSupport(){
  try{support=await api('bts_business_support?select=id,business_id,created_by,subject,details,priority,status,bts_reply,created_at&order=created_at.desc&limit=200')||[];renderSupport()}
  catch(e){notice('No se pudo cargar soporte: '+e.message,true)}
 }
+
+async function provision(action,payload){
+ let session=current();if(!session?.access_token)throw Error('Iniciá sesión en BTS.');
+ if((session.expires_at||0)*1000<Date.now()+45000){
+  const resp=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
+  const next=await resp.json();if(!resp.ok)throw Error('La sesión expiró. Ingresá nuevamente.');
+  session={...session,...next,expires_at:next.expires_at||Math.floor(Date.now()/1000)+(next.expires_in||3600)};
+  sessionStorage.setItem(STORE,JSON.stringify(session));
+ }
+ const response=await fetch(BASE+'/functions/v1/bts-business-provision',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify({action,...payload})});
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok||!result.ok)throw Error(result.error||'No se pudo completar la operación.');
+ return result;
+}
+function reveal(data){
+ $('generatedAccess').hidden=false;
+ $('generatedUrl').value=data.panel_url||'';
+ $('generatedUsername').value=data.username||'';
+ $('generatedPassword').value=data.password||'';
+}
+function mode(){
+ const isNew=$('provisionMode').value==='create_company';
+ $('newCompanyField').style.display=isNew?'':'none';
+ $('newSlugField').style.display=isNew?'':'none';
+ $('existingCompanyField').style.display=isNew?'none':'';
+ $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=!isNew;
+}
+async function createPanel(e){
+ e.preventDefault();const b=$('createPanel');b.disabled=true;$('generatedAccess').hidden=true;
+ try{
+  const action=$('provisionMode').value;
+  const payload=action==='create_company'?{business_name:$('newCompanyName').value.trim(),slug:$('newCompanySlug').value.trim().toLowerCase()}:{business_id:$('provisionCompany').value};
+  const data=await provision(action,payload);
+  reveal(data);await load();notice('Mini panel y cuenta generados. Copiá el acceso antes de salir.');
+ }catch(err){notice(err.message,true)}finally{b.disabled=false}
+}
+async function resetPassword(){
+ const id=$('passwordUser').value;if(!id)return notice('Seleccioná un acceso empresarial.',true);
+ if(!confirm('¿Restablecer contraseña? El cliente deberá usar la nueva clave.'))return;
+ const b=$('resetBusinessPassword');b.disabled=true;
+ try{
+  const data=await provision('reset_password',{user_id:id});
+  $('generatedAccess').hidden=false;$('generatedUrl').value='https://www.btsstudio.net/negocios/';
+  $('generatedUsername').value=users.find(x=>x.user_id===id)?.display_email?.split('@')[0]||'';
+  $('generatedPassword').value=data.password;notice('Contraseña nueva generada. Compartila por canal seguro.');
+ }catch(err){notice(err.message,true)}finally{b.disabled=false}
+}
 async function load(){
  try{
   const [b,u]=await Promise.all([
-   api('bts_nfc_cards?select=id,business_name,is_active&order=business_name.asc&limit=500'),
+   api('bts_nfc_cards?select=id,business_name,slug,is_active&order=business_name.asc&limit=500'),
    api('bts_business_users?select=id,business_id,user_id,role,is_active,display_email,created_at&order=created_at.desc&limit=1000')
   ]);
   businesses=b||[];users=u||[];
-  const sel=$('business'),old=sel.value;sel.replaceChildren();
-  for(const row of businesses)sel.add(new Option(row.business_name+(row.is_active?'':' (suspendido)'),row.id));
-  if(businesses.some(b=>b.id===old))sel.value=old;
+  const previous=$('provisionCompany').value;
+  $('provisionCompany').replaceChildren();
+  for(const business of businesses)if(business.is_active)$('provisionCompany').add(new Option(business.business_name,business.id));
+  if(businesses.some(x=>x.id===previous&&x.is_active))$('provisionCompany').value=previous;
+  $('passwordUser').replaceChildren();
+  for(const row of users)$('passwordUser').add(new Option((row.display_email||row.user_id)+' · '+(businesses.find(x=>x.id===row.business_id)?.business_name||'Empresa'),row.user_id));
   render();await loadSupport();notice(users.length+' accesos empresariales registrados.');
  }catch(e){notice('Error al consultar accesos: '+e.message,true)}
-}
-async function assign(e){
- e.preventDefault();const button=$('submit');button.disabled=true;
- try{
-  const id=$('userId').value.trim(),bid=$('business').value;
-  if(!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id))throw Error('Ingresá un UUID válido.');
-  if(!businesses.some(b=>b.id===bid&&b.is_active))throw Error('La empresa seleccionada debe estar activa.');
-  await api('bts_business_users','POST',{business_id:bid,user_id:id,role:$('role').value,is_active:true,display_email:$('userEmail').value.trim()});
-  $('assignForm').reset();await load();notice('Acceso asignado. El usuario puede entrar al portal de su empresa.');
- }catch(e){notice('No se pudo asignar la cuenta: '+e.message,true)}
- finally{button.disabled=false}
 }
 async function init(){
  try{
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
-  const rows=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id&limit=1');
+  const rows=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
   if(!rows.length)throw Error('La cuenta no tiene permisos de administrador BTS.');
-  $('assignForm').onsubmit=assign;$('reload').onclick=load;$('reloadSupport').onclick=loadSupport;await load();
- }catch(e){notice(e.message,true);$('submit').disabled=true;$('reload').disabled=true}
+  if(!['owner','admin'].includes(rows[0].role))throw Error('Solo el administrador puede generar credenciales empresariales.');
+  $('provisionForm').onsubmit=createPanel;
+  $('provisionMode').onchange=mode;
+  $('newCompanyName').oninput=()=>{if(!$('newCompanySlug').dataset.manual)$('newCompanySlug').value=$('newCompanyName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)};
+  $('newCompanySlug').oninput=()=>{$('newCompanySlug').dataset.manual='1'};
+  $('resetBusinessPassword').onclick=resetPassword;
+  $('copyGenerated').onclick=async()=>{
+   const msg='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
+   try{await navigator.clipboard.writeText(msg);notice('Acceso copiado. Compartilo por un canal seguro.')}catch{notice('Copiá las credenciales manualmente.',true)}
+  };
+  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;mode();await load();
+ }catch(e){notice(e.message,true);$('createPanel').disabled=true;$('reload').disabled=true}
 }
 init();
 })();
