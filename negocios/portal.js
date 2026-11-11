@@ -44,7 +44,7 @@ async function verify(){
 }
 async function login(e){e.preventDefault();const button=$('loginBtn');button.disabled=true;$('loginError').textContent='';
  try{
-  const form=e.currentTarget,email=form.elements.email.value.trim(),password=form.elements.password.value;
+  const form=e.currentTarget,email=form.elements.namedItem('email').value.trim(),password=form.elements.namedItem('password').value;
   const s=await request('/auth/v1/token?grant_type=password',{method:'POST',payload:{email,password}});
   save({...s,expires_at:s.expires_at||Math.floor(Date.now()/1000)+(s.expires_in||3600)});
   form.reset();await verify();
