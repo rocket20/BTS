@@ -127,8 +127,8 @@ function exportCsv(){
  const section=state.section,rows=state.rows[section]||[];
  if(!rows.length)return note('Todavía no hay registros para exportar.',true);
  const keys=section==='audit'?['occurred_at','table_name','record_id','action','actor_id']:fields[section].map(f=>f[0]);
- const quote=value=>'"'+String(value===null||value===undefined?'':value).replace(/"/g,'""').replace(/[\\r\\n]+/g,' ')+'"';
- const csv='\\uFEFF'+[keys.map(quote).join(','),...rows.map(r=>keys.map(key=>quote(r[key])).join(','))].join('\\r\\n');
+ const quote=value=>'"'+String(value===null||value===undefined?'':value).replace(/"/g,'""').replace(/[\r\n]+/g,' ')+'"';
+ const csv='\uFEFF'+[keys.map(quote).join(','),...rows.map(r=>keys.map(key=>quote(r[key])).join(','))].join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
  const url=URL.createObjectURL(blob);const a=document.createElement('a');
  a.href=url;a.download='BTS-'+section+'-'+new Date().toISOString().slice(0,10)+'.csv';
