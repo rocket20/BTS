@@ -98,6 +98,16 @@ function renderMembers(){
    }catch(e){msg(e.message,true)}finally{button.disabled=false}};
    row.append(button);
  }
+ if(p?.kind==='loyalty'){
+   const goal=Math.max(1,Number(p.goal_units)||6);
+   const current=Math.max(0,Number(m.current_units)||0);
+   const progress=$node('div',undefined,'card-progress');
+   progress.style.cssText='width:100%;max-width:160px;margin:5px 0;display:grid;gap:4px';
+   const label=$node('small',Math.min(goal,current)+' de '+goal+' compras/puntos');
+   const rail=$node('div');rail.style.cssText='height:6px;border-radius:8px;background:#403a46;overflow:hidden';
+   const fill=$node('span');fill.style.cssText='display:block;height:100%;background:#bd4f70;border-radius:8px;width:'+Math.min(100,current/goal*100)+'%';
+   rail.append(fill);progress.append(label,rail);row.firstElementChild?.append(progress);
+ }
  host.append(row);
  }
 }
