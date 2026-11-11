@@ -58,7 +58,7 @@ grant usage on schema bts_private to authenticated;
 create or replace function bts_private.business_vip_checkin_impl(
   p_program_id uuid, p_card_code text
 ) returns table(member_name text,tier text,expires_on date,checked_at timestamptz)
-language plpgsql security definer set search_path='' as $
+language plpgsql security definer set search_path='' as $portal$
 declare v_member public.bts_reward_members%rowtype;
         v_program public.bts_reward_programs%rowtype;
         v_id bigint;
@@ -96,14 +96,14 @@ begin
     returning id into v_id;
   return query select v_member.full_name,v_member.vip_tier,v_member.expires_at,c.created_at
     from public.bts_vip_checkins c where c.id=v_id;
-end $$;
+end $portal$;
 revoke all on function bts_private.business_vip_checkin_impl(uuid,text) from public,anon,authenticated;
 grant execute on function bts_private.business_vip_checkin_impl(uuid,text) to authenticated;
 create or replace function public.bts_business_vip_checkin(p_program_id uuid,p_card_code text)
 returns table(member_name text,tier text,expires_on date,checked_at timestamptz)
-language sql security invoker set search_path='' as $
+language sql security invoker set search_path='' as $portal$
  select * from bts_private.business_vip_checkin_impl(p_program_id,p_card_code)
-$;
+$portal$;
 revoke all on function public.bts_business_vip_checkin(uuid,text) from public,anon,authenticated;
 grant execute on function public.bts_business_vip_checkin(uuid,text) to authenticated;
 
