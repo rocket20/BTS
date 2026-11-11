@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const STORE='bts-business-session-v1',$=id=>document.getElementById(id);
-const state={session:null,assignments:[],business:null,role:'viewer',programs:[],members:[],movements:[],checkins:[],promos:[],tickets:[],tab:'programs'};
+const state={session:null,assignments:[],business:null,role:'viewer',programs:[],members:[],movements:[],checkins:[],promos:[],tickets:[],inventory:[],tab:'programs'};
 const nameRole={owner:'Propietario',manager:'Encargado',staff:'Personal',viewer:'Consulta'};
 const $node=(tag,txt,cls)=>{const x=document.createElement(tag);if(txt!==undefined)x.textContent=String(txt);if(cls)x.className=cls;return x};
 const iso=()=>new Date().toISOString().slice(0,10),date=s=>s?new Date(s.slice(0,10)+'T12:00:00').toLocaleDateString('es-NI'):'Sin fecha';
@@ -59,7 +59,7 @@ async function selectBusiness(id){
  $('businessTitle').textContent=a.business.business_name;
  $('roleLabel').textContent='Cuenta empresarial · '+nameRole[a.role];
  const canManage=['owner','manager'].includes(a.role),canCheckin=['owner','manager','staff'].includes(a.role);
- $('issueCardForm').hidden=!canManage;
+ $('assignCardForm').hidden=!canManage;
  $('promoForm').classList.toggle('hidden',!canManage);
  $('promoPermission').textContent=canManage?'Podés crear promociones':'Promociones de solo lectura';
  $('vipForm').classList.toggle('hidden',!canCheckin);
@@ -79,65 +79,63 @@ function render(){
  const programs=$('programRows');programs.replaceChildren();
  if(!state.programs.length)programs.append($node('p','Este negocio todavía no tiene programas configurados.','empty'));
  for(const p of state.programs)programs.append(entry(p.title,(p.kind==='vip'?'VIP · '+p.vip_validity_months+' meses':p.goal_units+' '+p.unit_name+' para '+p.reward_label),p.is_active?'Activo':'Suspendido',p.is_active));
- renderMembers();renderIssuable();renderLoyalty();renderPromos();renderVIP();renderSupport();
+ renderMembers();renderAssignable();renderLoyalty();renderPromos();renderVIP();renderSupport();
 }
 function renderMembers(){
- const host=$('memberRows'),q=$('memberSearch').value.trim().toLowerCase();host.replaceChildren();
- const rows=state.members.filter(m=>[m.full_name,m.card_label,m.phone].some(x=>String(x||'').toLowerCase().includes(q)));
- if(!rows.length)host.append($node('p','No hay tarjetas para mostrar.','empty'));
- for(const m of rows){
- const p=state.programs.find(x=>x.id===m.program_id);
- const note=(p?.kind==='vip'?'VIP '+m.vip_tier+' · Vence '+date(m.expires_at):m.current_units+' / '+(p?.goal_units||'—')+' '+(p?.unit_name||'puntos'));
- const row=entry(m.full_name,m.card_label+' · '+note,m.is_active?'Activa':'Suspendida',m.is_active);
- if(['owner','manager'].includes(state.role)){
-   const button=$node('button',m.is_active?'Suspender':'Activar','btn');button.type='button';
-   button.onclick=async()=>{if(!confirm('¿'+(m.is_active?'Suspender':'Activar')+' esta tarjeta?'))return;button.disabled=true;try{
-     const out=await api('rpc/bts_business_card_admin','POST',{p_program_id:m.program_id,p_action:m.is_active?'suspend':'activate',p_member_id:m.id});
-     if(!out?.length)throw Error('No recibimos confirmación del servidor.');
-     await loadBusiness();msg('Estado de tarjeta actualizado.');
-   }catch(e){msg(e.message,true)}finally{button.disabled=false}};
-   row.append(button);
- }
- if(p?.kind==='loyalty'){
-   const goal=Math.max(1,Number(p.goal_units)||6);
-   const current=Math.max(0,Number(m.current_units)||0);
+ const host=$('memberRows'),q=$('memberSearch').value.trim().toLowerCase();
+ host.replaceChildren();
+ const inv=state.inventory||[];
+ $('invTotal').textContent=inv.length;
+ $('invAvailable').textContent=inv.filter(x=>x.status==='available').length;
+ $('invAssigned').textContent=inv.filter(x=>x.status==='assigned').length;
+ $('invSuspended').textContent=inv.filter(x=>x.status==='suspended').length;
+ const rows=inv.filter(x=>{
+  const m=state.members.find(m=>m.id===x.member_id);
+  return [x.reference,m?.full_name].some(v=>String(v||'').toLowerCase().includes(q));
+ });
+ if(!rows.length)host.append($node('p','No hay tarjetas del lote para mostrar. BTS debe generar primero las tarjetas.','empty'));
+ for(const x of rows){
+  const m=state.members.find(m=>m.id===x.member_id);
+  const p=state.programs.find(p=>p.id===x.program_id);
+  const name=x.status==='available'?'Sin asignar':m?.full_name||'Cliente';
+  const detail=x.reference+' · '+(p?.title||'Programa')+' · '+(x.status==='available'?'Pendiente de cliente':x.benefit_label||'Beneficio asignado');
+  const row=entry(name,detail,x.status==='available'?'Disponible':x.status==='assigned'?'Asignada':'Suspendida',x.status==='assigned');
+  if(x.status==='assigned'&&p?.kind==='loyalty'&&m){
+   const goal=Math.max(1,Number(p.goal_units)||6),count=Math.max(0,Number(m.current_units)||0);
    const progress=$node('div',undefined,'card-progress');
-   progress.style.cssText='width:100%;max-width:160px;margin:5px 0;display:grid;gap:4px';
-   const label=$node('small',Math.min(goal,current)+' de '+goal+' compras/puntos');
-   const rail=$node('div');rail.style.cssText='height:6px;border-radius:8px;background:#403a46;overflow:hidden';
-   const fill=$node('span');fill.style.cssText='display:block;height:100%;background:#bd4f70;border-radius:8px;width:'+Math.min(100,current/goal*100)+'%';
-   rail.append(fill);progress.append(label,rail);row.firstElementChild?.append(progress);
- }
- host.append(row);
+   progress.style.cssText='width:100%;max-width:180px;display:grid;gap:5px;margin-top:8px';
+   progress.append($node('small',Math.min(goal,count)+' de '+goal+' '+(p.unit_name||'compras')));
+   const track=$node('div');track.style.cssText='height:7px;border-radius:8px;overflow:hidden;background:#403a46';
+   const fill=$node('span');fill.style.cssText='display:block;height:100%;background:#b74469;width:'+Math.min(100,count/goal*100)+'%';
+   track.append(fill);progress.append(track);row.firstElementChild?.append(progress);
+  }
+  host.append(row);
  }
 }
-function renderIssuable(){
- const select=$('issueProgram'),prev=select.value;
- select.replaceChildren();
- for(const p of state.programs.filter(p=>p.is_active)){
-  select.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
- }
- if(state.programs.some(p=>p.id===prev&&p.is_active))select.value=prev;
- select.disabled=!select.options.length;
- if(!select.options.length)select.add(new Option('Sin programas activos',''));
+function renderAssignable(){
+ const el=$('assignSlot'),old=el.value;el.replaceChildren();
+ const available=state.inventory.filter(x=>x.status==='available');
+ for(const x of available)el.add(new Option(x.reference+' · '+(state.programs.find(p=>p.id===x.program_id)?.title||'Programa'),x.id));
+ if(available.some(x=>x.id===old))el.value=old;
+ if(!available.length)el.add(new Option('No hay tarjetas pendientes de asignación',''));
+ el.disabled=!available.length;
+ $('assignSubmit').disabled=!available.length;
 }
-async function issueCard(e){
+async function assignCard(e){
  e.preventDefault();
- if(!['owner','manager'].includes(state.role))return msg('Solo propietarios y encargados pueden emitir tarjetas.',true);
- const b=$('issueSubmit'),programId=$('issueProgram').value,p=state.programs.find(x=>x.id===programId);
- if(!p||!p.is_active)return msg('Seleccioná un programa activo.',true);
- b.disabled=true;
+ if(!['owner','manager'].includes(state.role))return msg('No tenés permiso para asignar tarjetas.',true);
+ const id=$('assignSlot').value,slot=state.inventory.find(x=>x.id===id&&x.status==='available');
+ if(!slot)return msg('Elegí una tarjeta pendiente de asignar.',true);
+ const name=$('assignName').value.trim(),benefit=$('assignBenefit').value.trim();
+ if(!confirm('¿Asignar '+slot.reference+' a '+name+' con el beneficio indicado? Esta asignación es permanente.'))return;
+ const button=$('assignSubmit');button.disabled=true;
  try{
-  const rows=await api('rpc/bts_business_card_admin','POST',{
-    p_program_id:programId,p_action:'create',p_full_name:$('issueName').value.trim(),
-    p_phone:$('issuePhone').value.trim(),p_card_label:$('issueLabel').value.trim()
-  });
-  if(!rows?.[0]?.card_code)throw Error('No se confirmó la tarjeta.');
-  const url=location.origin+'/nfc/tarjeta/?card='+rows[0].card_code;
-  $('issueResult').replaceChildren($node('span','Tarjeta emitida. Enlace: '));
-  const link=$node('a',url);link.href=url;link.target='_blank';link.rel='noopener noreferrer';$('issueResult').append(link);
-  $('issueCardForm').reset();await loadBusiness();msg('Tarjeta NFC emitida y activada.');
- }catch(e){msg(e.message,true)}finally{b.disabled=false}
+  const result=await api('rpc/bts_business_assign_nfc','POST',{p_slot_id:id,p_full_name:name,p_benefit_label:benefit});
+  if(!result?.length)throw Error('No se confirmó la asignación.');
+  $('assignCardForm').reset();await loadBusiness();$('assignResult').textContent='Tarjeta '+slot.reference+' asignada correctamente.';
+  msg('Tarjeta asignada. El código NFC sigue reservado a BTS.');
+ }catch(error){msg(error.message,true);$('assignResult').textContent=error.message}
+ finally{button.disabled=false}
 }
 function renderPromos(){
  const host=$('promoRows');host.replaceChildren();
@@ -176,7 +174,7 @@ function renderLoyalty(){
 }
 function renderLoyaltyMembers(){
  const id=$('loyaltyProgram').value,selector=$('loyaltyMember'),old=selector.value;
- const members=state.members.filter(m=>m.program_id===id&&m.is_active);
+ const members=state.members.filter(m=>m.program_id===id&&m.is_active&&state.inventory.some(x=>x.member_id===m.id&&x.status==='assigned'));
  selector.replaceChildren();
  for(const m of members)selector.add(new Option(m.full_name+' · '+m.card_label+' ('+m.current_units+' puntos)',m.id));
  if(members.some(m=>m.id===old))selector.value=old;
@@ -225,14 +223,15 @@ async function loadBusiness(){
   state.programs=programs||[];
   const pids=programs.map(x=>x.id);
   const param=pids.length?'program_id=in.('+pids.map(encodeURIComponent).join(',')+')':'program_id=eq.00000000-0000-0000-0000-000000000000';
-  const [members,movements,checkins,promos,tickets]=await Promise.all([
+  const [members,movements,checkins,promos,tickets,inventory]=await Promise.all([
    api('bts_reward_members?'+param+'&select=id,program_id,full_name,phone,card_label,current_units,vip_tier,expires_at,is_active&order=created_at.desc&limit=1000'),
    api('bts_reward_movements?'+param+'&select=id,member_id,program_id,action,created_at&order=created_at.desc&limit=1000'),
    api('bts_vip_checkins?'+param+'&select=id,member_id,program_id,created_at&order=created_at.desc&limit=1000'),
    api('bts_business_promotions?business_id=eq.'+encodeURIComponent(id)+'&select=id,title,description,starts_on,ends_on,is_active&order=created_at.desc&limit=200'),
-   api('bts_business_support?business_id=eq.'+encodeURIComponent(id)+'&select=id,subject,details,priority,status,bts_reply,created_at&order=created_at.desc&limit=100')
+   api('bts_business_support?business_id=eq.'+encodeURIComponent(id)+'&select=id,subject,details,priority,status,bts_reply,created_at&order=created_at.desc&limit=100'),
+   api('bts_nfc_inventory?business_id=eq.'+encodeURIComponent(id)+'&select=id,member_id,program_id,reference,status,benefit_label,number&order=created_at.asc&limit=1000')
   ]);
-  state.members=members||[];state.movements=movements||[];state.checkins=checkins||[];state.promos=promos||[];state.tickets=tickets||[];
+  state.members=members||[];state.movements=movements||[];state.checkins=checkins||[];state.promos=promos||[];state.tickets=tickets||[];state.inventory=inventory||[];
   render();msg('Datos actualizados desde BTS Studio.');
  }catch(err){msg('No se pudo cargar el negocio: '+err.message,true)}
 }
@@ -273,7 +272,7 @@ function selectTab(tab){
 async function boot(){
  $('loginForm').addEventListener('submit',login);$('logout').onclick=logout;
  $('reload').onclick=loadBusiness;$('businessSelect').onchange=e=>selectBusiness(e.target.value).catch(err=>msg(err.message,true));
- $('memberSearch').oninput=renderMembers;$('issueCardForm').addEventListener('submit',issueCard);$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');
+ $('memberSearch').oninput=renderMembers;$('assignCardForm').addEventListener('submit',assignCard);$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');
  $('tabs').onclick=e=>{const x=e.target.closest('[data-tab]');if(x)selectTab(x.dataset.tab)};
  $('promoForm').addEventListener('submit',submitPromo);$('supportForm').addEventListener('submit',submitSupport);$('vipForm').addEventListener('submit',submitVIP);
  const s=getSaved();if(s){save(s);try{await verify()}catch(err){save(null);showLogin(err.message)}}else showLogin();

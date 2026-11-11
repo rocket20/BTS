@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[];
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[];
 const notice=(text,bad=false)=>{$('notice').textContent=text;$('notice').classList.toggle('bad',bad)};
 function current(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 async function api(endpoint,method='GET',payload){
@@ -110,6 +110,72 @@ async function resetPassword(){
   $('generatedPassword').value=data.password;notice('Contraseña nueva generada. Compartila por canal seguro.');
  }catch(err){notice(err.message,true)}finally{b.disabled=false}
 }
+function downloadBatchCSV(rows){
+ const heading=['Referencia interna BTS','Código NFC privado','Enlace para grabar en NFC'];
+ const quote=x=>'"'+String(x??'').replace(/"/g,'""').replace(/[\r\n]+/g,' ')+'"';
+ const csv='\uFEFF'+[heading,...rows.map(r=>[r.reference,r.card_code,location.origin+'/nfc/tarjeta/?card='+r.card_code])]
+    .map(line=>line.map(quote).join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='BTS-LOTE-NFC-'+new Date().toISOString().slice(0,10)+'.csv';
+ document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function fetchCodes(batchId){
+ const rows=await api('rpc/bts_admin_batch_codes','POST',{p_batch_id:batchId});
+ if(!rows?.length)throw Error('El lote no tiene códigos.');
+ downloadBatchCSV(rows);
+ notice('Códigos privados descargados: '+rows.length+'. Reservados para programación NFC BTS.');
+}
+function renderBatches(){
+ const host=$('batchRows');host.replaceChildren();
+ if(!batchRows.length){const tr=node('tr'),td=node('td','No hay lotes NFC generados.');td.colSpan=6;tr.append(td);host.append(tr);return;}
+ for(const batch of batchRows){
+  const tr=node('tr');
+  const company=businesses.find(x=>x.id===batch.business_id)?.business_name||'Empresa';
+  const program=batchPrograms.find(x=>x.id===batch.program_id)?.title||'Programa';
+  for(const value of [company,program,batch.id.slice(0,8),String(batch.quantity),new Date(batch.created_at).toLocaleDateString('es-NI')])tr.append(node('td',value));
+  const td=node('td'),button=node('button','Descargar CSV privado','btn');button.type='button';
+  button.onclick=async()=>{button.disabled=true;try{await fetchCodes(batch.id)}catch(e){notice(e.message,true)}finally{button.disabled=false}};
+  td.append(button);tr.append(td);host.append(tr);
+ }
+}
+function setBatchPrograms(){
+ const businessId=$('batchCompany').value,sel=$('batchProgram'),old=sel.value;
+ sel.replaceChildren();
+ for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
+ if([...sel.options].some(o=>o.value===old))sel.value=old;
+ if(!sel.options.length)sel.add(new Option('Sin programas activos',''));
+ sel.disabled=!batchPrograms.some(x=>x.business_id===businessId&&x.is_active);
+ $('batchGenerate').disabled=sel.disabled;
+}
+async function loadBatches(){
+ try{
+  const [programs,batches]=await Promise.all([
+   api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
+   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500')
+  ]);
+  batchPrograms=programs||[];batchRows=batches||[];
+  const select=$('batchCompany'),old=select.value;select.replaceChildren();
+  for(const b of businesses.filter(b=>b.is_active))select.add(new Option(b.business_name,b.id));
+  if(businesses.some(b=>b.id===old&&b.is_active))select.value=old;
+  setBatchPrograms();renderBatches();
+ }catch(e){notice('No se pudieron consultar los lotes: '+e.message,true)}
+}
+async function generateBatch(e){
+ e.preventDefault();
+ const b=$('batchGenerate');b.disabled=true;
+ const businessId=$('batchCompany').value,programId=$('batchProgram').value,quantity=Number($('batchQuantity').value);
+ try{
+  if(!Number.isInteger(quantity)||quantity<1||quantity>200)throw Error('Generá entre 1 y 200 tarjetas por lote.');
+  if(!batchPrograms.some(x=>x.id===programId&&x.business_id===businessId&&x.is_active))throw Error('Programa inválido.');
+  if(!confirm('¿Generar '+quantity+' tarjetas NFC privadas para esta empresa? Solo BTS tendrá acceso a los códigos.'))return;
+  const rows=await api('rpc/bts_issue_nfc_batch','POST',{p_business_id:businessId,p_program_id:programId,p_quantity:quantity,p_note:'Lote BTS'});
+  if(!rows?.length||rows.length!==quantity)throw Error('El servidor no confirmó todas las tarjetas.');
+  downloadBatchCSV(rows);await loadBatches();
+  notice('Lote emitido correctamente: '+rows.length+' tarjetas. CSV descargado para grabación física.');
+ }catch(err){notice('No se pudo generar lote: '+err.message,true)}
+ finally{b.disabled=false}
+}
 async function load(){
  try{
   const [b,u]=await Promise.all([
@@ -123,7 +189,7 @@ async function load(){
   if(businesses.some(x=>x.id===previous&&x.is_active))$('provisionCompany').value=previous;
   $('passwordUser').replaceChildren();
   for(const row of users)$('passwordUser').add(new Option((row.display_email||row.user_id)+' · '+(businesses.find(x=>x.id===row.business_id)?.business_name||'Empresa'),row.user_id));
-  render();await loadSupport();notice(users.length+' accesos empresariales registrados.');
+  render();await loadSupport();await loadBatches();notice(users.length+' accesos empresariales registrados.');
  }catch(e){notice('Error al consultar accesos: '+e.message,true)}
 }
 async function init(){
@@ -141,7 +207,7 @@ async function init(){
    const msg='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
    try{await navigator.clipboard.writeText(msg);notice('Acceso copiado. Compartilo por un canal seguro.')}catch{notice('Copiá las credenciales manualmente.',true)}
   };
-  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;mode();await load();
+  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;$('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;$('batchCompany').onchange=setBatchPrograms;mode();await load();
  }catch(e){notice(e.message,true);$('createPanel').disabled=true;$('reload').disabled=true}
 }
 init();
