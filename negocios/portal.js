@@ -33,9 +33,10 @@ async function verify(){
  const records=await api('bts_business_users?user_id=eq.'+encodeURIComponent(s.user.id)+'&is_active=eq.true&select=business_id,role,id&order=created_at.asc&limit=100');
  if(!records?.length)throw Error('Tu cuenta aún no tiene empresas asignadas. Solicitá acceso a BTS.');
  const ids=[...new Set(records.map(x=>x.business_id))];
- const businessRows=await api('bts_nfc_cards?id=in.('+ids.map(encodeURIComponent).join(',')+')&select=id,business_name,is_active');
- const active=businessRows.filter(x=>x.is_active&&records.some(r=>r.business_id===x.id));
- if(!active.length)throw Error('Las empresas asignadas están suspendidas.');
+ const businessRows=await api('bts_nfc_cards?id=in.('+ids.map(encodeURIComponent).join(',')+')&select=id,slug,business_name,is_active');
+ const requestedSlug=new URLSearchParams(location.search).get('empresa');
+ const active=businessRows.filter(x=>x.is_active&&records.some(r=>r.business_id===x.id)&&(!requestedSlug||x.slug===requestedSlug));
+ if(!active.length)throw Error('No tenés acceso a este mini panel o la empresa está suspendida.');
  state.assignments=records.filter(r=>active.some(b=>b.id===r.business_id)).map(r=>({...r,business:active.find(b=>b.id===r.business_id)}));
  $('businessSelect').replaceChildren();
  for(const a of state.assignments){const opt=new Option(a.business.business_name,a.business_id);$('businessSelect').add(opt)}
@@ -44,7 +45,7 @@ async function verify(){
 }
 async function login(e){e.preventDefault();const button=$('loginBtn');button.disabled=true;$('loginError').textContent='';
  try{
-  const form=e.currentTarget,email=form.elements.namedItem('email').value.trim(),password=form.elements.namedItem('password').value;
+  const form=e.currentTarget,username=form.elements.namedItem('email').value.trim().toLowerCase(),email=username.includes('@')?username:username+'@acceso.btsstudio.net',password=form.elements.namedItem('password').value;
   const s=await request('/auth/v1/token?grant_type=password',{method:'POST',payload:{email,password}});
   save({...s,expires_at:s.expires_at||Math.floor(Date.now()/1000)+(s.expires_in||3600)});
   form.reset();await verify();
@@ -58,6 +59,7 @@ async function selectBusiness(id){
  $('businessTitle').textContent=a.business.business_name;
  $('roleLabel').textContent='Cuenta empresarial · '+nameRole[a.role];
  const canManage=['owner','manager'].includes(a.role),canCheckin=['owner','manager','staff'].includes(a.role);
+ $('issueCardForm').hidden=!canManage;
  $('promoForm').classList.toggle('hidden',!canManage);
  $('promoPermission').textContent=canManage?'Podés crear promociones':'Promociones de solo lectura';
  $('vipForm').classList.toggle('hidden',!canCheckin);
@@ -77,7 +79,7 @@ function render(){
  const programs=$('programRows');programs.replaceChildren();
  if(!state.programs.length)programs.append($node('p','Este negocio todavía no tiene programas configurados.','empty'));
  for(const p of state.programs)programs.append(entry(p.title,(p.kind==='vip'?'VIP · '+p.vip_validity_months+' meses':p.goal_units+' '+p.unit_name+' para '+p.reward_label),p.is_active?'Activo':'Suspendido',p.is_active));
- renderMembers();renderLoyalty();renderPromos();renderVIP();renderSupport();
+ renderMembers();renderIssuable();renderLoyalty();renderPromos();renderVIP();renderSupport();
 }
 function renderMembers(){
  const host=$('memberRows'),q=$('memberSearch').value.trim().toLowerCase();host.replaceChildren();
@@ -86,8 +88,56 @@ function renderMembers(){
  for(const m of rows){
  const p=state.programs.find(x=>x.id===m.program_id);
  const note=(p?.kind==='vip'?'VIP '+m.vip_tier+' · Vence '+date(m.expires_at):m.current_units+' / '+(p?.goal_units||'—')+' '+(p?.unit_name||'puntos'));
- host.append(entry(m.full_name,m.card_label+' · '+note,m.is_active?'Activa':'Suspendida',m.is_active));
+ const row=entry(m.full_name,m.card_label+' · '+note,m.is_active?'Activa':'Suspendida',m.is_active);
+ if(['owner','manager'].includes(state.role)){
+   const button=$node('button',m.is_active?'Suspender':'Activar','btn');button.type='button';
+   button.onclick=async()=>{if(!confirm('¿'+(m.is_active?'Suspender':'Activar')+' esta tarjeta?'))return;button.disabled=true;try{
+     const out=await api('rpc/bts_business_card_admin','POST',{p_program_id:m.program_id,p_action:m.is_active?'suspend':'activate',p_member_id:m.id});
+     if(!out?.length)throw Error('No recibimos confirmación del servidor.');
+     await loadBusiness();msg('Estado de tarjeta actualizado.');
+   }catch(e){msg(e.message,true)}finally{button.disabled=false}};
+   row.append(button);
  }
+ if(p?.kind==='loyalty'){
+   const goal=Math.max(1,Number(p.goal_units)||6);
+   const current=Math.max(0,Number(m.current_units)||0);
+   const progress=$node('div',undefined,'card-progress');
+   progress.style.cssText='width:100%;max-width:160px;margin:5px 0;display:grid;gap:4px';
+   const label=$node('small',Math.min(goal,current)+' de '+goal+' compras/puntos');
+   const rail=$node('div');rail.style.cssText='height:6px;border-radius:8px;background:#403a46;overflow:hidden';
+   const fill=$node('span');fill.style.cssText='display:block;height:100%;background:#bd4f70;border-radius:8px;width:'+Math.min(100,current/goal*100)+'%';
+   rail.append(fill);progress.append(label,rail);row.firstElementChild?.append(progress);
+ }
+ host.append(row);
+ }
+}
+function renderIssuable(){
+ const select=$('issueProgram'),prev=select.value;
+ select.replaceChildren();
+ for(const p of state.programs.filter(p=>p.is_active)){
+  select.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
+ }
+ if(state.programs.some(p=>p.id===prev&&p.is_active))select.value=prev;
+ select.disabled=!select.options.length;
+ if(!select.options.length)select.add(new Option('Sin programas activos',''));
+}
+async function issueCard(e){
+ e.preventDefault();
+ if(!['owner','manager'].includes(state.role))return msg('Solo propietarios y encargados pueden emitir tarjetas.',true);
+ const b=$('issueSubmit'),programId=$('issueProgram').value,p=state.programs.find(x=>x.id===programId);
+ if(!p||!p.is_active)return msg('Seleccioná un programa activo.',true);
+ b.disabled=true;
+ try{
+  const rows=await api('rpc/bts_business_card_admin','POST',{
+    p_program_id:programId,p_action:'create',p_full_name:$('issueName').value.trim(),
+    p_phone:$('issuePhone').value.trim(),p_card_label:$('issueLabel').value.trim()
+  });
+  if(!rows?.[0]?.card_code)throw Error('No se confirmó la tarjeta.');
+  const url=location.origin+'/nfc/tarjeta/?card='+rows[0].card_code;
+  $('issueResult').replaceChildren($node('span','Tarjeta emitida. Enlace: '));
+  const link=$node('a',url);link.href=url;link.target='_blank';link.rel='noopener noreferrer';$('issueResult').append(link);
+  $('issueCardForm').reset();await loadBusiness();msg('Tarjeta NFC emitida y activada.');
+ }catch(e){msg(e.message,true)}finally{b.disabled=false}
 }
 function renderPromos(){
  const host=$('promoRows');host.replaceChildren();
@@ -223,7 +273,7 @@ function selectTab(tab){
 async function boot(){
  $('loginForm').addEventListener('submit',login);$('logout').onclick=logout;
  $('reload').onclick=loadBusiness;$('businessSelect').onchange=e=>selectBusiness(e.target.value).catch(err=>msg(err.message,true));
- $('memberSearch').oninput=renderMembers;$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');
+ $('memberSearch').oninput=renderMembers;$('issueCardForm').addEventListener('submit',issueCard);$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');
  $('tabs').onclick=e=>{const x=e.target.closest('[data-tab]');if(x)selectTab(x.dataset.tab)};
  $('promoForm').addEventListener('submit',submitPromo);$('supportForm').addEventListener('submit',submitSupport);$('vipForm').addEventListener('submit',submitVIP);
  const s=getSaved();if(s){save(s);try{await verify()}catch(err){save(null);showLogin(err.message)}}else showLogin();
