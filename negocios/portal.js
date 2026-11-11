@@ -174,7 +174,7 @@ function renderLoyalty(){
 }
 function renderLoyaltyMembers(){
  const id=$('loyaltyProgram').value,selector=$('loyaltyMember'),old=selector.value;
- const members=state.members.filter(m=>m.program_id===id&&m.is_active);
+ const members=state.members.filter(m=>m.program_id===id&&m.is_active&&state.inventory.some(x=>x.member_id===m.id&&x.status==='assigned'));
  selector.replaceChildren();
  for(const m of members)selector.add(new Option(m.full_name+' · '+m.card_label+' ('+m.current_units+' puntos)',m.id));
  if(members.some(m=>m.id===old))selector.value=old;
