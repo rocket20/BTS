@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[];
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[];
 const notice=(text,bad=false)=>{$('notice').textContent=text;$('notice').classList.toggle('bad',bad)};
 function current(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 async function api(endpoint,method='GET',payload){
@@ -38,6 +38,31 @@ function render(){
   buttons.append(save,toggle);last.append(buttons);tr.append(first,second,third,fourth,last);tbody.append(tr);
  }
 }
+function renderSupport(){
+ const host=$('supportRows');host.replaceChildren();
+ if(!support.length){const tr=node('tr'),td=node('td','Todavía no hay solicitudes empresariales.');td.colSpan=5;tr.append(td);host.append(tr);return}
+ for(const item of support){
+  const tr=node('tr'),company=businesses.find(b=>b.id===item.business_id);
+  const c=node('td',company?.business_name||'Empresa'),subject=node('td');
+  subject.append(node('strong',item.subject),node('small',item.details.slice(0,250)),node('small',new Date(item.created_at).toLocaleString('es-NI')));
+  const prio=node('td',item.priority),status=node('td'),select=node('select');
+  select.className='field';
+  for(const [key,label] of [['abierto','Abierto'],['en_proceso','En proceso'],['resuelto','Resuelto'],['cerrado','Cerrado']])select.add(new Option(label,key));
+  select.value=item.status;status.append(select);
+  const response=node('td'),text=document.createElement('textarea');text.value=item.bts_reply||'';text.maxLength=2000;text.rows=3;text.style.cssText='width:100%;min-width:220px;background:#101116;border:1px solid #504653;border-radius:9px;color:#fff;padding:9px;font:inherit;';
+  const save=node('button','Guardar respuesta','btn');save.type='button';save.onclick=async()=>{
+    save.disabled=true;try{
+      await api('bts_business_support?id=eq.'+encodeURIComponent(item.id),'PATCH',{status:select.value,bts_reply:text.value.trim()});
+      await loadSupport();notice('Respuesta de soporte guardada.');
+    }catch(e){notice(e.message,true)}finally{save.disabled=false}
+  };
+  response.append(text,save);tr.append(c,subject,prio,status,response);host.append(tr);
+ }
+}
+async function loadSupport(){
+ try{support=await api('bts_business_support?select=id,business_id,created_by,subject,details,priority,status,bts_reply,created_at&order=created_at.desc&limit=200')||[];renderSupport()}
+ catch(e){notice('No se pudo cargar soporte: '+e.message,true)}
+}
 async function load(){
  try{
   const [b,u]=await Promise.all([
@@ -48,7 +73,7 @@ async function load(){
   const sel=$('business'),old=sel.value;sel.replaceChildren();
   for(const row of businesses)sel.add(new Option(row.business_name+(row.is_active?'':' (suspendido)'),row.id));
   if(businesses.some(b=>b.id===old))sel.value=old;
-  render();notice(users.length+' accesos empresariales registrados.');
+  render();await loadSupport();notice(users.length+' accesos empresariales registrados.');
  }catch(e){notice('Error al consultar accesos: '+e.message,true)}
 }
 async function assign(e){
@@ -67,7 +92,7 @@ async function init(){
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
   const rows=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id&limit=1');
   if(!rows.length)throw Error('La cuenta no tiene permisos de administrador BTS.');
-  $('assignForm').onsubmit=assign;$('reload').onclick=load;await load();
+  $('assignForm').onsubmit=assign;$('reload').onclick=load;$('reloadSupport').onclick=loadSupport;await load();
  }catch(e){notice(e.message,true);$('submit').disabled=true;$('reload').disabled=true}
 }
 init();
