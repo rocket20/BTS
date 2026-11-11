@@ -92,7 +92,18 @@ function renderMembers(){
 function renderPromos(){
  const host=$('promoRows');host.replaceChildren();
  if(!state.promos.length)host.append($node('p','Aún no hay promociones.','empty'));
- for(const p of state.promos)host.append(entry(p.title,p.description+' · '+date(p.starts_on)+' — '+date(p.ends_on),p.is_active?'Activa':'Pausada',p.is_active));
+ for(const p of state.promos){
+  const row=entry(p.title,p.description+' · '+date(p.starts_on)+' — '+date(p.ends_on),p.is_active?'Activa':'Pausada',p.is_active);
+  if(['owner','manager'].includes(state.role)){
+   const button=$node('button',p.is_active?'Pausar':'Activar','btn');button.type='button';
+   button.onclick=async()=>{button.disabled=true;try{
+    await api('bts_business_promotions?id=eq.'+encodeURIComponent(p.id)+'&business_id=eq.'+encodeURIComponent(state.business.id),'PATCH',{is_active:!p.is_active});
+    await loadBusiness();msg('Promoción actualizada.');
+   }catch(e){msg(e.message,true)}finally{button.disabled=false}};
+   row.append(button);
+  }
+  host.append(row);
+ }
 }
 function renderVIP(){
  const host=$('vipRows'),selector=$('vipProgram');host.replaceChildren();selector.replaceChildren();
