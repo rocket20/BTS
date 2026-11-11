@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>BTS Studio · Centro de operaciones</title>
+<style>
+:root{color-scheme:dark;--bg:#101116;--card:#1b1c24;--line:#393640;--ink:#f5f2f5;--muted:#aaa5b0;--wine:#ad3558;--soft:#29202a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,-apple-system,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.6;cursor:wait}
+.shell{max-width:1450px;margin:auto;padding:26px clamp(12px,2.5vw,28px) 70px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:850;color:#f18ba8}h1{font-size:clamp(26px,3.5vw,38px);line-height:1.1;letter-spacing:-.045em;margin:6px 0}h2{font-size:18px;letter-spacing:-.02em;margin:0}p{color:var(--muted)}.top p{margin:7px 0 0}
+.btn{border:1px solid var(--line);border-radius:11px;padding:9px 14px;background:#272631;color:var(--ink);font-weight:700}.btn.primary{background:var(--wine);border-color:var(--wine)}.btn:hover:not(:disabled){filter:brightness(1.17)}
+.status{margin:18px 0;min-height:24px;color:#b6e2ca}.status.bad{color:#ff9caa}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:19px}.metric,.panel{border:1px solid var(--line);border-radius:16px;background:var(--card)}.metric{padding:16px}.metric small{display:block;color:var(--muted)}.metric strong{font-size:27px;display:block;letter-spacing:-.04em;margin:5px 0}.metric span{font-size:11px;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:15px}.tab{border:1px solid transparent;border-radius:10px 10px 0 0;background:none;color:var(--muted);padding:11px 14px;font-weight:750}.tab.active{background:var(--card);color:#fff;border-color:var(--line);border-bottom-color:var(--card);box-shadow:inset 0 2px var(--wine)}
+.panel{padding:18px}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:16px}.panelhead p{font-size:12px;margin:3px 0 0}
+.tools{display:flex;gap:8px;flex-wrap:wrap}.control{min-width:130px;padding:10px 11px;border:1px solid #4b4651;border-radius:10px;background:#111219;color:var(--ink)}
+.table-wrap{width:100%;overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px;text-align:left}th{font-size:10px;color:#b2adba;letter-spacing:.08em;text-transform:uppercase}th,td{padding:12px 10px;border-bottom:1px solid #36333d}tr:last-child td{border-bottom:0}td{font-size:12px;overflow-wrap:anywhere}td b{font-size:13px}td small{color:var(--muted);display:block;margin-top:2px}
+.pill{display:inline-block;padding:4px 9px;border-radius:12px;background:#343039;color:#ded5dc;font-size:11px;font-weight:750}.pill.active{background:#173b2d;color:#a6e8be}.pill.pending{background:#493a24;color:#f6d6a3}
+.empty{text-align:center;padding:42px 14px;color:var(--muted)}
+dialog{width:min(590px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid #61515c;border-radius:18px;background:#191920;color:var(--ink);padding:23px}dialog::backdrop{background:#050409cc;backdrop-filter:blur(6px)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}.field{display:grid;gap:5px;font-weight:650;font-size:12px}.field.wide{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;border:1px solid #504a55;border-radius:10px;background:#111219;color:var(--ink);padding:11px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#cf547a}.actions{display:flex;justify-content:flex-end;gap:9px}
+@media(max-width:800px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric strong{font-size:22px}}@media(max-width:480px){.shell{padding:14px 10px 40px}.metrics{gap:7px}.metric{padding:12px}.panel{padding:13px}.formgrid{grid-template-columns:1fr}.field.wide{grid-column:auto}.tools{width:100%}.tools .control{flex:1;min-width:0}}
+</style></head><body>
+<main class="shell">
+<header class="top"><div><div class="eyebrow">BTS STUDIO / ADMINISTRACIÓN EMPRESARIAL</div><h1>Centro de operaciones.</h1><p>Clientes, servicios contratados, finanzas, inventario NFC y soporte en un solo lugar.</p></div><button type="button" class="btn" id="refresh">Actualizar datos</button></header>
+<div id="notice" class="status" role="status" aria-live="polite">Comprobando permisos...</div>
+<section class="metrics" aria-label="Indicadores reales">
+<div class="metric"><small>Clientes registrados</small><strong id="mClients">—</strong><span>Contactos empresariales</span></div>
+<div class="metric"><small>Servicios activos</small><strong id="mServices">—</strong><span>Planes y proyectos</span></div>
+<div class="metric"><small>Por cobrar</small><strong id="mPending">—</strong><span id="mPendingUnit">USD / NIO por separado</span></div>
+<div class="metric"><small>Renovaciones próximas</small><strong id="mRenewals">—</strong><span>Dentro de 30 días</span></div>
+</section>
+<nav class="tabs" aria-label="Módulos ERP" id="tabs">
+<button class="tab active" data-section="clients" type="button">Clientes</button>
+<button class="tab" data-section="services" type="button">Servicios</button>
+<button class="tab" data-section="transactions" type="button">Finanzas</button>
+<button class="tab" data-section="cards" type="button">Inventario NFC</button>
+<button class="tab" data-section="tickets" type="button">Soporte</button>
+<button class="tab" data-section="audit" type="button">Historial</button>
+</nav>
+<section class="panel"><div class="panelhead"><div><h2 id="sectionTitle">Clientes</h2><p id="sectionDesc">Información central del negocio y contacto.</p></div><div class="tools"><input class="control" id="search" type="search" aria-label="Buscar" placeholder="Buscar..." autocomplete="off"><select class="control" id="filter" aria-label="Filtrar estado"><option value="">Todos</option></select><button type="button" class="btn primary" id="add">+ Nuevo cliente</button></div></div>
+<div class="table-wrap"><table><thead id="headers"></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty" hidden>Sin registros todavía.</div></section>
+</main>
+<dialog id="editor" aria-labelledby="dialogTitle"><form id="form"><div class="modal-head"><h2 id="dialogTitle">Nuevo registro</h2><button type="button" class="btn" id="close">Cerrar</button></div><div class="formgrid" id="formFields"></div><div class="actions"><button type="button" class="btn" id="cancel">Cancelar</button><button type="submit" class="btn primary" id="save">Guardar registro</button></div></form></dialog>
+<script src="./app.js" defer></script>
+</body></html>
