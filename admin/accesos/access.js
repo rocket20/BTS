@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null,selectedBatchId=null;
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],adminNotices=[],selectedBusinessId=null,selectedBatchId=null;
 const notice=(text,bad=false)=>{
  $('notice').textContent=text;$('notice').classList.toggle('bad',bad);
  if(bad)window.BTSNotify?.toast({title:'No se pudo completar',message:text,type:'error',duration:6500});
@@ -116,7 +116,7 @@ function applyBusinessSelection(id,clearCredentials=true){
  syncProgramBusiness();syncPasswordUsers();
  if(b){$('programBusiness').value=b.id;$('batchCompany').value=b.id;setProgramKind();setBatchPrograms()}
  renderCompany();
- render();renderBatches();renderSupport();
+ renderAdminNotices();render();renderBatches();renderSupport();
 }
 function nextStep(){
  const b=selectedBusiness();
@@ -187,7 +187,7 @@ function renderCompany(){
   const note=node('p','Programas de esta empresa:');
   list.append(note);
   for(const p of programs){
-   const line=node('div',p.title+' · '+(p.kind==='vip'?'VIP':p.kind==='loyalty'?'Fidelización':'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
+   const names={purchases:'Compras',visits:'Visitas',points:'Puntos',vip:'VIP'};const line=node('div',p.title+' · '+(names[p.card_category]||'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
    list.append(line);
   }
  }
@@ -388,50 +388,101 @@ function prepareAdditionalBatch(id){
  $('batchQuantity').focus({preventScroll:true});
  notice('Elegí cuántas tarjetas adicionales querés crear. El nuevo lote quedará pendiente de envío.');
 }
+function renderAdminNotices(){
+ const select=$('adminNoticeProgram'),previous=select.value;select.replaceChildren();
+ const programs=batchPrograms.filter(p=>p.business_id===selectedBusinessId&&p.is_active);
+ for(const p of programs)select.add(new Option(p.title,p.id));
+ if([...select.options].some(x=>x.value===previous))select.value=previous;
+ if(!select.options.length)select.add(new Option('Primero configurá un programa',''));
+ select.disabled=!programs.length;$('adminNoticeSave').disabled=!programs.length;
+ const box=$('adminNoticeRows');box.replaceChildren();
+ const notices=adminNotices.filter(x=>x.business_id===selectedBusinessId);
+ if(!notices.length)box.append(node('p','Todavía no hay avisos publicados para esta empresa.','muted'));
+ for(const n of notices){
+  const row=node('article',undefined,'entry'),label=node('div');
+  const prog=programs.find(p=>p.id===n.program_id)?.title||'Programa';
+  label.append(node('strong',n.title),node('small',prog+' · '+(n.member_id?'Tarjeta específica':'Todos los clientes')+' · '+n.message));
+  const button=node('button',n.is_active?'Pausar':'Activar','btn');button.type='button';
+  button.onclick=async()=>{
+   const ok=await confirmBTS({title:n.is_active?'Pausar aviso NFC':'Activar aviso NFC',message:'Este cambio afecta a los mensajes que aparecen al escanear la tarjeta.',
+    details:[{label:'Empresa',value:currentCompanyName()},{label:'Aviso',value:n.title}],
+    confirmText:n.is_active?'Pausar aviso':'Activar aviso'});
+   if(!ok)return;
+   button.disabled=true;
+   try{await api('bts_nfc_card_notices?id=eq.'+encodeURIComponent(n.id),'PATCH',{is_active:!n.is_active});
+    await loadBatches();success('Aviso actualizado','La configuración NFC se guardó correctamente.');
+   }catch(e){notice(e.message,true)}finally{button.disabled=false}
+  };
+  row.append(label,node('span',n.is_active?'Visible':'Pausado','tag'),button);box.append(row);
+ }
+}
+async function publishAdminNotice(e){
+ e.preventDefault();const programId=$('adminNoticeProgram').value,program=batchPrograms.find(x=>x.id===programId&&x.business_id===selectedBusinessId&&x.is_active);
+ if(!program)return notice('Elegí un programa activo para este negocio.',true);
+ const title=$('adminNoticeTitle').value.trim(),message=$('adminNoticeMessage').value.trim();
+ const starts=$('adminNoticeStart').value||null,ends=$('adminNoticeEnd').value||null;
+ if(title.length<2||title.length>90||message.length<3||message.length>300)return notice('Revisá título y mensaje del aviso.',true);
+ if(starts&&ends&&ends<starts)return notice('La fecha final no puede ser anterior a la inicial.',true);
+ const ok=await confirmBTS({title:'Publicar aviso NFC',
+  message:'Este aviso aparecerá cuando un cliente escanee una tarjeta válida del programa. No se enviarán SMS ni notificaciones push.',
+  details:[{label:'Empresa',value:currentCompanyName()},{label:'Programa',value:program.title},{label:'Título',value:title}],
+  confirmText:'Publicar aviso',type:'info'});
+ if(!ok)return;
+ const button=$('adminNoticeSave');button.disabled=true;
+ try{
+  await api('bts_nfc_card_notices','POST',{business_id:selectedBusinessId,program_id:programId,member_id:null,
+   notice_type:$('adminNoticeType').value,title,message,starts_on:starts,ends_on:ends,is_active:true});
+  $('adminNoticeForm').reset();await loadBatches();
+  success('Aviso publicado','Aparecerá en la página NFC de los clientes del programa.');
+ }catch(e){notice(e.message,true)}finally{button.disabled=false}
+}
 function syncProgramBusiness(){
  const el=$('programBusiness'),old=el.value;el.replaceChildren();
  for(const b of businesses.filter(b=>b.is_active))el.add(new Option(b.business_name,b.id));
  if(businesses.some(b=>b.id===old&&b.is_active))el.value=old;
 }
 function setProgramKind(){
- const vip=$('programKind').value==='vip';
+ const type=$('programKind').value,vip=type==='vip';
  $('programGoalField').style.display=vip?'none':'';
  $('programUnitField').style.display=vip?'none':'';
  $('programVipMonthsField').style.display=vip?'':'none';
- $('programGoal').required=!vip;
+ $('programEarnField').style.display=type==='points'?'':'none';
+ $('programGoal').required=!vip;$('programEarn').required=type==='points';
+ $('programBenefit').maxLength=vip?600:130;
+ $('programBenefit').placeholder=vip?'Ej. 15 % de descuento, eventos exclusivos y prioridad de atención':'Ej. Regalo o descuento al completar la meta';
+ $('programUnit').value=type==='purchases'?'compras':type==='visits'?'visitas':type==='points'?'puntos':'membresía';
+ const names={purchases:'Fidelización',visits:'Visitas',points:'Puntos',vip:'VIP'};
  if(!$('programTitle').dataset.manual){
   const company=selectedBusiness()?.business_name||'';
-  $('programTitle').value=(vip?'VIP · ':'Fidelización · ')+company.slice(0,65);
+  $('programTitle').value=names[type]+' · '+company.slice(0,65);
  }
- $('programSetupHint').textContent=vip?'BTS creará un programa VIP. Luego generá el lote de tarjetas desde la sección siguiente.':'BTS creará el programa de recompensas. Después generá un lote de tarjetas para que el negocio pueda asignarlas.';
+ $('programSetupHint').textContent=vip?'La membresía ofrece beneficios y vigencia. BTS generará sus tarjetas VIP al emitir un lote.':
+ type==='points'?'Definí los puntos que se obtienen por operación y la meta para retirar el premio.':
+ 'Elegí cuántas '+$('programUnit').value+' debe completar el cliente para obtener el beneficio.';
 }
 async function createRewardProgram(e){
  e.preventDefault();
- const businessId=selectedBusinessId,kind=$('programKind').value,company=selectedBusiness();
+ const businessId=selectedBusinessId,category=$('programKind').value,kind=category==='vip'?'vip':'loyalty',company=selectedBusiness();
  const button=$('programCreate');button.disabled=true;
  try{
   if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
   const title=$('programTitle').value.trim(),benefit=$('programBenefit').value.trim();
   if(title.length<2||title.length>85)throw Error('El nombre del programa debe tener entre 2 y 85 caracteres.');
-  if(!benefit||benefit.length>130)throw Error('Revisá el beneficio de la tarjeta.');
-  if(!['loyalty','vip'].includes(kind))throw Error('Tipo de programa inválido.');
-  const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.is_active&&p.kind===kind);
-  if(existing.length){
-   const another=await confirmBTS({title:'Ya existe un programa de este tipo',message:'Esta empresa ya tiene '+existing.length+' programa(s) activos de esta categoría.',
-    details:[{label:'Empresa',value:company.business_name},{label:'Programas existentes',value:String(existing.length)}],
-    confirmText:'Crear otro programa',type:'warning',note:'Si querés usar el programa existente, cancelá y elegilo al generar el lote.'});
-   if(!another)return;
-  }
-  const goal=Number($('programGoal').value),months=Number($('programVipMonths').value);
+  if(!benefit||benefit.length>(kind==='vip'?600:130))throw Error('Revisá los beneficios de la tarjeta.');
+  if(!['purchases','visits','points','vip'].includes(category))throw Error('Tipo de tarjeta inválido.');
+  const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.card_category===category);
+  if(existing.length)throw Error('Esta empresa ya tiene la categoría '+category+'. Seleccioná el programa existente al generar el lote; no tenés que crearlo otra vez.');
+  const goal=Number($('programGoal').value),months=Number($('programVipMonths').value),earn=Number($('programEarn').value);
   if(kind==='loyalty'&&(!Number.isInteger(goal)||goal<1||goal>10000))throw Error('La meta debe estar entre 1 y 10000.');
   if(kind==='vip'&&(!Number.isInteger(months)||months<1||months>60))throw Error('La vigencia VIP debe estar entre 1 y 60 meses.');
+  if(category==='points'&&(!Number.isInteger(earn)||earn<1||earn>1000))throw Error('Los puntos por compra deben estar entre 1 y 1000.');
   const approved=await confirmBTS({
    title:'Configurar programa de tarjetas',message:'El programa quedará disponible para esta empresa, pero todavía no se emitirán códigos NFC.',
    details:[{label:'Empresa',value:company.business_name},{label:'Programa',value:title},{label:'Tipo',value:kind==='vip'?'Membresía VIP':'Fidelización'},{label:'Beneficio',value:benefit}],
    confirmText:'Sí, crear programa',type:'info'
   });if(!approved)return;
-  const payload={business_id:businessId,kind,title,reward_label:benefit,is_active:true};
-  if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=$('programUnit').value;payload.units_per_visit=1;}
+  const payload={business_id:businessId,kind,card_category:category,title,reward_label:kind==='vip'?'Beneficios VIP':benefit,is_active:true};
+  if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=category==='visits'?'visitas':category==='points'?'puntos':'compras';payload.units_per_visit=category==='points'?earn:1;}
   if(kind==='vip'){payload.vip_benefits=benefit;payload.vip_validity_months=months;}
   const rows=await api('bts_reward_programs','POST',payload);
   if(!rows?.[0]?.id)throw Error('No se recibió confirmación del programa.');
@@ -448,7 +499,7 @@ async function createRewardProgram(e){
 function setBatchPrograms(){
  const businessId=selectedBusinessId,sel=$('batchProgram'),old=sel.value;
  sel.replaceChildren();
- for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
+ for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+({purchases:'Compras',visits:'Visitas',points:'Puntos',vip:'VIP'}[p.card_category]||'Tarjeta'),p.id));
  if([...sel.options].some(o=>o.value===old))sel.value=old;
  if(!sel.options.length)sel.add(new Option('Sin programas activos',''));
  sel.disabled=!batchPrograms.some(x=>x.business_id===businessId&&x.is_active);
@@ -456,17 +507,18 @@ function setBatchPrograms(){
 }
 async function loadBatches(){
  try{
-  const [programs,batches,cards]=await Promise.all([
-   api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
+  const [programs,batches,cards,notices]=await Promise.all([
+   api('bts_reward_programs?select=id,business_id,kind,card_category,title,is_active&order=created_at.desc&limit=500'),
    api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at,released_at,released_by&order=created_at.desc&limit=500'),
-   api('bts_nfc_inventory?select=id,batch_id,business_id,number,status,reference&order=created_at.desc&limit=5000')
+   api('bts_nfc_inventory?select=id,batch_id,business_id,number,status,reference&order=created_at.desc&limit=5000'),
+   selectedBusiness()?api('bts_nfc_card_notices?business_id=eq.'+encodeURIComponent(selectedBusinessId)+'&select=id,business_id,program_id,member_id,notice_type,title,message,is_active,created_at&order=created_at.desc&limit=300'):Promise.resolve([])
   ]);
-  batchPrograms=programs||[];batchRows=batches||[];inventory=cards||[];
+  batchPrograms=programs||[];batchRows=batches||[];inventory=cards||[];adminNotices=notices||[];
   const select=$('batchCompany'),old=select.value;select.replaceChildren();
   for(const b of businesses.filter(b=>b.is_active))select.add(new Option(b.business_name,b.id));
   if(businesses.some(b=>b.id===old&&b.is_active))select.value=old;
   if(selectedBusinessId&&businesses.some(b=>b.id===selectedBusinessId))select.value=selectedBusinessId;
-  setBatchPrograms();renderBatches();renderCompany();
+  setBatchPrograms();renderBatches();renderCompany();renderAdminNotices();
  }catch(e){notice('No se pudieron consultar los lotes: '+e.message,true)}
 }
 async function generateBatch(e){
@@ -524,7 +576,7 @@ async function init(){
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
   const admins=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
   if(!admins.length||!['owner','admin'].includes(admins[0].role))throw Error('Tu cuenta no tiene acceso de administración BTS.');
-  $('companyPicker').onchange=e=>applyBusinessSelection(e.target.value);
+  $('companyPicker').onchange=e=>{applyBusinessSelection(e.target.value);loadBatches()};
   $('newBusiness').onclick=()=>{applyBusinessSelection('__new__');$('panelStep').open=true;$('panelStep').scrollIntoView({behavior:'smooth',block:'start'})};
   $('manageExistingAccess').onclick=()=>{$('advancedStep').open=true;$('advancedStep').scrollIntoView({behavior:'smooth',block:'start'})};
   $('addProgram').onclick=()=>{$('programSetupPanel').hidden=false;$('addProgram').hidden=true;$('programStep').open=true;$('programTitle').dataset.manual='';setProgramKind()};
@@ -540,6 +592,7 @@ async function init(){
   };
   $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;
   $('programSetupForm').onsubmit=createRewardProgram;
+  $('adminNoticeForm').onsubmit=publishAdminNotice;
   $('programKind').onchange=setProgramKind;
   $('programTitle').oninput=()=>{$('programTitle').dataset.manual='1'};
   $('batchTestThree').onclick=()=>{
