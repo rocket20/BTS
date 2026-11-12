@@ -65,6 +65,19 @@ html[data-bts-theme="light"] .bts-dialog-note{color:var(--bts-subtle)}
 html[data-bts-theme] :is(#batchReport,.batch-report){background:#fff!important;color:#191822!important}
 html[data-bts-theme] :is(#batchReport h2,#batchReport th,#batchReport td,#batchReport strong,#batchReport p,#batchReport small){color:inherit}
 /* Los diseños de tarjetas físicas mantienen sus colores y estilos independientes. */
+/* Módulos NFC heredados: mismos tokens claros sin alterar tarjetas de muestra ni mockups. */
+html[data-bts-theme="light"] :is(.history-panel,.editor-panel,.registry-status,.generated-link,.upload-tile,.nfc-design-controls,.corporate-preview-panel,.hero,.history-intro,.member-row,.member-list,.formgrid .panel){
+ background:var(--bts-surface)!important;color:var(--bts-text)!important;border-color:var(--bts-border)!important;
+}
+html[data-bts-theme="light"] :is(.linkhead,.nfc-preview-heading,.history-count,.finance-tag,.generated-title,.sectionTitle,.panelhead h2,.hero h1,.editor-panel h2){
+ color:var(--bts-text)!important;
+}
+html[data-bts-theme="light"] :is(.history-intro,.nfc-preview-note,.nfc-design-controls p,.corporate-preview-panel p,.brand+.hint,.upload-tile small,.generated-link p){
+ color:var(--bts-subtle)!important;
+}
+html[data-bts-theme="light"] dialog:not(.bts-dialog){background:#fff!important;color:var(--bts-text)!important;border-color:var(--bts-border)!important}
+html[data-bts-theme="light"] :is(.field label,.control label,.formgrid label){color:var(--bts-text)!important}
+html[data-bts-theme="light"] :is(.member-row,.history-panel,.editor-panel,.registry-status){box-shadow:0 8px 30px #2d1e290b}
 /* Navegación de módulos independiente: se oculta si el panel está embebido. */
 .bts-panel-links{display:flex;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap;
  border:1px solid var(--bts-border);border-radius:13px;background:var(--bts-surface);padding:11px 13px;margin:0 0 20px;box-shadow:var(--bts-shadow)}
