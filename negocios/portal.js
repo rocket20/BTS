@@ -153,8 +153,9 @@ async function assignCard(e){
  if(!['owner','manager'].includes(state.role))return msg('No tenés permiso para asignar tarjetas.',true);
  const id=$('assignSlot').value,slot=state.inventory.find(x=>x.id===id&&x.status==='available');
  if(!slot)return msg('Elegí una tarjeta pendiente de asignar.',true);
- if(!program?.is_active)return msg('La tarjeta no tiene un programa activo. Consultá a BTS.',true);
  const name=$('assignName').value.trim(),program=programForSlot(slot),benefit=benefitFromProgram(program);
+ if(!program?.is_active)return msg('La tarjeta no tiene un programa activo. Consultá a BTS.',true);
+ if(name.length<2||name.length>100)return msg('Ingresá el nombre completo del cliente (2 a 100 caracteres).',true);
  const approved=await confirmBTS({
  title:'Asignar tarjeta NFC',message:'Vas a asignar una tarjeta del lote de BTS. Esta operación no puede repetirse con otro cliente.',
  details:[{label:'Negocio',value:state.business?.business_name||'Negocio'},{label:'Tarjeta',value:slot.reference},{label:'Cliente',value:name},{label:'Programa',value:program.title},{label:'Beneficio',value:benefit||'Beneficios VIP definidos por BTS'}],
