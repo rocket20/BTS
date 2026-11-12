@@ -11,8 +11,8 @@
 <header><div class="eyebrow">BTS STUDIO / TARJETAS NFC</div><h1>Empresas y tarjetas.</h1><p class="muted">Elegí una empresa. BTS te indica si ya tiene su panel, beneficios y tarjetas; no necesitás volver a crear lo que ya existe.</p></header>
 <div id="notice" role="status" class="status">Comprobando permisos...</div>
 <section class="panel" id="companyOverviewPanel">
- <div class="company-picker"><label class="field">¿Qué empresa querés administrar?<select id="companyPicker" aria-label="Seleccionar empresa BTS"></select></label>
- <button class="btn" id="newBusiness" type="button">+ Registrar nueva empresa</button></div>
+ <div class="company-picker"><label class="field">Empresa que querés revisar<select id="companyPicker" aria-label="Seleccionar empresa BTS"></select></label>
+ <button class="btn" id="newBusiness" type="button">+ Nueva empresa</button></div>
  <div class="company-summary" id="companySummary">
   <h2 id="companySummaryTitle">Seleccioná una empresa</h2>
   <p class="help-line" id="companySummaryText">Al seleccionar una empresa verás qué está listo y cuál es el siguiente paso.</p>
@@ -29,7 +29,7 @@
 <strong id="existingPanelTitle">Esta empresa ya tiene un mini panel</strong>
 <p id="existingPanelDetails" class="help-line"></p>
 <a id="existingPanelLink" class="btn" href="/negocios/" target="_blank" rel="noopener noreferrer">Abrir mini panel existente</a>
-<button id="manageExistingAccess" class="btn" type="button">Gestionar usuarios</button>
+<button id="manageExistingAccess" class="btn" type="button">Ver usuarios de esta empresa</button>
 </div>
 <form id="provisionForm" class="controls">
 <select id="provisionMode" hidden aria-hidden="true"><option value="create_company">Nueva empresa</option><option value="create_access">Empresa existente</option></select>
@@ -40,7 +40,7 @@
 <div id="generatedAccess" hidden style="margin-top:18px;border:1px solid #59505e;border-radius:12px;padding:16px;background:#121218">
 <strong>Acceso generado para entregar a la empresa</strong><p class="muted">Copiá las credenciales ahora. La contraseña solo se mostrará al generarla.</p>
 <div class="controls"><label class="field">Enlace del mini panel<input id="generatedUrl" readonly></label><label class="field">Usuario<input id="generatedUsername" readonly></label><label class="field">Contraseña temporal<input id="generatedPassword" readonly></label><button class="btn" id="copyGenerated" type="button">Copiar acceso</button></div>
-</div></section>
+</div>
 </div></details>
 <details class="step" id="programStep"><summary><span>2. Beneficios de las tarjetas</span><span class="step-state" id="programStepStatus">Sin revisar</span></summary>
 <div class="step-body"><div id="programList" class="help-line"></div>
