@@ -96,13 +96,14 @@
  <p class="muted">Un programa define la meta y el premio de las tarjetas. Si ya existe uno, no hace falta crearlo otra vez.</p></div></div>
  <form id="programSetupForm" class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr));margin:15px 0">
  <label class="field">Empresa<select id="programBusiness" required></select></label>
- <label class="field">Tipo de servicio<select id="programKind"><option value="loyalty">Tarjeta de fidelización</option><option value="vip">Membresía VIP</option></select></label>
+ <label class="field">Tipo de tarjeta<select id="programKind"><option value="purchases">Fidelización por compras</option><option value="visits">Tarjeta de visitas</option><option value="points">Tarjeta de puntos</option><option value="vip">Membresía VIP</option></select></label>
  <label class="field">Nombre del programa<input id="programTitle" maxlength="85" minlength="2" required placeholder="Ej. Fidelización de clientes"></label>
- <label class="field" id="programGoalField">Meta de compras/visitas<input id="programGoal" type="number" min="1" max="10000" value="6" required></label>
- <label class="field" id="programUnitField">Unidad de progreso<select id="programUnit"><option value="compras">Compras</option><option value="visitas">Visitas</option><option value="puntos">Puntos</option></select></label>
+ <label class="field" id="programGoalField">Meta para obtener el premio<input id="programGoal" type="number" min="1" max="10000" value="6" required></label>
+ <label class="field" id="programUnitField">Medida del programa<input id="programUnit" value="compras" readonly aria-label="Medida predeterminada"></label>
+<label class="field" id="programEarnField" style="display:none">Puntos por compra o visita<input id="programEarn" type="number" min="1" max="1000" value="1"></label>
  <label class="field">Beneficio del cliente<input id="programBenefit" minlength="1" maxlength="130" required placeholder="Ej. Corte gratis al completar 6 compras"></label>
  <label class="field" id="programVipMonthsField" style="display:none">Vigencia VIP en meses<input id="programVipMonths" type="number" min="1" max="60" value="12"></label>
- <button type="submit" class="btn primary" id="programCreate">Guardar beneficio</button>
+ <button type="submit" class="btn primary" id="programCreate">Guardar tipo de tarjeta</button>
  </form>
  <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Para una prueba, podés generar solo tres tarjetas.</p>
  </section>
