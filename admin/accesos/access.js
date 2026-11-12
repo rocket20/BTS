@@ -180,13 +180,27 @@ function mode(){
  $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=!isNew;
 }
 async function createPanel(e){
- e.preventDefault();const b=$('createPanel');b.disabled=true;$('generatedAccess').hidden=true;
+ e.preventDefault();
+ const b=$('createPanel');b.disabled=true;
  try{
-  const action=$('provisionMode').value;
-  const payload=action==='create_company'?{business_name:$('newCompanyName').value.trim(),slug:$('newCompanySlug').value.trim().toLowerCase()}:{business_id:$('provisionCompany').value};
+  const company=selectedBusiness();
+  if(company&&users.some(u=>u.business_id===company.id)){
+   renderCompany();throw Error('Esta empresa ya tiene un mini panel. Abrí su acceso existente en lugar de crear otro.');
+  }
+  if(!company){
+   const name=$('newCompanyName').value.trim(),slug=$('newCompanySlug').value.trim().toLowerCase();
+   if(businesses.some(x=>x.slug===slug||x.business_name.trim().toLocaleLowerCase('es')===name.toLocaleLowerCase('es')))
+     throw Error('Esta empresa ya existe en BTS. Seleccionala arriba para revisar su panel.');
+  }
+  const action=company?'create_access':'create_company';
+  const payload=company?{business_id:company.id}:{business_name:$('newCompanyName').value.trim(),slug:$('newCompanySlug').value.trim().toLowerCase()};
   const data=await provision(action,payload);
-  reveal(data);await load();notice('Mini panel y cuenta generados. Copiá el acceso antes de salir.');
- }catch(err){notice(err.message,true)}finally{b.disabled=false}
+  selectedBusinessId=data.business_id;
+  await load();
+  reveal(data);
+  $('panelStep').open=true;
+  notice('Acceso creado para '+(selectedBusiness()?.business_name||'la empresa')+'. Copiá las credenciales ahora; no se podrán recuperar después.');
+ }catch(err){notice(err.message,true);renderCompany()}finally{b.disabled=!!(selectedBusiness()&&users.some(u=>u.business_id===selectedBusinessId))}
 }
 async function resetPassword(){
  const id=$('passwordUser').value;if(!id)return notice('Seleccioná un acceso empresarial.',true);
@@ -217,8 +231,8 @@ async function fetchCodes(batchId){
 }
 function renderBatches(){
  const host=$('batchRows');host.replaceChildren();
- if(!batchRows.length){const tr=node('tr'),td=node('td','No hay lotes NFC generados.');td.colSpan=6;tr.append(td);host.append(tr);return;}
- for(const batch of batchRows){
+ if(!batchRows.some(x=>x.business_id===selectedBusinessId)){const tr=node('tr'),td=node('td','Este negocio todavía no tiene tarjetas NFC.');td.colSpan=6;tr.append(td);host.append(tr);return;}
+ for(const batch of batchRows.filter(x=>x.business_id===selectedBusinessId)){
   const tr=node('tr');
   const company=businesses.find(x=>x.id===batch.business_id)?.business_name||'Empresa';
   const program=batchPrograms.find(x=>x.id===batch.program_id)?.title||'Programa';
@@ -240,14 +254,14 @@ function setProgramKind(){
  $('programVipMonthsField').style.display=vip?'':'none';
  $('programGoal').required=!vip;
  if(!$('programTitle').dataset.manual){
-  const company=businesses.find(b=>b.id===$('programBusiness').value)?.business_name||'';
+  const company=selectedBusiness()?.business_name||'';
   $('programTitle').value=(vip?'VIP · ':'Fidelización · ')+company.slice(0,65);
  }
  $('programSetupHint').textContent=vip?'BTS creará un programa VIP. Luego generá el lote de tarjetas desde la sección siguiente.':'BTS creará el programa de recompensas. Después generá un lote de tarjetas para que el negocio pueda asignarlas.';
 }
 async function createRewardProgram(e){
  e.preventDefault();
- const businessId=$('programBusiness').value,kind=$('programKind').value,company=businesses.find(b=>b.id===businessId);
+ const businessId=selectedBusinessId,kind=$('programKind').value,company=selectedBusiness();
  const button=$('programCreate');button.disabled=true;
  try{
   if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
@@ -276,7 +290,7 @@ async function createRewardProgram(e){
  }catch(err){notice('No se pudo crear el programa: '+err.message,true)}finally{button.disabled=false}
 }
 function setBatchPrograms(){
- const businessId=$('batchCompany').value,sel=$('batchProgram'),old=sel.value;
+ const businessId=selectedBusinessId,sel=$('batchProgram'),old=sel.value;
  sel.replaceChildren();
  for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
  if([...sel.options].some(o=>o.value===old))sel.value=old;
@@ -286,21 +300,23 @@ function setBatchPrograms(){
 }
 async function loadBatches(){
  try{
-  const [programs,batches]=await Promise.all([
+  const [programs,batches,cards]=await Promise.all([
    api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
-   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500')
+   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500'),
+   api('bts_nfc_inventory?select=id,business_id,status,reference&order=created_at.desc&limit=5000')
   ]);
-  batchPrograms=programs||[];batchRows=batches||[];
+  batchPrograms=programs||[];batchRows=batches||[];inventory=cards||[];
   const select=$('batchCompany'),old=select.value;select.replaceChildren();
   for(const b of businesses.filter(b=>b.is_active))select.add(new Option(b.business_name,b.id));
   if(businesses.some(b=>b.id===old&&b.is_active))select.value=old;
-  setBatchPrograms();renderBatches();
+  if(selectedBusinessId&&businesses.some(b=>b.id===selectedBusinessId))select.value=selectedBusinessId;
+  setBatchPrograms();renderBatches();renderCompany();
  }catch(e){notice('No se pudieron consultar los lotes: '+e.message,true)}
 }
 async function generateBatch(e){
  e.preventDefault();
  const b=$('batchGenerate');b.disabled=true;
- const businessId=$('batchCompany').value,programId=$('batchProgram').value,quantity=Number($('batchQuantity').value);
+ const businessId=selectedBusinessId,programId=$('batchProgram').value,quantity=Number($('batchQuantity').value);
  try{
   if(!Number.isInteger(quantity)||quantity<1||quantity>200)throw Error('Generá entre 1 y 200 tarjetas por lote.');
   if(!batchPrograms.some(x=>x.id===programId&&x.business_id===businessId&&x.is_active))throw Error('Programa inválido.');
