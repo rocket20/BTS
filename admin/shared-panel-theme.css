@@ -1,0 +1,81 @@
+/* BTS Studio · temas corporativos para paneles independientes.
+   Conserva los temas de diseño de tarjetas físicas y vistas previas. */
+html[data-bts-theme="dark"]{
+ color-scheme:dark;
+ --bts-page:#101116;--bts-surface:#1c1b24;--bts-raised:#25212b;--bts-border:#3d3945;
+ --bts-text:#f8f5f8;--bts-subtle:#afa7b3;--bts-input:#111118;
+ --bts-accent:#aa2d51;--bts-accent-text:#ffffff;--bts-positive:#a8e3be;
+ --bts-success-surface:#173729;--bts-tint:#2b1e29;--bts-shadow:0 16px 36px #0003;
+}
+html[data-bts-theme="light"]{
+ color-scheme:light;
+ --bts-page:#f8f6f9;--bts-surface:#ffffff;--bts-raised:#f6f1f5;--bts-border:#e5dbe3;
+ --bts-text:#201b24;--bts-subtle:#695f6c;--bts-input:#ffffff;
+ --bts-accent:#a9234d;--bts-accent-text:#ffffff;--bts-positive:#277046;
+ --bts-success-surface:#e6f5eb;--bts-tint:#fff0f5;--bts-shadow:0 12px 35px #3b20300f;
+}
+html[data-bts-theme]{
+ --bg:var(--bts-page);--surface:var(--bts-surface);--surface2:var(--bts-raised);
+ --card:var(--bts-surface);--panel:var(--bts-surface);--panel2:var(--bts-raised);
+ --ink:var(--bts-text);--txt:var(--bts-text);--text:var(--bts-text);
+ --muted:var(--bts-subtle);--line:var(--bts-border);--wine:var(--bts-accent);
+ --accent:var(--bts-accent);
+}
+html[data-bts-theme] body{background:var(--bts-page)!important;color:var(--bts-text)!important}
+html[data-bts-theme] :is(.panel,.metric,.step,.entry,.batch-lot,.company-summary,.company-stat,.login,.metric-card,.tabs,.bts-panel){
+ color:var(--bts-text);border-color:var(--bts-border);
+}
+html[data-bts-theme="light"] :is(.panel,.metric,.step,.entry,.batch-lot,.company-summary,.company-stat,.login,.metric-card,.business-nav-wrap,.bts-panel){
+ background:var(--bts-surface)!important;box-shadow:var(--bts-shadow);border-color:var(--bts-border)!important;
+}
+html[data-bts-theme="light"] :is(.step>summary,.step-body,.step>.panel,.batch-lot-top,.batch-lot-info,.company-picker,.company-stats,.panelhead){
+ color:var(--bts-text);
+}
+html[data-bts-theme="light"] :is(.batch-status,.tag,.pill,.business-nav-wrap .tab,.btn:not(.primary),.button:not(.primary),.nfc-folder-tab,.tab:not(.active)){
+ color:var(--bts-text)!important;background:var(--bts-raised)!important;border-color:var(--bts-border)!important;
+}
+html[data-bts-theme="light"] :is(.existing-panel,.assignment-preview,.file-preview,.batch-report-stat,.item-card:not(.physical-card),.notice,.status){
+ background:var(--bts-tint)!important;border-color:var(--bts-border)!important;color:var(--bts-text)!important;
+}
+html[data-bts-theme="light"] :is(.company-stat strong,.assignment-preview strong,.batch-lot h3,.panel h2,.entry strong,.metric strong,.business-nav-label strong,.batch-head h3,.step>summary,.top h1,.heading h1){
+ color:var(--bts-text)!important;
+}
+html[data-bts-theme="light"] :is(p,.muted,.subtle,.help-line,small,.entry small,.company-stat small,.step-state,.batch-lot-info,.business-nav-label span,.metric span,.metric small,.panelhead p,.eyebrow + p){
+ color:var(--bts-subtle);
+}
+html[data-bts-theme="light"] :is(input:not([type="color"]),select,textarea,.control,.input,.search,.field input:not([type="color"]),.field select,.field textarea){
+ background:var(--bts-input)!important;color:var(--bts-text)!important;border-color:#d8cbd7!important;
+}
+html[data-bts-theme="light"] :is(input,textarea)::placeholder{color:#867b89}
+html[data-bts-theme="light"] :is(th,td){color:var(--bts-text);border-bottom-color:var(--bts-border)}
+html[data-bts-theme="light"] th{color:var(--bts-subtle)}
+html[data-bts-theme="light"] :is(.tab.active,.business-nav-wrap .tab.active,.btn.primary,.button.primary){
+ background:var(--bts-accent)!important;color:#fff!important;border-color:var(--bts-accent)!important;
+}
+html[data-bts-theme="light"] :is(.tag.ok,.pill.active,.batch-status--sent){background:var(--bts-success-surface)!important;color:#226b42!important;border-color:#bedbc7!important}
+html[data-bts-theme="light"] :is(.notice.bad,.status.bad){color:#a71843!important}
+html[data-bts-theme="light"] .bts-dialog{background:#fff!important;color:var(--bts-text)!important;border-color:#e4d6df}
+html[data-bts-theme="light"] :is(.bts-dialog-title,.bts-toast-title){color:var(--bts-text)!important}
+html[data-bts-theme="light"] :is(.bts-dialog-message,.bts-dialog-detail-label,.bts-toast-message){color:var(--bts-subtle)!important}
+html[data-bts-theme="light"] :is(.bts-dialog-details,.bts-toast){background:#fff!important;border-color:#e5d8e2!important;color:var(--bts-text)}
+html[data-bts-theme="light"] .bts-dialog-detail-value{color:var(--bts-text)}
+html[data-bts-theme="light"] .bts-dialog-button:not(.bts-dialog-button--primary){background:#f5f0f4;color:var(--bts-text);border-color:#e2d5df}
+html[data-bts-theme="light"] .bts-dialog-note{color:var(--bts-subtle)}
+/* Los documentos imprimibles son siempre blancos, independientemente del tema. */
+html[data-bts-theme] :is(#batchReport,.batch-report){background:#fff!important;color:#191822!important}
+html[data-bts-theme] :is(#batchReport h2,#batchReport th,#batchReport td,#batchReport strong,#batchReport p,#batchReport small){color:inherit}
+html[data-bts-theme] .physical-card,html[data-bts-theme] #cardFront,html[data-bts-theme] #cardBack{color:inherit}
+/* Navegación de módulos independiente: se oculta si el panel está embebido. */
+.bts-panel-links{display:flex;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap;
+ border:1px solid var(--bts-border);border-radius:13px;background:var(--bts-surface);padding:11px 13px;margin:0 0 20px;box-shadow:var(--bts-shadow)}
+.bts-panel-links-brand{font-weight:850;letter-spacing:.08em;font-size:11px;color:var(--bts-accent)}
+.bts-panel-links-list{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bts-panel-links-list a{font-size:11px;text-decoration:none;font-weight:700;color:var(--bts-text);border:1px solid var(--bts-border);border-radius:8px;padding:8px 10px;background:var(--bts-raised)}
+.bts-panel-links-list a[aria-current="page"]{border-color:var(--bts-accent);color:var(--bts-accent)}
+.bts-mode-toggle{display:inline-flex;gap:7px;align-items:center;justify-content:center;border:1px solid var(--bts-border);
+ padding:9px 12px;border-radius:10px;background:var(--bts-raised);font-weight:750;color:var(--bts-text);font-size:12px;cursor:pointer}
+.bts-mode-toggle:hover,.bts-panel-links-list a:hover{border-color:var(--bts-accent)}
+.bts-mode-toggle:focus-visible,.bts-panel-links-list a:focus-visible{outline:2px solid var(--bts-accent);outline-offset:2px}
+.bts-theme-switching *{transition:none!important;animation:none!important}
+@media(max-width:700px){.bts-panel-links{align-items:stretch;flex-direction:column}.bts-panel-links-list{width:100%}.bts-panel-links-list a{flex:1;text-align:center}.bts-mode-toggle{width:100%}}
+@media print{.bts-panel-links{display:none!important}}
