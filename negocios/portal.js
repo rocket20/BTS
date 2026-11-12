@@ -270,6 +270,8 @@ function selectTab(tab){
  for(const name of ['programs','members','loyalty','promotions','vip','support'])$('tab-'+name).classList.toggle('hidden',name!==tab);
 }
 async function boot(){
+ const prefillKey='bts-business-login-prefill-v1';
+ try{const candidate=sessionStorage.getItem(prefillKey);if(candidate&&/^bts-[a-z0-9-]{5,}$/.test(candidate))$('loginForm').elements.namedItem('email').value=candidate;sessionStorage.removeItem(prefillKey)}catch(_){}
  $('loginForm').addEventListener('submit',login);$('logout').onclick=logout;
  $('reload').onclick=loadBusiness;$('businessSelect').onchange=e=>selectBusiness(e.target.value).catch(err=>msg(err.message,true));
  $('memberSearch').oninput=renderMembers;$('assignCardForm').addEventListener('submit',assignCard);$('loyaltyProgram').onchange=renderLoyaltyMembers;$('loyaltyEarn').onclick=()=>loyaltyEvent('earn');$('loyaltyRedeem').onclick=()=>loyaltyEvent('redeem');

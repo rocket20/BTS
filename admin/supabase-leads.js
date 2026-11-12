@@ -6,6 +6,19 @@
 const BASE="https://xwehejgwufwhpkpzjzyt.supabase.co";
 const KEY="sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz";
 const STORAGE="bts-admin-sb-session-v1";
+const BUSINESS_PREFILL="bts-business-login-prefill-v1";
+function isBusinessLogin(value){
+ const v=String(value||"").trim().toLowerCase();
+ return /^bts-[a-z0-9-]{5,}$/.test(v) || /^[^@\s]+@acceso\.btsstudio\.net$/.test(v);
+}
+function goToBusinessLogin(value){
+ const v=String(value||"").trim().toLowerCase();
+ if(isBusinessLogin(v)){
+  try{sessionStorage.setItem(BUSINESS_PREFILL,v.endsWith("@acceso.btsstudio.net")?v.slice(0,-"@acceso.btsstudio.net".length):v);}catch(_){}
+ }
+ location.assign("../negocios/");
+}
+
 let session=null;
 let onReady=null;
 let gate=null;
@@ -17,19 +30,41 @@ function unlock(){document.body.classList.add("bts-authenticated");if(gate)gate.
 function reset(){session=null;saveSession();clearInterval(timer);timer=null;lock();}
 function interfaceUI(){
  const css=document.createElement("style");
- css.textContent=".bts-auth-gate{position:fixed;inset:0;z-index:9999;background:#090b11;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,sans-serif;color:#fff}.bts-auth-gate[hidden]{display:none}.bts-auth-card{width:min(420px,100%);padding:36px;border:1px solid #333641;background:#15161f;border-radius:18px;box-shadow:0 25px 100px #0008}.bts-auth-card h1{font-size:28px;letter-spacing:-1px;margin:0 0 8px}.bts-auth-card p{color:#a2a4b2;line-height:1.55;font-size:13px;margin:0 0 25px}.bts-auth-card label{display:block;font-size:12px;margin:16px 0 7px}.bts-auth-card input{display:block;width:100%;padding:13px 14px;background:#0e1017;border:1px solid #363946;color:#fff;border-radius:9px;font:inherit}.bts-auth-card button{width:100%;margin-top:22px;padding:14px;border:0;border-radius:9px;background:#ff0037;color:white;font-weight:700;cursor:pointer}.bts-auth-card button:disabled{opacity:.65;cursor:wait}.bts-auth-error{min-height:20px;margin-top:14px;color:#ff8ea5;font-size:12px}.bts-auth-card a{color:#afb0bd;font-size:12px;display:inline-block;margin-top:18px}.bts-admin-logout{background:transparent;color:#e1e2e7;border:1px solid #3b3c49;border-radius:8px;padding:9px 11px;font-size:11px;cursor:pointer}";
+ css.textContent=".bts-auth-gate{position:fixed;inset:0;z-index:9999;background:#090b11;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,sans-serif;color:#fff}.bts-auth-gate[hidden]{display:none}.bts-auth-card{width:min(420px,100%);padding:36px;border:1px solid #333641;background:#15161f;border-radius:18px;box-shadow:0 25px 100px #0008}.bts-auth-card h1{font-size:28px;letter-spacing:-1px;margin:0 0 8px}.bts-auth-card p{color:#a2a4b2;line-height:1.55;font-size:13px;margin:0 0 25px}.bts-auth-card label{display:block;font-size:12px;margin:16px 0 7px}.bts-auth-card input{display:block;width:100%;padding:13px 14px;background:#0e1017;border:1px solid #363946;color:#fff;border-radius:9px;font:inherit}.bts-auth-card button{width:100%;margin-top:22px;padding:14px;border:0;border-radius:9px;background:#ff0037;color:white;font-weight:700;cursor:pointer}.bts-auth-card button:disabled{opacity:.65;cursor:wait}.bts-auth-error{min-height:20px;margin-top:14px;color:#ff8ea5;font-size:12px}.bts-auth-card a{color:#afb0bd;font-size:12px;display:inline-block;margin-top:18px}.bts-auth-business{margin-top:12px;color:#e8c6d0;font-size:12px;line-height:1.45}.bts-auth-business[hidden]{display:none}.bts-admin-logout{background:transparent;color:#e1e2e7;border:1px solid #3b3c49;border-radius:8px;padding:9px 11px;font-size:11px;cursor:pointer}";
  document.head.appendChild(css);
  gate=document.createElement("div");
  gate.className="bts-auth-gate";
  gate.id="btsAdminGate";
- gate.innerHTML='<div class="bts-auth-card"><div style="color:#ff0037;font-weight:900;letter-spacing:.12em;margin-bottom:18px">BTS STUDIO / ADMIN</div><h1>Acceso al panel</h1><p>Iniciá sesión con tu usuario administrador de Supabase para gestionar cotizaciones.</p><form id="btsAuthForm"><label for="btsAuthEmail">Correo</label><input id="btsAuthEmail" name="email" type="email" autocomplete="username" required><label for="btsAuthPassword">Contraseña</label><input id="btsAuthPassword" name="password" type="password" autocomplete="current-password" required><button id="btsAuthSubmit" type="submit">Entrar al dashboard</button></form><div id="btsLoginError" class="bts-auth-error" role="status"></div><a href="../index.html">Volver a BTS Studio</a></div>';
+ gate.innerHTML='<div class="bts-auth-card"><div style="color:#ff0037;font-weight:900;letter-spacing:.12em;margin-bottom:18px">BTS STUDIO / ADMINISTRACIÓN</div><h1>Acceso administrativo</h1><p>Ingreso exclusivo de los administradores de BTS Studio. Las empresas utilizan su propio mini panel.</p><form id="btsAuthForm" novalidate><label for="btsAuthEmail">Correo administrativo</label><input id="btsAuthEmail" name="email" type="email" inputmode="email" autocomplete="section-btsadmin username" required><label for="btsAuthPassword">Contraseña</label><input id="btsAuthPassword" name="password" type="password" autocomplete="section-btsadmin current-password" required><button id="btsAuthSubmit" type="submit">Entrar al dashboard BTS</button></form><div id="btsBusinessHint" class="bts-auth-business" hidden>Esta parece una cuenta de empresa. Su acceso es al mini panel, no a la administración de BTS.</div><div id="btsLoginError" class="bts-auth-error" role="status" aria-live="polite"></div><a id="btsBusinessLink" href="../negocios/">Ingresar al mini panel de mi empresa</a><div style="margin-top:6px"><a href="../index.html">Volver a BTS Studio</a></div></div>';
  document.body.appendChild(gate);
- gate.querySelector("form").addEventListener("submit",async e=>{
-  e.preventDefault();const btn=gate.querySelector("button");btn.disabled=true;btn.textContent="Verificando acceso...";setError("");
-  try{await signIn(gate.querySelector("#btsAuthEmail").value.trim(),gate.querySelector("#btsAuthPassword").value);await activate();}
-  catch(err){reset();setError(err.message||"No se pudo iniciar sesión");}
-  finally{btn.disabled=false;btn.textContent="Entrar al dashboard";gate.querySelector("#btsAuthPassword").value="";}
+ const adminEmail=gate.querySelector("#btsAuthEmail");
+ const adminPassword=gate.querySelector("#btsAuthPassword");
+ const adminSubmit=gate.querySelector("#btsAuthSubmit");
+ const businessHint=gate.querySelector("#btsBusinessHint");
+ function updateLoginType(){
+  const business=isBusinessLogin(adminEmail.value);
+  adminSubmit.textContent=business?"Ir al mini panel empresarial":"Entrar al dashboard BTS";
+  businessHint.hidden=!business;
+ }
+ adminEmail.addEventListener("input",updateLoginType);
+ adminEmail.addEventListener("change",updateLoginType);
+ gate.querySelector("#btsBusinessLink").addEventListener("click",e=>{
+  if(isBusinessLogin(adminEmail.value)){e.preventDefault();goToBusinessLogin(adminEmail.value);}
  });
+ gate.querySelector("form").addEventListener("submit",async e=>{
+  e.preventDefault();setError("");
+  const email=adminEmail.value.trim();
+  if(isBusinessLogin(email)){goToBusinessLogin(email);return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+   setError("Ingresá el correo de tu cuenta administradora BTS. Si sos una empresa, usá el enlace al mini panel.");return;
+  }
+  if(!adminPassword.value){setError("Ingresá tu contraseña administrativa.");return;}
+  adminSubmit.disabled=true;adminSubmit.textContent="Verificando acceso...";
+  try{await signIn(email,adminPassword.value);await activate();}
+  catch(err){reset();setError(err.message||"No se pudo iniciar sesión");}
+  finally{adminSubmit.disabled=false;adminPassword.value="";updateLoginType();}
+ });
+ updateLoginType();
  const logout=document.createElement("button");logout.type="button";logout.className="bts-admin-logout";logout.textContent="Salir";logout.title="Cerrar sesión de Supabase";logout.addEventListener("click",reset);
  document.querySelector(".top-actions")?.appendChild(logout);
 }
