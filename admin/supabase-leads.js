@@ -55,7 +55,7 @@ function interfaceUI(){
   e.preventDefault();setError("");
   const email=adminEmail.value.trim();
   if(isBusinessLogin(email)){goToBusinessLogin(email);return;}
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
    setError("Ingresá el correo de tu cuenta administradora BTS. Si sos una empresa, usá el enlace al mini panel.");return;
   }
   if(!adminPassword.value){setError("Ingresá tu contraseña administrativa.");return;}
