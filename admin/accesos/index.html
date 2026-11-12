@@ -107,6 +107,19 @@
  </form>
  <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Para una prueba, podés generar solo tres tarjetas.</p>
  </section>
+<section class="panel" id="adminNoticesPanel">
+ <div class="toolbar"><div><h2>Avisos para las tarjetas NFC</h2><p class="muted">BTS también puede publicar un aviso para todo un programa. El negocio podrá gestionar avisos generales y para clientes desde su mini panel.</p></div></div>
+ <form id="adminNoticeForm" class="controls" style="margin:14px 0">
+  <label class="field">Programa<select id="adminNoticeProgram" required></select></label>
+  <label class="field">Tipo de aviso<select id="adminNoticeType"><option value="promotion">Promoción</option><option value="gift">Regalía especial</option><option value="info">Información importante</option></select></label>
+  <label class="field">Título<input id="adminNoticeTitle" required minlength="2" maxlength="90" placeholder="¡Tenés una promoción!"></label>
+  <label class="field">Mensaje<textarea id="adminNoticeMessage" required minlength="3" maxlength="300" rows="3"></textarea></label>
+  <label class="field">Desde (opcional)<input id="adminNoticeStart" type="date"></label>
+  <label class="field">Hasta (opcional)<input id="adminNoticeEnd" type="date"></label>
+  <button type="submit" class="btn primary" id="adminNoticeSave">Publicar aviso NFC</button>
+ </form>
+ <div id="adminNoticeRows" class="rows"></div>
+</section>
 </div></details>
 <details class="step" id="batchStep"><summary><span>3. Tarjetas NFC del negocio</span><span class="step-state" id="batchStepStatus">Sin revisar</span></summary>
 <div class="step-body"><section class="panel">
