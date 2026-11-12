@@ -6,23 +6,49 @@
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;margin:17px 0}.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:end}.field{display:grid;gap:6px;font-size:12px;font-weight:700}.field input,.field select{border:1px solid #514953;padding:11px;background:#0f1016;color:var(--txt);border-radius:10px;width:100%;min-width:0}.btn{padding:11px 15px;border:1px solid #50434d;border-radius:10px;color:#fff;background:#28252d;font-weight:750}.btn.primary{background:var(--wine);border-color:var(--wine)}.btn.warning{color:#ffb6c4}.btn:focus-visible,.field input:focus,.field select:focus{outline:2px solid #e9698f}.status{min-height:23px;color:#b8dfc7;font-size:13px}.status.bad{color:#ff9eac}.scroller{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{border-bottom:1px solid #38333e;padding:14px 9px;text-align:left;font-size:12px}th{color:var(--muted);letter-spacing:.09em;font-size:10px}small{display:block;color:var(--muted)}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.tag{padding:5px 9px;border-radius:12px;background:#34303b;color:#dcd6de;font-size:10px}.tag.on{background:#1e4433;color:#ade4c1}.tag.off{background:#4a282e;color:#ffc2ca}.action{display:flex;gap:5px}
 @media(max-width:780px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:14px 10px}.panel{padding:14px}}
 @media(max-width:470px){.controls{grid-template-columns:1fr}}
+.company-picker{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.company-picker .field{flex:1;min-width:220px}.company-summary{margin-top:16px;padding:17px;border:1px solid #46414c;border-radius:13px;background:#14151c}.company-summary h2{margin:0 0 7px}.company-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.company-stat{border:1px solid #403943;border-radius:11px;background:#1d1d27;padding:12px}.company-stat strong{display:block;font-size:21px;line-height:1.3}.company-stat small{color:#aaa2ad}.step{border:1px solid #393540;border-radius:15px;background:#1b1c24;margin:12px 0;overflow:hidden}.step>summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 21px;list-style:none;font-size:16px;font-weight:800}.step>summary::-webkit-details-marker{display:none}.step>summary:after{content:"⌄";font-size:19px;color:#d889a0}.step[open]>summary{border-bottom:1px solid #373540}.step[open]>summary:after{transform:rotate(180deg)}.step-body{padding:17px 21px}.step>.panel{border:0;margin:0;border-radius:0;background:transparent}.step-state{color:#b2aab5;font-size:11px;font-weight:600}.existing-panel{margin:14px 0;padding:16px;border:1px solid #3d594c;background:#17231f;border-radius:12px}.existing-panel strong{color:#bde6ce}.existing-panel .btn{display:inline-block;text-decoration:none;margin-top:10px}.help-line{font-size:12px;color:#bbb0bc;margin:6px 0 12px}.panel[hidden],.controls[hidden],form[hidden],div[hidden]{display:none!important}@media(max-width:650px){.company-stats{grid-template-columns:repeat(3,1fr);gap:5px}.company-stat{padding:8px}.company-stat strong{font-size:17px}.step>summary{padding:13px;flex-wrap:wrap}.step-body{padding:13px}}
 </style></head><body><main class="wrap">
-<header><div class="eyebrow">BTS STUDIO / GESTIÓN DE ACCESOS</div><h1>Empresas y usuarios.</h1><p class="muted">Asigná cuentas existentes de Supabase Auth a negocios, sin darles acceso al dashboard general de BTS.</p></header>
+<header><div class="eyebrow">BTS STUDIO / TARJETAS NFC</div><h1>Empresas y tarjetas.</h1><p class="muted">Elegí una empresa. BTS te indica si ya tiene su panel, beneficios y tarjetas; no necesitás volver a crear lo que ya existe.</p></header>
 <div id="notice" role="status" class="status">Comprobando permisos...</div>
-<section class="panel"><h2>Crear mini panel para una empresa</h2><p class="muted">BTS crea el panel y las credenciales. El negocio solo recibe su enlace, usuario y contraseña; nunca necesita entrar a Supabase.</p>
+<section class="panel" id="companyOverviewPanel">
+ <div class="company-picker"><label class="field">Empresa que querés revisar<select id="companyPicker" aria-label="Seleccionar empresa BTS"></select></label>
+ <button class="btn" id="newBusiness" type="button">+ Nueva empresa</button></div>
+ <div class="company-summary" id="companySummary">
+  <h2 id="companySummaryTitle">Seleccioná una empresa</h2>
+  <p class="help-line" id="companySummaryText">Al seleccionar una empresa verás qué está listo y cuál es el siguiente paso.</p>
+  <button type="button" class="btn primary" id="companyNextAction" style="margin-top:14px">Ver qué falta configurar</button>
+  <div class="company-stats">
+   <div class="company-stat"><strong id="companyPanelsCount">—</strong><small>Accesos</small></div>
+   <div class="company-stat"><strong id="companyProgramsCount">—</strong><small>Programas</small></div>
+   <div class="company-stat"><strong id="companyCardsCount">—</strong><small>Tarjetas NFC</small></div>
+  </div>
+ </div>
+ </section>
+ <details class="step" id="panelStep" open><summary><span>1. Panel de la empresa</span><span class="step-state" id="panelStepStatus">Revisando accesos</span></summary>
+ <div class="step-body"><h2>Acceso al mini panel</h2><p class="muted">BTS crea el acceso una sola vez. Si la empresa ya lo tiene, podrás abrirlo o administrar sus usuarios sin generar otro.</p>
+<div id="existingPanelInfo" class="existing-panel" hidden>
+<strong id="existingPanelTitle">Esta empresa ya tiene un mini panel</strong>
+<p id="existingPanelDetails" class="help-line"></p>
+<a id="existingPanelLink" class="btn" href="/negocios/" target="_blank" rel="noopener noreferrer">Abrir mini panel existente</a>
+<button id="manageExistingAccess" class="btn" type="button">Ver usuarios de esta empresa</button>
+</div>
 <form id="provisionForm" class="controls">
-<label class="field">Modalidad<select id="provisionMode"><option value="create_company">Nueva empresa + mini panel</option><option value="create_access">Mini panel de empresa existente</option></select></label>
+<select id="provisionMode" hidden aria-hidden="true"><option value="create_company">Nueva empresa</option><option value="create_access">Empresa existente</option></select>
 <label class="field" id="newCompanyField">Nombre del negocio<input id="newCompanyName" maxlength="90" minlength="2" placeholder="Ej. Barbería Central"></label>
 <label class="field" id="newSlugField">Identificador del enlace<input id="newCompanySlug" maxlength="48" minlength="3" placeholder="barberia-central" pattern="[a-z0-9]+(-[a-z0-9]+)*"></label>
-<label class="field" id="existingCompanyField" style="display:none">Empresa existente<select id="provisionCompany"></select></label>
-<button class="btn primary" id="createPanel" type="submit">Crear mini panel y accesos</button></form>
+<label id="existingCompanyField" hidden><select id="provisionCompany" aria-label="Empresa elegida"></select></label>
+<button class="btn primary" id="createPanel" type="submit">Crear acceso empresarial</button></form>
 <div id="generatedAccess" hidden style="margin-top:18px;border:1px solid #59505e;border-radius:12px;padding:16px;background:#121218">
 <strong>Acceso generado para entregar a la empresa</strong><p class="muted">Copiá las credenciales ahora. La contraseña solo se mostrará al generarla.</p>
 <div class="controls"><label class="field">Enlace del mini panel<input id="generatedUrl" readonly></label><label class="field">Usuario<input id="generatedUsername" readonly></label><label class="field">Contraseña temporal<input id="generatedPassword" readonly></label><button class="btn" id="copyGenerated" type="button">Copiar acceso</button></div>
-</div></section>
+</div>
+</div></details>
+<details class="step" id="programStep"><summary><span>2. Beneficios de las tarjetas</span><span class="step-state" id="programStepStatus">Sin revisar</span></summary>
+<div class="step-body"><div id="programList" class="help-line"></div>
+<button type="button" id="addProgram" class="btn" hidden>+ Agregar otro beneficio</button>
 <section class="panel" id="programSetupPanel">
- <div class="toolbar"><div><h2>Configurar tarjetas para una empresa</h2>
- <p class="muted">El mini panel no puede asignar tarjetas hasta que BTS configure un programa y emita su lote. Esto también sirve para empresas existentes.</p></div></div>
+ <div class="toolbar"><div><h2>Configurar beneficio o programa</h2>
+ <p class="muted">Un programa define la meta y el premio de las tarjetas. Si ya existe uno, no hace falta crearlo otra vez.</p></div></div>
  <form id="programSetupForm" class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr));margin:15px 0">
  <label class="field">Empresa<select id="programBusiness" required></select></label>
  <label class="field">Tipo de servicio<select id="programKind"><option value="loyalty">Tarjeta de fidelización</option><option value="vip">Membresía VIP</option></select></label>
@@ -31,12 +57,14 @@
  <label class="field" id="programUnitField">Unidad de progreso<select id="programUnit"><option value="compras">Compras</option><option value="visitas">Visitas</option><option value="puntos">Puntos</option></select></label>
  <label class="field">Beneficio del cliente<input id="programBenefit" minlength="1" maxlength="130" required placeholder="Ej. Corte gratis al completar 6 compras"></label>
  <label class="field" id="programVipMonthsField" style="display:none">Vigencia VIP en meses<input id="programVipMonths" type="number" min="1" max="60" value="12"></label>
- <button type="submit" class="btn primary" id="programCreate">Guardar programa de tarjetas</button>
+ <button type="submit" class="btn primary" id="programCreate">Guardar beneficio</button>
  </form>
  <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Para una prueba, podés generar solo tres tarjetas.</p>
  </section>
-<section class="panel">
-<div class="toolbar"><div><h2>Emisión de lotes NFC · Solo BTS</h2><p class="muted">Elegí empresa y programa. BTS genera códigos únicos por cada tarjeta y los prepara para grabación física. El mini panel solo ve referencias enmascaradas y cupos asignados.</p></div><button type="button" class="btn" id="batchRefresh">Actualizar lotes</button></div>
+</div></details>
+<details class="step" id="batchStep"><summary><span>3. Tarjetas NFC del negocio</span><span class="step-state" id="batchStepStatus">Sin revisar</span></summary>
+<div class="step-body"><section class="panel">
+<div class="toolbar"><div><h2>Crear lote de tarjetas · Solo BTS</h2><p class="muted">Elegí empresa y programa. BTS genera códigos únicos por cada tarjeta y los prepara para grabación física. El mini panel solo ve referencias enmascaradas y cupos asignados.</p></div><button type="button" class="btn" id="batchRefresh">Actualizar lotes</button></div>
 <form id="batchForm" class="controls">
 <label class="field">Empresa<select id="batchCompany" required></select></label>
 <label class="field">Programa de tarjetas<select id="batchProgram" required></select></label>
@@ -45,11 +73,14 @@
 <div class="scroller" style="margin-top:15px"><table><thead><tr><th>EMPRESA</th><th>PROGRAMA</th><th>LOTE</th><th>CANTIDAD</th><th>CREADO</th><th>CÓDIGOS BTS</th></tr></thead><tbody id="batchRows"></tbody></table></div>
 <p class="muted">La descarga contiene enlaces que BTS debe grabar en cada chip NFC. No compartás este archivo con el negocio.</p>
 </section>
-<section class="panel"><h2>Restablecer acceso de un negocio</h2><p class="muted">Si un cliente olvida su contraseña, BTS puede generar una nueva sin mostrar ni conocer la anterior.</p><div class="controls"><label class="field">Cuenta empresarial<select id="passwordUser"></select></label><button class="btn" type="button" id="resetBusinessPassword">Generar contraseña nueva</button></div></section>
+</div></details>
+<details class="step" id="advancedStep"><summary><span>Otras herramientas</span><span class="step-state">Usuarios, contraseñas y soporte</span></summary>
+<div class="step-body"><section class="panel"><h2>Restablecer acceso de un negocio</h2><p class="muted">Si un cliente olvida su contraseña, BTS puede generar una nueva sin mostrar ni conocer la anterior.</p><div class="controls"><label class="field">Cuenta empresarial<select id="passwordUser"></select></label><button class="btn" type="button" id="resetBusinessPassword">Generar contraseña nueva</button></div></section>
 <section class="panel"><div class="toolbar"><div><h2>Cuentas asignadas</h2><p class="muted">Podés cambiar permisos o suspender una cuenta sin eliminarla.</p></div><button class="btn" id="reload" type="button">Actualizar</button></div>
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>USUARIO</th><th>ROL</th><th>ESTADO</th><th>ACCIONES</th></tr></thead><tbody id="rows"></tbody></table></div>
 </section>
 <section class="panel"><div class="toolbar"><div><h2>Solicitudes de soporte empresarial</h2><p class="muted">Consultá y respondé las solicitudes enviadas desde los portales de clientes.</p></div><button class="btn" id="reloadSupport" type="button">Actualizar soporte</button></div>
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>SOLICITUD</th><th>PRIORIDAD</th><th>ESTADO</th><th>RESPUESTA BTS</th></tr></thead><tbody id="supportRows"></tbody></table></div></section>
-<p class="muted">Enlace de acceso para tus clientes: <a href="/negocios/" target="_blank" rel="noopener noreferrer">www.btsstudio.net/negocios/</a>. No compartás tu usuario administrativo de BTS.</p></main>
+</div></details>
+<p class="muted">Las empresas entran por <a href="/negocios/" target="_blank" rel="noopener noreferrer">el mini panel empresarial</a>. Nunca compartás el acceso administrativo de BTS.</p></main>
 <script src="./access.js" defer></script></body></html>

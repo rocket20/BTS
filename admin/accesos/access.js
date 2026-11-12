@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[];
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null;
 const notice=(text,bad=false)=>{$('notice').textContent=text;$('notice').classList.toggle('bad',bad)};
 function current(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 async function api(endpoint,method='GET',payload){
@@ -21,8 +21,8 @@ async function api(endpoint,method='GET',payload){
 const node=(tag,label,cls)=>{const el=document.createElement(tag);if(label!==undefined)el.textContent=label;if(cls)el.className=cls;return el};
 function render(){
  const tbody=$('rows');tbody.replaceChildren();
- if(!users.length){const tr=node('tr'),td=node('td','Sin usuarios empresariales asignados.');td.colSpan=5;tr.append(td);tbody.append(tr);return}
- for(const u of users){
+ const visible=users.filter(u=>u.business_id===selectedBusinessId);if(!visible.length){const tr=node('tr'),td=node('td','Esta empresa todavía no tiene usuarios asignados.');td.colSpan=5;tr.append(td);tbody.append(tr);return}
+ for(const u of visible){
   const business=businesses.find(b=>b.id===u.business_id);
   const tr=node('tr');
   const first=node('td');first.append(node('strong',business?.business_name||'Empresa no disponible'),node('small',u.business_id));
@@ -45,8 +45,8 @@ function render(){
 }
 function renderSupport(){
  const host=$('supportRows');host.replaceChildren();
- if(!support.length){const tr=node('tr'),td=node('td','Todavía no hay solicitudes empresariales.');td.colSpan=5;tr.append(td);host.append(tr);return}
- for(const item of support){
+ if(!support.some(x=>x.business_id===selectedBusinessId)){const tr=node('tr'),td=node('td','Esta empresa no tiene solicitudes de soporte.');td.colSpan=5;tr.append(td);host.append(tr);return}
+ for(const item of support.filter(x=>x.business_id===selectedBusinessId)){
   const tr=node('tr'),company=businesses.find(b=>b.id===item.business_id);
   const c=node('td',company?.business_name||'Empresa'),subject=node('td');
   subject.append(node('strong',item.subject),node('small',item.details.slice(0,250)),node('small',new Date(item.created_at).toLocaleString('es-NI')));
@@ -69,6 +69,110 @@ async function loadSupport(){
  catch(e){notice('No se pudo cargar soporte: '+e.message,true)}
 }
 
+
+function selectedBusiness(){return businesses.find(b=>b.id===selectedBusinessId)||null}
+function syncPasswordUsers(){
+ const el=$('passwordUser'),old=el.value;el.replaceChildren();
+ for(const u of users.filter(x=>x.business_id===selectedBusinessId))
+  el.add(new Option((u.display_email||u.user_id)+(u.is_active?'':' · suspendido'),u.user_id));
+ if([...el.options].some(o=>o.value===old))el.value=old;
+ $('resetBusinessPassword').disabled=!el.options.length;
+}
+function panelUrl(b){return '/negocios/?empresa='+encodeURIComponent(b?.slug||'')}
+function applyBusinessSelection(id,clearCredentials=true){
+ selectedBusinessId=id;
+ if(clearCredentials)$('generatedAccess').hidden=true;
+ const b=selectedBusiness();
+ $('companyPicker').value=id;
+ $('provisionMode').value=b?'create_access':'create_company';
+ mode();
+ syncProgramBusiness();syncPasswordUsers();
+ if(b){$('programBusiness').value=b.id;$('batchCompany').value=b.id;setProgramKind();setBatchPrograms()}
+ renderCompany();
+ render();renderBatches();renderSupport();
+}
+function nextStep(){
+ const b=selectedBusiness();
+ let section='panelStep';
+ if(b){
+  const accounts=users.filter(u=>u.business_id===b.id&&u.is_active);
+  const programs=batchPrograms.filter(p=>p.business_id===b.id&&p.is_active);
+  section=!accounts.length?'panelStep':!programs.length?'programStep':'batchStep';
+ }
+ const target=$(section);target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderCompany(){
+ const business=selectedBusiness();
+ $('companyPicker').value=business?.id||'__new__';
+ const selected=business?.id||null;
+ const accounts=users.filter(u=>u.business_id===selected);
+ const active=accounts.filter(u=>u.is_active);
+ const programs=batchPrograms.filter(p=>p.business_id===selected);
+ const activePrograms=programs.filter(p=>p.is_active);
+ const cards=inventory.filter(c=>c.business_id===selected);
+ $('companyPanelsCount').textContent=accounts.length;
+ $('companyProgramsCount').textContent=programs.length;
+ $('companyCardsCount').textContent=cards.length;
+ $('panelStepStatus').textContent=accounts.length?(active.length?'Panel creado':'Panel suspendido'):'Sin panel';
+ $('programStepStatus').textContent=activePrograms.length?activePrograms.length+' programa(s)':'Sin beneficio configurado';
+ $('batchStepStatus').textContent=cards.length?cards.length+' tarjetas registradas':'Sin tarjetas';
+ const noticeBox=$('existingPanelInfo');
+ const form=$('provisionForm');
+ $('programStep').hidden=!business;
+ $('batchStep').hidden=!business;
+ $('programBusiness').disabled=true;
+ $('batchCompany').disabled=true;
+ $('programBusiness').closest('label').hidden=true;
+ $('batchCompany').closest('label').hidden=true;
+ if(!business){
+  $('companySummaryTitle').textContent='Nueva empresa';
+  $('companySummaryText').textContent='Ingresá el nombre y el identificador. BTS creará su panel y sus credenciales una sola vez.';
+  $('companyNextAction').textContent='Registrar empresa nueva';$('companyNextAction').onclick=nextStep;
+  noticeBox.hidden=true;form.hidden=false;
+  $('createPanel').disabled=false;
+  $('createPanel').textContent='Registrar empresa y crear acceso';
+  $('newCompanyField').hidden=false;$('newSlugField').hidden=false;
+  return;
+ }
+ $('companySummaryTitle').textContent=business.business_name;
+ const overview=accounts.length?
+   (active.length?'El mini panel ya existe. No necesitás generar otro.':'Existe un mini panel suspendido. Reactivá el acceso desde Otras herramientas.'):
+   'La empresa está registrada, pero aún no tiene acceso empresarial. Podés generarlo una vez desde el paso 1.';
+ const steps=activePrograms.length?cards.length?
+   ' Programa y tarjetas disponibles para gestionar.':
+   ' Falta generar un lote de tarjetas en el paso 3.':
+   ' Falta configurar el beneficio del programa en el paso 2.';
+ $('companySummaryText').textContent=overview+steps;
+ $('companyNextAction').textContent=!accounts.length?'Crear acceso empresarial':!activePrograms.length?'Configurar beneficio':cards.length?'Administrar tarjetas':'Generar primeras tarjetas';
+ $('companyNextAction').onclick=nextStep;
+ noticeBox.hidden=accounts.length===0;
+ form.hidden=accounts.length>0;
+ $('existingPanelTitle').textContent=active.length?'Esta empresa ya tiene su mini panel':'Esta empresa ya tiene panel, pero el acceso está suspendido';
+ const names=accounts.map(a=>(a.display_email||'Usuario empresarial')+(a.is_active?'':' · suspendido'));
+ $('existingPanelDetails').textContent=names.join(' · ')+' · '+accounts.length+' usuario(s). Para recuperar el acceso, usá Otras herramientas.';
+ $('existingPanelLink').href=panelUrl(business);
+ $('createPanel').disabled=accounts.length>0;
+ $('createPanel').textContent='Crear acceso para '+business.business_name;
+ $('newCompanyField').hidden=true;$('newSlugField').hidden=true;
+ const list=$('programList');list.replaceChildren();
+ if(!programs.length){list.textContent='Todavía no hay beneficio configurado. Completá el formulario siguiente una sola vez.'}
+ else{
+  const note=node('p','Programas de esta empresa:');
+  list.append(note);
+  for(const p of programs){
+   const line=node('div',p.title+' · '+(p.kind==='vip'?'VIP':p.kind==='loyalty'?'Fidelización':'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
+   list.append(line);
+  }
+ }
+ $('programSetupPanel').hidden=activePrograms.length>0;
+ $('addProgram').hidden=activePrograms.length===0;
+ $('addProgram').textContent='Agregar otro programa';
+ if($('programBusiness').value!==business.id)$('programBusiness').value=business.id;
+ if($('batchCompany').value!==business.id){$('batchCompany').value=business.id;setBatchPrograms()}
+ const available=cards.filter(x=>x.status==='available').length, assigned=cards.filter(x=>x.status==='assigned').length;
+ if(cards.length)$('batchPrerequisite').textContent='Esta empresa tiene '+cards.length+' tarjetas: '+available+' sin asignar y '+assigned+' asignadas. Para vender más, generá un lote adicional.';
+ else $('batchPrerequisite').textContent=activePrograms.length?'Programa listo: elegí cuántas tarjetas querés emitir para este negocio.':'Primero configurá un programa en el paso 2; después podés generar sus tarjetas.';
+}
 async function provision(action,payload){
  let session=current();if(!session?.access_token)throw Error('Iniciá sesión en BTS.');
  if((session.expires_at||0)*1000<Date.now()+45000){
@@ -93,16 +197,30 @@ function mode(){
  $('newCompanyField').style.display=isNew?'':'none';
  $('newSlugField').style.display=isNew?'':'none';
  $('existingCompanyField').style.display=isNew?'none':'';
- $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=!isNew;
+ $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=false;
 }
 async function createPanel(e){
- e.preventDefault();const b=$('createPanel');b.disabled=true;$('generatedAccess').hidden=true;
+ e.preventDefault();
+ const b=$('createPanel');b.disabled=true;
  try{
-  const action=$('provisionMode').value;
-  const payload=action==='create_company'?{business_name:$('newCompanyName').value.trim(),slug:$('newCompanySlug').value.trim().toLowerCase()}:{business_id:$('provisionCompany').value};
+  const company=selectedBusiness();
+  if(company&&users.some(u=>u.business_id===company.id)){
+   renderCompany();throw Error('Esta empresa ya tiene un mini panel. Abrí su acceso existente en lugar de crear otro.');
+  }
+  if(!company){
+   const name=$('newCompanyName').value.trim(),slug=$('newCompanySlug').value.trim().toLowerCase();
+   if(businesses.some(x=>x.slug===slug||x.business_name.trim().toLocaleLowerCase('es')===name.toLocaleLowerCase('es')))
+     throw Error('Esta empresa ya existe en BTS. Seleccionala arriba para revisar su panel.');
+  }
+  const action=company?'create_access':'create_company';
+  const payload=company?{business_id:company.id}:{business_name:$('newCompanyName').value.trim(),slug:$('newCompanySlug').value.trim().toLowerCase()};
   const data=await provision(action,payload);
-  reveal(data);await load();notice('Mini panel y cuenta generados. Copiá el acceso antes de salir.');
- }catch(err){notice(err.message,true)}finally{b.disabled=false}
+  selectedBusinessId=data.business_id;
+  await load();
+  reveal(data);
+  $('panelStep').open=true;
+  notice('Acceso creado para '+(selectedBusiness()?.business_name||'la empresa')+'. Copiá las credenciales ahora; no se podrán recuperar después.');
+ }catch(err){notice(err.message,true);renderCompany()}finally{b.disabled=!!(selectedBusiness()&&users.some(u=>u.business_id===selectedBusinessId))}
 }
 async function resetPassword(){
  const id=$('passwordUser').value;if(!id)return notice('Seleccioná un acceso empresarial.',true);
@@ -133,8 +251,8 @@ async function fetchCodes(batchId){
 }
 function renderBatches(){
  const host=$('batchRows');host.replaceChildren();
- if(!batchRows.length){const tr=node('tr'),td=node('td','No hay lotes NFC generados.');td.colSpan=6;tr.append(td);host.append(tr);return;}
- for(const batch of batchRows){
+ if(!batchRows.some(x=>x.business_id===selectedBusinessId)){const tr=node('tr'),td=node('td','Este negocio todavía no tiene tarjetas NFC.');td.colSpan=6;tr.append(td);host.append(tr);return;}
+ for(const batch of batchRows.filter(x=>x.business_id===selectedBusinessId)){
   const tr=node('tr');
   const company=businesses.find(x=>x.id===batch.business_id)?.business_name||'Empresa';
   const program=batchPrograms.find(x=>x.id===batch.program_id)?.title||'Programa';
@@ -156,14 +274,14 @@ function setProgramKind(){
  $('programVipMonthsField').style.display=vip?'':'none';
  $('programGoal').required=!vip;
  if(!$('programTitle').dataset.manual){
-  const company=businesses.find(b=>b.id===$('programBusiness').value)?.business_name||'';
+  const company=selectedBusiness()?.business_name||'';
   $('programTitle').value=(vip?'VIP · ':'Fidelización · ')+company.slice(0,65);
  }
  $('programSetupHint').textContent=vip?'BTS creará un programa VIP. Luego generá el lote de tarjetas desde la sección siguiente.':'BTS creará el programa de recompensas. Después generá un lote de tarjetas para que el negocio pueda asignarlas.';
 }
 async function createRewardProgram(e){
  e.preventDefault();
- const businessId=$('programBusiness').value,kind=$('programKind').value,company=businesses.find(b=>b.id===businessId);
+ const businessId=selectedBusinessId,kind=$('programKind').value,company=selectedBusiness();
  const button=$('programCreate');button.disabled=true;
  try{
   if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
@@ -188,11 +306,12 @@ async function createRewardProgram(e){
   $('batchProgram').value=rows[0].id;
   $('batchQuantity').value='3';
   $('programSetupHint').textContent='Programa listo. Elegí cantidad y presioná «Generar lote NFC» más abajo. Para prueba recomendamos 3 tarjetas.';
+  $('batchStep').open=true;
   notice('Programa creado. Falta emitir el lote de tarjetas desde BTS.');
  }catch(err){notice('No se pudo crear el programa: '+err.message,true)}finally{button.disabled=false}
 }
 function setBatchPrograms(){
- const businessId=$('batchCompany').value,sel=$('batchProgram'),old=sel.value;
+ const businessId=selectedBusinessId,sel=$('batchProgram'),old=sel.value;
  sel.replaceChildren();
  for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
  if([...sel.options].some(o=>o.value===old))sel.value=old;
@@ -202,21 +321,23 @@ function setBatchPrograms(){
 }
 async function loadBatches(){
  try{
-  const [programs,batches]=await Promise.all([
+  const [programs,batches,cards]=await Promise.all([
    api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
-   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500')
+   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500'),
+   api('bts_nfc_inventory?select=id,business_id,status,reference&order=created_at.desc&limit=5000')
   ]);
-  batchPrograms=programs||[];batchRows=batches||[];
+  batchPrograms=programs||[];batchRows=batches||[];inventory=cards||[];
   const select=$('batchCompany'),old=select.value;select.replaceChildren();
   for(const b of businesses.filter(b=>b.is_active))select.add(new Option(b.business_name,b.id));
   if(businesses.some(b=>b.id===old&&b.is_active))select.value=old;
-  setBatchPrograms();renderBatches();
+  if(selectedBusinessId&&businesses.some(b=>b.id===selectedBusinessId))select.value=selectedBusinessId;
+  setBatchPrograms();renderBatches();renderCompany();
  }catch(e){notice('No se pudieron consultar los lotes: '+e.message,true)}
 }
 async function generateBatch(e){
  e.preventDefault();
  const b=$('batchGenerate');b.disabled=true;
- const businessId=$('batchCompany').value,programId=$('batchProgram').value,quantity=Number($('batchQuantity').value);
+ const businessId=selectedBusinessId,programId=$('batchProgram').value,quantity=Number($('batchQuantity').value);
  try{
   if(!Number.isInteger(quantity)||quantity<1||quantity>200)throw Error('Generá entre 1 y 200 tarjetas por lote.');
   if(!batchPrograms.some(x=>x.id===programId&&x.business_id===businessId&&x.is_active))throw Error('Programa inválido.');
@@ -235,37 +356,55 @@ async function load(){
    api('bts_business_users?select=id,business_id,user_id,role,is_active,display_email,created_at&order=created_at.desc&limit=1000')
   ]);
   businesses=b||[];users=u||[];
-  const previous=$('provisionCompany').value;
-  $('provisionCompany').replaceChildren();
-  for(const business of businesses)if(business.is_active)$('provisionCompany').add(new Option(business.business_name,business.id));
-  if(businesses.some(x=>x.id===previous&&x.is_active))$('provisionCompany').value=previous;
-  $('passwordUser').replaceChildren();
-  for(const row of users)$('passwordUser').add(new Option((row.display_email||row.user_id)+' · '+(businesses.find(x=>x.id===row.business_id)?.business_name||'Empresa'),row.user_id));
-  render();syncProgramBusiness();setProgramKind();await loadSupport();await loadBatches();notice(users.length+' accesos empresariales registrados.');
- }catch(e){notice('Error al consultar accesos: '+e.message,true)}
+  const picker=$('companyPicker');picker.replaceChildren();
+  for(const row of businesses)picker.add(new Option(row.business_name+(row.is_active?'':' · inactiva'),row.id));
+  picker.add(new Option('+ Registrar empresa nueva','__new__'));
+  if(!selectedBusinessId||(!businesses.some(x=>x.id===selectedBusinessId)&&selectedBusinessId!=='__new__'))selectedBusinessId=businesses[0]?.id||'__new__';
+  picker.value=selectedBusinessId;
+  const select=$('provisionCompany');select.replaceChildren();
+  for(const business of businesses.filter(b=>b.is_active))select.add(new Option(business.business_name,business.id));
+  if(selectedBusinessId!=='__new__')select.value=selectedBusinessId;
+  syncPasswordUsers();
+  const bSelected=selectedBusiness();
+  $('provisionMode').value=bSelected?'create_access':'create_company';
+  mode();
+  render();
+  syncProgramBusiness();
+  await Promise.all([loadSupport(),loadBatches()]);
+  renderCompany();
+  notice('Información de '+(bSelected?.business_name||'empresas')+' actualizada.');
+ }catch(err){notice('No se pudieron consultar las empresas: '+err.message,true)}
 }
 async function init(){
  try{
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
-  const rows=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
-  if(!rows.length)throw Error('La cuenta no tiene permisos de administrador BTS.');
-  if(!['owner','admin'].includes(rows[0].role))throw Error('Solo el administrador puede generar credenciales empresariales.');
+  const admins=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
+  if(!admins.length||!['owner','admin'].includes(admins[0].role))throw Error('Tu cuenta no tiene acceso de administración BTS.');
+  $('companyPicker').onchange=e=>applyBusinessSelection(e.target.value);
+  $('newBusiness').onclick=()=>{applyBusinessSelection('__new__');$('panelStep').open=true;$('panelStep').scrollIntoView({behavior:'smooth',block:'start'})};
+  $('manageExistingAccess').onclick=()=>{$('advancedStep').open=true;$('advancedStep').scrollIntoView({behavior:'smooth',block:'start'})};
+  $('addProgram').onclick=()=>{$('programSetupPanel').hidden=false;$('addProgram').hidden=true;$('programStep').open=true;$('programTitle').dataset.manual='';setProgramKind()};
   $('provisionForm').onsubmit=createPanel;
-  $('provisionMode').onchange=mode;
-  $('newCompanyName').oninput=()=>{if(!$('newCompanySlug').dataset.manual)$('newCompanySlug').value=$('newCompanyName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)};
+  $('newCompanyName').oninput=()=>{
+   if(!$('newCompanySlug').dataset.manual)$('newCompanySlug').value=$('newCompanyName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48);
+  };
   $('newCompanySlug').oninput=()=>{$('newCompanySlug').dataset.manual='1'};
   $('resetBusinessPassword').onclick=resetPassword;
   $('copyGenerated').onclick=async()=>{
-   const msg='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
-   try{await navigator.clipboard.writeText(msg);notice('Acceso copiado. Compartilo por un canal seguro.')}catch{notice('Copiá las credenciales manualmente.',true)}
+   const message='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
+   try{await navigator.clipboard.writeText(message);notice('Datos copiados. Compartilos por un canal seguro.')}catch{notice('Copiá los datos manualmente.',true)}
   };
-  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;$('programSetupForm').onsubmit=createRewardProgram;
-  $('programBusiness').onchange=setProgramKind;
+  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;
+  $('programSetupForm').onsubmit=createRewardProgram;
   $('programKind').onchange=setProgramKind;
   $('programTitle').oninput=()=>{$('programTitle').dataset.manual='1'};
-  $('batchTestThree').onclick=()=>{$('batchQuantity').value='3';$('batchPrerequisite').textContent='Prueba preparada: 3 códigos únicos se emitirán únicamente después de presionar «Generar lote NFC» y confirmar.'};
-  $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;$('batchCompany').onchange=setBatchPrograms;mode();await load();
- }catch(e){notice(e.message,true);$('createPanel').disabled=true;$('reload').disabled=true}
+  $('batchTestThree').onclick=()=>{
+   $('batchQuantity').value='3';
+   $('batchPrerequisite').textContent='Prueba preparada: se emitirán 3 códigos solo después de confirmar «Generar lote NFC».';
+  };
+  $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;
+  await load();
+ }catch(err){notice(err.message,true);$('createPanel').disabled=true;$('reload').disabled=true;$('batchGenerate').disabled=true;$('programCreate').disabled=true}
 }
 init();
 })();
