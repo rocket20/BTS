@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null;
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null,selectedBatchId=null;
 const notice=(text,bad=false)=>{
  $('notice').textContent=text;$('notice').classList.toggle('bad',bad);
  if(bad)window.BTSNotify?.toast({title:'No se pudo completar',message:text,type:'error',duration:6500});
@@ -108,6 +108,7 @@ function panelUrl(b){return '/negocios/?empresa='+encodeURIComponent(b?.slug||''
 function applyBusinessSelection(id,clearCredentials=true){
  selectedBusinessId=id;
  if(clearCredentials)$('generatedAccess').hidden=true;
+ if(selectedBatchId&&!batchRows.some(x=>x.id===selectedBatchId&&x.business_id===id)){$('batchReport').hidden=true;selectedBatchId=null;}
  const b=selectedBusiness();
  $('companyPicker').value=id;
  $('provisionMode').value=b?'create_access':'create_company';
@@ -195,8 +196,9 @@ function renderCompany(){
  $('addProgram').textContent='Agregar otro programa';
  if($('programBusiness').value!==business.id)$('programBusiness').value=business.id;
  if($('batchCompany').value!==business.id){$('batchCompany').value=business.id;setBatchPrograms()}
- const available=cards.filter(x=>x.status==='available').length, assigned=cards.filter(x=>x.status==='assigned').length;
- if(cards.length)$('batchPrerequisite').textContent='Esta empresa tiene '+cards.length+' tarjetas: '+available+' sin asignar y '+assigned+' asignadas. Para vender más, generá un lote adicional.';
+ const released=new Set(batchRows.filter(b=>b.business_id===selected&&b.released_at).map(b=>b.id));
+ const available=cards.filter(x=>x.status==='available'&&released.has(x.batch_id)).length, assigned=cards.filter(x=>x.status==='assigned'&&released.has(x.batch_id)).length;
+ if(cards.length)$('batchPrerequisite').textContent='BTS tiene '+cards.length+' tarjetas generadas para esta empresa: '+available+' enviadas y sin asignar, '+assigned+' asignadas. Las pendientes de envío todavía no están visibles para el negocio.';
  else $('batchPrerequisite').textContent=activePrograms.length?'Programa listo: elegí cuántas tarjetas querés emitir para este negocio.':'Primero configurá un programa en el paso 2; después podés generar sus tarjetas.';
 }
 async function provision(action,payload){
@@ -280,18 +282,111 @@ async function fetchCodes(batchId){
  downloadBatchCSV(rows);
  notice('Códigos privados descargados: '+rows.length+'. Reservados para programación NFC BTS.');success('CSV privado descargado',rows.length+' códigos NFC disponibles para programación exclusiva de BTS.');
 }
+function batchCompany(batch){return businesses.find(b=>b.id===batch.business_id)?.business_name||'Empresa'}
+function batchProgram(batch){return batchPrograms.find(p=>p.id===batch.program_id)?.title||'Programa NFC'}
+function batchItems(batch){return inventory.filter(c=>c.batch_id===batch.id).sort((a,b)=>a.number-b.number)}
+function batchSent(batch){return !!batch.released_at}
+function smallMetric(label,value){
+ const stat=node('div',undefined,'batch-report-stat');
+ stat.append(node('small',label),node('strong',String(value)));return stat;
+}
 function renderBatches(){
  const host=$('batchRows');host.replaceChildren();
- if(!batchRows.some(x=>x.business_id===selectedBusinessId)){const tr=node('tr'),td=node('td','Este negocio todavía no tiene tarjetas NFC.');td.colSpan=6;tr.append(td);host.append(tr);return;}
- for(const batch of batchRows.filter(x=>x.business_id===selectedBusinessId)){
-  const tr=node('tr');
-  const company=businesses.find(x=>x.id===batch.business_id)?.business_name||'Empresa';
-  const program=batchPrograms.find(x=>x.id===batch.program_id)?.title||'Programa';
-  for(const value of [company,program,batch.id.slice(0,8),String(batch.quantity),new Date(batch.created_at).toLocaleDateString('es-NI')])tr.append(node('td',value));
-  const td=node('td'),button=node('button','Descargar CSV privado','btn');button.type='button';
-  button.onclick=async()=>{button.disabled=true;try{await fetchCodes(batch.id)}catch(e){notice(e.message,true)}finally{button.disabled=false}};
-  td.append(button);tr.append(td);host.append(tr);
+ const batches=batchRows.filter(x=>x.business_id===selectedBusinessId);
+ if(!batches.length){
+  const empty=node('div','Esta empresa todavía no tiene lotes NFC. Generá el primero con el formulario de arriba.','batch-lot');
+  host.append(empty);$('batchReport').hidden=true;selectedBatchId=null;return;
  }
+ for(const batch of batches){
+  const cards=batchItems(batch),assigned=cards.filter(c=>c.status==='assigned').length;
+  const entry=node('article',undefined,'batch-lot'),top=node('div',undefined,'batch-lot-top'),heading=node('div');
+  heading.append(node('div','LOTE BTS · '+batch.id.slice(0,8).toUpperCase(),'batch-lot-kicker'),node('h3',batchProgram(batch)));
+  const badge=node('span',batchSent(batch)?'Enviado al mini panel':'Pendiente de envío','batch-status'+(batchSent(batch)?' batch-status--sent':''));
+  top.append(heading,badge);
+  const info=node('div',undefined,'batch-lot-info');
+  for(const text of [batch.quantity+' tarjetas',assigned+' asignadas',new Date(batch.created_at).toLocaleDateString('es-NI')])info.append(node('span',text));
+  const actions=node('div',undefined,'batch-lot-actions');
+  const view=node('button','Ver ficha del lote','btn'),add=node('button','+ Agregar tarjetas','btn');
+  view.type=add.type='button';view.onclick=()=>openBatchReport(batch.id);
+  add.onclick=()=>prepareAdditionalBatch(batch.id);
+  actions.append(view,add);
+  if(!batchSent(batch)){
+   const send=node('button','Enviar al mini panel','btn primary');send.type='button';
+   send.onclick=()=>sendBatch(batch.id,send);actions.append(send);
+  }
+  entry.append(top,info,actions);host.append(entry);
+ }
+ if(selectedBatchId)renderBatchReport();
+}
+function openBatchReport(id){
+ selectedBatchId=id;
+ renderBatchReport();
+ $('batchReport').hidden=false;
+ $('batchReport').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderBatchReport(){
+ const batch=batchRows.find(x=>x.id===selectedBatchId&&x.business_id===selectedBusinessId);
+ if(!batch){$('batchReport').hidden=true;selectedBatchId=null;return}
+ const cards=batchItems(batch);
+ $('batchReport').hidden=false;
+ $('batchReportTitle').textContent='Lote '+batch.id.slice(0,8).toUpperCase();
+ $('batchReportSubtitle').textContent=batchCompany(batch)+' · '+batchProgram(batch);
+ const stats=$('batchReportStats');stats.replaceChildren(
+  smallMetric('EMPRESA',batchCompany(batch)),
+  smallMetric('PROGRAMA',batchProgram(batch)),
+  smallMetric('TARJETAS DEL LOTE',batch.quantity),
+  smallMetric('ESTADO',batchSent(batch)?'Enviado al mini panel':'Pendiente de envío'),
+  smallMetric('FECHA DE GENERACIÓN',new Date(batch.created_at).toLocaleString('es-NI')),
+  smallMetric('ASIGNADAS',cards.filter(x=>x.status==='assigned').length+' de '+batch.quantity)
+ );
+ $('batchReportInfo').textContent=batchSent(batch)?
+  'Este lote ya fue enviado al mini panel y sus tarjetas están disponibles para el negocio.':
+  'Este lote está guardado en BTS. La empresa no verá sus tarjetas hasta que confirmés «Enviar al mini panel».';
+ $('batchReportSend').hidden=batchSent(batch);
+ $('batchReportSend').disabled=batchSent(batch);
+ const host=$('batchReportRows');host.replaceChildren();
+ for(const card of cards){
+  const row=node('tr');
+  for(const value of [String(card.number).padStart(3,'0'),card.reference,card.status==='assigned'?'Asignada':card.status==='suspended'?'Suspendida':'Pendiente de asignación'])
+   row.append(node('td',value));
+  host.append(row);
+ }
+ if(!cards.length){const tr=node('tr'),td=node('td','No hay tarjetas registradas en este lote.');td.colSpan=3;tr.append(td);host.append(tr)}
+}
+async function sendBatch(id,button){
+ const batch=batchRows.find(b=>b.id===id&&b.business_id===selectedBusinessId);
+ if(!batch)return notice('No se encontró el lote.',true);
+ if(batchSent(batch))return notice('Este lote ya fue enviado al mini panel.',true);
+ const recipients=users.filter(u=>u.business_id===batch.business_id&&u.is_active);
+ const approved=await confirmBTS({
+  title:'Enviar tarjetas al mini panel',type:'warning',
+  message:'Vas a habilitar las tarjetas de este lote para que la empresa pueda asignar nombres y beneficios. Los códigos NFC privados no se compartirán.',
+  details:[{label:'Empresa',value:batchCompany(batch)},{label:'Programa',value:batchProgram(batch)},{label:'Tarjetas',value:batch.quantity},{label:'Accesos empresariales activos',value:recipients.length}],
+  confirmText:'Sí, enviar tarjetas',
+  note:recipients.length?'Las tarjetas aparecerán en el inventario del negocio.':'La empresa todavía no tiene usuario activo. Las tarjetas quedarán habilitadas cuando BTS cree o reactive su acceso.'
+ });if(!approved)return;
+ button.disabled=true;
+ try{
+  const result=await api('rpc/bts_admin_release_nfc_batch','POST',{p_batch_id:id});
+  if(!result?.length)throw Error('El servidor no confirmó el envío.');
+  await loadBatches();
+  selectedBatchId=id;renderBatchReport();
+  success('Tarjetas enviadas',batch.quantity+' tarjetas disponibles en el mini panel de '+batchCompany(batch)+'.');
+  notice('Lote enviado. La empresa puede administrar las tarjetas que recibió.');
+ }catch(error){notice('No se pudieron enviar las tarjetas: '+error.message,true)}
+ finally{button.disabled=false}
+}
+function prepareAdditionalBatch(id){
+ const batch=batchRows.find(b=>b.id===id&&b.business_id===selectedBusinessId);
+ if(!batch)return notice('Seleccioná un lote válido de esta empresa.',true);
+ $('batchProgram').value=batch.program_id;
+ $('batchQuantity').value='10';
+ $('batchStep').open=true;
+ $('batchReport').hidden=true;
+ selectedBatchId=null;
+ $('batchForm').scrollIntoView({behavior:'smooth',block:'center'});
+ $('batchQuantity').focus({preventScroll:true});
+ notice('Elegí cuántas tarjetas adicionales querés crear. El nuevo lote quedará pendiente de envío.');
 }
 function syncProgramBusiness(){
  const el=$('programBusiness'),old=el.value;el.replaceChildren();
@@ -363,8 +458,8 @@ async function loadBatches(){
  try{
   const [programs,batches,cards]=await Promise.all([
    api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
-   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at&order=created_at.desc&limit=500'),
-   api('bts_nfc_inventory?select=id,business_id,status,reference&order=created_at.desc&limit=5000')
+   api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at,released_at,released_by&order=created_at.desc&limit=500'),
+   api('bts_nfc_inventory?select=id,batch_id,business_id,number,status,reference&order=created_at.desc&limit=5000')
   ]);
   batchPrograms=programs||[];batchRows=batches||[];inventory=cards||[];
   const select=$('batchCompany'),old=select.value;select.replaceChildren();
@@ -385,14 +480,16 @@ async function generateBatch(e){
   const approved=await confirmBTS({
    title:'Generar lote de tarjetas NFC',
    message:'Vas a emitir códigos privados y únicos para esta empresa. Esta operación creará tarjetas reales en el inventario BTS.',
-   details:[{label:'Empresa',value:company?.business_name||'Empresa'},{label:'Programa',value:program?.title||'Programa NFC'},{label:'Cantidad',value:quantity+' tarjetas NFC'},{label:'Códigos privados',value:'Solo BTS'},{label:'Al finalizar',value:'Descarga de CSV de grabación'}],
+   details:[{label:'Empresa',value:company?.business_name||'Empresa'},{label:'Programa',value:program?.title||'Programa NFC'},{label:'Cantidad',value:quantity+' tarjetas NFC'},{label:'Códigos privados',value:'Solo BTS'},{label:'Al finalizar',value:'Ficha de lote en BTS; envío por separado'}],
    confirmText:quantity<=3?'Sí, generar prueba':'Sí, generar lote',type:'warning',
-   note:'Los códigos generados no deben compartirse con el negocio.'
+   note:'El lote quedará pendiente: no aparecerá en el mini panel hasta que presionés «Enviar al mini panel». Los códigos privados permanecen en BTS.'
   });if(!approved)return;
   const rows=await api('rpc/bts_issue_nfc_batch','POST',{p_business_id:businessId,p_program_id:programId,p_quantity:quantity,p_note:'Lote BTS'});
   if(!rows?.length||rows.length!==quantity)throw Error('El servidor no confirmó todas las tarjetas.');
-  downloadBatchCSV(rows);await loadBatches();
-  notice('Lote emitido correctamente: '+rows.length+' tarjetas. CSV descargado para grabación física.');success('Lote generado correctamente','Se crearon '+rows.length+' tarjetas para '+(company?.business_name||'la empresa')+' y se descargó el CSV privado.');
+  const newBatchId=rows[0].batch_id;
+  await loadBatches();openBatchReport(newBatchId);
+  notice('Lote creado y guardado en BTS. Revisá su ficha y decidí cuándo enviarlo al mini panel.');
+  success('Lote listo para revisar',rows.length+' tarjetas generadas. Los códigos privados se descargan desde «CSV privado»; el negocio aún no ve este lote.');
  }catch(err){notice('No se pudo generar lote: '+err.message,true)}
  finally{b.disabled=false}
 }
@@ -450,6 +547,11 @@ async function init(){
    $('batchPrerequisite').textContent='Prueba preparada: se emitirán 3 códigos solo después de confirmar «Generar lote NFC».';
   };
   $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;
+  $('batchReportClose').onclick=()=>{$('batchReport').hidden=true;selectedBatchId=null};
+  $('batchReportPrint').onclick=()=>{if(selectedBatchId)window.print()};
+  $('batchReportPrivate').onclick=async()=>{const id=selectedBatchId;if(!id)return;const btn=$('batchReportPrivate');btn.disabled=true;try{await fetchCodes(id)}catch(e){notice(e.message,true)}finally{btn.disabled=false}};
+  $('batchReportSend').onclick=()=>{if(selectedBatchId)sendBatch(selectedBatchId,$('batchReportSend'))};
+  $('batchReportAdd').onclick=()=>{if(selectedBatchId)prepareAdditionalBatch(selectedBatchId)};
   await load();
  }catch(err){notice(err.message,true);$('createPanel').disabled=true;$('reload').disabled=true;$('batchGenerate').disabled=true;$('programCreate').disabled=true}
 }
