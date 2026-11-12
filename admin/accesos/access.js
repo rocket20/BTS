@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[];
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null;
 const notice=(text,bad=false)=>{$('notice').textContent=text;$('notice').classList.toggle('bad',bad)};
 function current(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 async function api(endpoint,method='GET',payload){
@@ -21,8 +21,8 @@ async function api(endpoint,method='GET',payload){
 const node=(tag,label,cls)=>{const el=document.createElement(tag);if(label!==undefined)el.textContent=label;if(cls)el.className=cls;return el};
 function render(){
  const tbody=$('rows');tbody.replaceChildren();
- if(!users.length){const tr=node('tr'),td=node('td','Sin usuarios empresariales asignados.');td.colSpan=5;tr.append(td);tbody.append(tr);return}
- for(const u of users){
+ const visible=users.filter(u=>u.business_id===selectedBusinessId);if(!visible.length){const tr=node('tr'),td=node('td','Esta empresa todavía no tiene usuarios asignados.');td.colSpan=5;tr.append(td);tbody.append(tr);return}
+ for(const u of visible){
   const business=businesses.find(b=>b.id===u.business_id);
   const tr=node('tr');
   const first=node('td');first.append(node('strong',business?.business_name||'Empresa no disponible'),node('small',u.business_id));
@@ -46,7 +46,7 @@ function render(){
 function renderSupport(){
  const host=$('supportRows');host.replaceChildren();
  if(!support.length){const tr=node('tr'),td=node('td','Todavía no hay solicitudes empresariales.');td.colSpan=5;tr.append(td);host.append(tr);return}
- for(const item of support){
+ for(const item of support.filter(x=>x.business_id===selectedBusinessId)){
   const tr=node('tr'),company=businesses.find(b=>b.id===item.business_id);
   const c=node('td',company?.business_name||'Empresa'),subject=node('td');
   subject.append(node('strong',item.subject),node('small',item.details.slice(0,250)),node('small',new Date(item.created_at).toLocaleString('es-NI')));
@@ -69,6 +69,90 @@ async function loadSupport(){
  catch(e){notice('No se pudo cargar soporte: '+e.message,true)}
 }
 
+
+function selectedBusiness(){return businesses.find(b=>b.id===selectedBusinessId)||null}
+function panelUrl(b){return '/negocios/?empresa='+encodeURIComponent(b?.slug||'')}
+function applyBusinessSelection(id,clearCredentials=true){
+ selectedBusinessId=id;
+ if(clearCredentials)$('generatedAccess').hidden=true;
+ const b=selectedBusiness();
+ $('companyPicker').value=id;
+ $('provisionMode').value=b?'create_access':'create_company';
+ mode();
+ syncProgramBusiness();
+ if(b){$('programBusiness').value=b.id;$('batchCompany').value=b.id;setProgramKind();setBatchPrograms()}
+ renderCompany();
+ render();renderBatches();renderSupport();
+}
+function renderCompany(){
+ const business=selectedBusiness();
+ $('companyPicker').value=business?.id||'__new__';
+ const selected=business?.id||null;
+ const accounts=users.filter(u=>u.business_id===selected);
+ const active=accounts.filter(u=>u.is_active);
+ const programs=batchPrograms.filter(p=>p.business_id===selected);
+ const activePrograms=programs.filter(p=>p.is_active);
+ const cards=inventory.filter(c=>c.business_id===selected);
+ $('companyPanelsCount').textContent=accounts.length;
+ $('companyProgramsCount').textContent=programs.length;
+ $('companyCardsCount').textContent=cards.length;
+ $('panelStepStatus').textContent=accounts.length?(active.length?'Panel creado':'Panel suspendido'):'Sin panel';
+ $('programStepStatus').textContent=activePrograms.length?activePrograms.length+' programa(s)':'Sin beneficio configurado';
+ $('batchStepStatus').textContent=cards.length?cards.length+' tarjetas registradas':'Sin tarjetas';
+ const noticeBox=$('existingPanelInfo');
+ const form=$('provisionForm');
+ $('programStep').hidden=!business;
+ $('batchStep').hidden=!business;
+ $('programBusiness').disabled=true;
+ $('batchCompany').disabled=true;
+ $('programBusiness').closest('label').hidden=true;
+ $('batchCompany').closest('label').hidden=true;
+ if(!business){
+  $('companySummaryTitle').textContent='Nueva empresa';
+  $('companySummaryText').textContent='Ingresá el nombre y el identificador. BTS creará su panel y sus credenciales una sola vez.';
+  noticeBox.hidden=true;form.hidden=false;
+  $('createPanel').disabled=false;
+  $('createPanel').textContent='Registrar empresa y crear acceso';
+  $('newCompanyField').hidden=false;$('newSlugField').hidden=false;
+  return;
+ }
+ $('companySummaryTitle').textContent=business.business_name;
+ const overview=accounts.length?
+   (active.length?'El mini panel ya existe. No necesitás generar otro.':'Existe un mini panel suspendido. Reactivá el acceso desde Otras herramientas.'):
+   'La empresa está registrada, pero aún no tiene acceso empresarial. Podés generarlo una vez desde el paso 1.';
+ const steps=activePrograms.length?cards.length?
+   ' Programa y tarjetas disponibles para gestionar.':
+   ' Falta generar un lote de tarjetas en el paso 3.':
+   ' Falta configurar el beneficio del programa en el paso 2.';
+ $('companySummaryText').textContent=overview+steps;
+ noticeBox.hidden=accounts.length===0;
+ form.hidden=accounts.length>0;
+ $('existingPanelTitle').textContent=active.length?'Esta empresa ya tiene su mini panel':'Esta empresa ya tiene panel, pero el acceso está suspendido';
+ const names=accounts.map(a=>(a.display_email||'Usuario empresarial')+(a.is_active?'':' · suspendido'));
+ $('existingPanelDetails').textContent=names.join(' · ')+' · '+accounts.length+' usuario(s). Para recuperar el acceso, usá Otras herramientas.';
+ $('existingPanelLink').href=panelUrl(business);
+ $('createPanel').disabled=accounts.length>0;
+ $('createPanel').textContent='Crear acceso para '+business.business_name;
+ $('newCompanyField').hidden=true;$('newSlugField').hidden=true;
+ const list=$('programList');list.replaceChildren();
+ if(!programs.length){list.textContent='Todavía no hay beneficio configurado. Completá el formulario siguiente una sola vez.'}
+ else{
+  const note=node('p','Programas de esta empresa:');
+  list.append(note);
+  for(const p of programs){
+   const line=node('div',p.title+' · '+(p.kind==='vip'?'VIP':p.kind==='loyalty'?'Fidelización':'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
+   list.append(line);
+  }
+ }
+ $('programSetupPanel').hidden=activePrograms.length>0;
+ $('addProgram').hidden=activePrograms.length===0;
+ $('addProgram').textContent='Agregar otro programa';
+ if($('programBusiness').value!==business.id)$('programBusiness').value=business.id;
+ if($('batchCompany').value!==business.id){$('batchCompany').value=business.id;setBatchPrograms()}
+ const available=cards.filter(x=>x.status==='available').length, assigned=cards.filter(x=>x.status==='assigned').length;
+ if(cards.length)$('batchPrerequisite').textContent='Esta empresa tiene '+cards.length+' tarjetas: '+available+' sin asignar y '+assigned+' asignadas. Para vender más, generá un lote adicional.';
+ else $('batchPrerequisite').textContent=activePrograms.length?'Programa listo: elegí cuántas tarjetas querés emitir para este negocio.':'Primero configurá un programa en el paso 2; después podés generar sus tarjetas.';
+}
 async function provision(action,payload){
  let session=current();if(!session?.access_token)throw Error('Iniciá sesión en BTS.');
  if((session.expires_at||0)*1000<Date.now()+45000){
