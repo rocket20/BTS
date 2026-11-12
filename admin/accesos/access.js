@@ -335,37 +335,57 @@ async function load(){
    api('bts_business_users?select=id,business_id,user_id,role,is_active,display_email,created_at&order=created_at.desc&limit=1000')
   ]);
   businesses=b||[];users=u||[];
-  const previous=$('provisionCompany').value;
-  $('provisionCompany').replaceChildren();
-  for(const business of businesses)if(business.is_active)$('provisionCompany').add(new Option(business.business_name,business.id));
-  if(businesses.some(x=>x.id===previous&&x.is_active))$('provisionCompany').value=previous;
-  $('passwordUser').replaceChildren();
-  for(const row of users)$('passwordUser').add(new Option((row.display_email||row.user_id)+' · '+(businesses.find(x=>x.id===row.business_id)?.business_name||'Empresa'),row.user_id));
-  render();syncProgramBusiness();setProgramKind();await loadSupport();await loadBatches();notice(users.length+' accesos empresariales registrados.');
- }catch(e){notice('Error al consultar accesos: '+e.message,true)}
+  const picker=$('companyPicker');picker.replaceChildren();
+  for(const row of businesses)picker.add(new Option(row.business_name+(row.is_active?'':' · inactiva'),row.id));
+  picker.add(new Option('+ Registrar empresa nueva','__new__'));
+  if(!selectedBusinessId||(!businesses.some(x=>x.id===selectedBusinessId)&&selectedBusinessId!=='__new__'))selectedBusinessId=businesses[0]?.id||'__new__';
+  picker.value=selectedBusinessId;
+  const select=$('provisionCompany');select.replaceChildren();
+  for(const business of businesses.filter(b=>b.is_active))select.add(new Option(business.business_name,business.id));
+  if(selectedBusinessId!=='__new__')select.value=selectedBusinessId;
+  const password=$('passwordUser');password.replaceChildren();
+  for(const row of users.filter(u=>u.business_id===selectedBusinessId))
+   password.add(new Option((row.display_email||row.user_id)+(row.is_active?'':' · suspendido'),row.user_id));
+  const bSelected=selectedBusiness();
+  $('provisionMode').value=bSelected?'create_access':'create_company';
+  mode();
+  render();
+  syncProgramBusiness();
+  await Promise.all([loadSupport(),loadBatches()]);
+  renderCompany();
+  notice('Información de '+(bSelected?.business_name||'empresas')+' actualizada.');
+ }catch(err){notice('No se pudieron consultar las empresas: '+err.message,true)}
 }
 async function init(){
  try{
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
-  const rows=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
-  if(!rows.length)throw Error('La cuenta no tiene permisos de administrador BTS.');
-  if(!['owner','admin'].includes(rows[0].role))throw Error('Solo el administrador puede generar credenciales empresariales.');
+  const admins=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
+  if(!admins.length||!['owner','admin'].includes(admins[0].role))throw Error('Tu cuenta no tiene acceso de administración BTS.');
+  $('companyPicker').onchange=e=>applyBusinessSelection(e.target.value);
+  $('newBusiness').onclick=()=>{applyBusinessSelection('__new__');$('panelStep').open=true;$('panelStep').scrollIntoView({behavior:'smooth',block:'start'})};
+  $('manageExistingAccess').onclick=()=>{$('advancedStep').open=true;$('advancedStep').scrollIntoView({behavior:'smooth',block:'start'})};
+  $('addProgram').onclick=()=>{$('programSetupPanel').hidden=false;$('addProgram').hidden=true;$('programStep').open=true;$('programTitle').dataset.manual='';setProgramKind()};
   $('provisionForm').onsubmit=createPanel;
-  $('provisionMode').onchange=mode;
-  $('newCompanyName').oninput=()=>{if(!$('newCompanySlug').dataset.manual)$('newCompanySlug').value=$('newCompanyName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)};
+  $('newCompanyName').oninput=()=>{
+   if(!$('newCompanySlug').dataset.manual)$('newCompanySlug').value=$('newCompanyName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48);
+  };
   $('newCompanySlug').oninput=()=>{$('newCompanySlug').dataset.manual='1'};
   $('resetBusinessPassword').onclick=resetPassword;
   $('copyGenerated').onclick=async()=>{
-   const msg='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
-   try{await navigator.clipboard.writeText(msg);notice('Acceso copiado. Compartilo por un canal seguro.')}catch{notice('Copiá las credenciales manualmente.',true)}
+   const message='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
+   try{await navigator.clipboard.writeText(message);notice('Datos copiados. Compartilos por un canal seguro.')}catch{notice('Copiá los datos manualmente.',true)}
   };
-  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;$('programSetupForm').onsubmit=createRewardProgram;
-  $('programBusiness').onchange=setProgramKind;
+  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;
+  $('programSetupForm').onsubmit=createRewardProgram;
   $('programKind').onchange=setProgramKind;
   $('programTitle').oninput=()=>{$('programTitle').dataset.manual='1'};
-  $('batchTestThree').onclick=()=>{$('batchQuantity').value='3';$('batchPrerequisite').textContent='Prueba preparada: 3 códigos únicos se emitirán únicamente después de presionar «Generar lote NFC» y confirmar.'};
-  $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;$('batchCompany').onchange=setBatchPrograms;mode();await load();
- }catch(e){notice(e.message,true);$('createPanel').disabled=true;$('reload').disabled=true}
+  $('batchTestThree').onclick=()=>{
+   $('batchQuantity').value='3';
+   $('batchPrerequisite').textContent='Prueba preparada: se emitirán 3 códigos solo después de confirmar «Generar lote NFC».';
+  };
+  $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;
+  await load();
+ }catch(err){notice(err.message,true);$('createPanel').disabled=true;$('reload').disabled=true;$('batchGenerate').disabled=true;$('programCreate').disabled=true}
 }
 init();
 })();
