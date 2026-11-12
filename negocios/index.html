@@ -22,7 +22,7 @@
 <div id="notice" class="notice" role="status" aria-live="polite"></div>
 <div class="bar"><label class="field">Empresa asignada<select id="businessSelect"></select></label><button type="button" id="reload" class="btn">Actualizar</button></div>
 <section class="metrics"><article class="metric"><small>Programas activos</small><strong id="kPrograms">0</strong></article><article class="metric"><small>Tarjetas registradas</small><strong id="kMembers">0</strong></article><article class="metric"><small>Compras / movimientos</small><strong id="kMovements">0</strong></article><article class="metric"><small>Accesos VIP</small><strong id="kVisits">0</strong></article></section>
-<nav class="tabs" id="tabs" aria-label="Apartados del negocio"><button type="button" class="tab active" data-tab="programs">Programas</button><button type="button" class="tab" data-tab="members">Clientes y tarjetas</button><button type="button" class="tab" data-tab="loyalty">Fidelización</button><button type="button" class="tab" data-tab="promotions">Promociones</button><button type="button" class="tab" data-tab="vip">Entradas VIP</button><button type="button" class="tab" data-tab="support">Soporte BTS</button></nav>
+<nav class="tabs" id="tabs" aria-label="Apartados del negocio"><button type="button" class="tab active" data-tab="programs">Programas</button><button type="button" class="tab" data-tab="members">Clientes y tarjetas</button><button type="button" class="tab" data-tab="loyalty">Fidelización</button><button type="button" class="tab" data-tab="promotions">Promociones</button><button type="button" class="tab" data-tab="notices">Avisos en la NFC</button><button type="button" class="tab" data-tab="vip">Entradas VIP</button><button type="button" class="tab" data-tab="support">Soporte BTS</button></nav>
 <section id="tab-programs" class="panel"><div class="panelhead"><h2>Programas activos</h2><span class="subtle">Información de tu empresa</span></div><div id="programRows" class="rows"></div></section>
 <section id="tab-members" class="panel hidden">
 <div class="panelhead"><h2>Inventario de tarjetas NFC</h2><input id="memberSearch" class="field" type="search" placeholder="Buscar cliente o referencia..." aria-label="Buscar tarjetas"></div>
@@ -36,6 +36,20 @@
 <label class="field">Beneficio autorizado<input id="assignBenefit" required minlength="2" maxlength="160" placeholder="Ej. Regalo en la sexta compra"></label></div>
 <button type="submit" class="btn primary" id="assignSubmit">Asignar tarjeta al cliente</button><p id="assignResult" class="notice" role="status"></p>
 </form></section>
+<section id="tab-notices" class="panel hidden">
+ <div class="panelhead"><div><h2>Mensajes que verá tu cliente al escanear</h2><p class="subtle">Los avisos aparecen en la página digital de la tarjeta NFC al abrirla. No son mensajes push ni SMS.</p></div><span class="subtle" id="noticesPermission"></span></div>
+ <div class="grid"><form id="noticesForm" class="stack">
+ <label class="field">Programa de tarjetas<select id="noticeProgram" required></select></label>
+ <label class="field">Tipo de aviso<select id="noticeType"><option value="promotion">Promoción</option><option value="gift">Regalía especial</option><option value="info">Información importante</option></select></label>
+ <label class="field">A quién mostrar<select id="noticeTarget"><option value="all">Todos los clientes de este programa</option><option value="one">Solo una tarjeta de cliente</option></select></label>
+ <label class="field" id="noticeMemberField" hidden>Cliente<select id="noticeMember"></select></label>
+ <label class="field">Título del aviso<input id="noticeTitle" required maxlength="90" minlength="2" placeholder="¡Tenemos una promoción para vos!"></label>
+ <label class="field">Mensaje<textarea id="noticeMessage" required maxlength="300" minlength="3" rows="3" placeholder="Mostrá tu tarjeta y conocé la promoción disponible."></textarea></label>
+ <div class="grid"><label class="field">Visible desde (opcional)<input id="noticeStarts" type="date"></label><label class="field">Visible hasta (opcional)<input id="noticeEnds" type="date"></label></div>
+ <button type="submit" class="btn primary" id="noticeSave">Publicar aviso en la tarjeta</button>
+ <p id="noticeResult" class="subtle" role="status">Solo se mostrarán avisos activos y vigentes. El código NFC real permanece oculto.</p>
+ </form><div><h2>Avisos publicados</h2><div id="noticeRows" class="rows"></div></div></div>
+</section>
 <section id="tab-promotions" class="panel hidden"><div class="panelhead"><h2>Promociones</h2><span class="subtle" id="promoPermission"></span></div><div class="grid"><div id="promoRows" class="rows"></div><form id="promoForm" class="stack"><label class="field">Título<input name="title" required minlength="2" maxlength="110"></label><label class="field">Descripción<textarea name="description" rows="3" maxlength="500"></textarea></label><label class="field">Inicio<input name="starts_on" type="date"></label><label class="field">Fin<input name="ends_on" type="date"></label><button class="btn primary" id="savePromo" type="submit">Crear promoción</button></form></div></section>
 <section id="tab-loyalty" class="panel hidden"><div class="panelhead"><h2>Compras y premios</h2><span class="subtle">Operaciones con historial y referencia de compra única</span></div>
 <div class="grid"><form id="loyaltyForm" class="stack">
