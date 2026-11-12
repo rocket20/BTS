@@ -2,7 +2,13 @@
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
 const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],selectedBusinessId=null;
-const notice=(text,bad=false)=>{$('notice').textContent=text;$('notice').classList.toggle('bad',bad)};
+const notice=(text,bad=false)=>{
+ $('notice').textContent=text;$('notice').classList.toggle('bad',bad);
+ if(bad)window.BTSNotify?.toast({title:'No se pudo completar',message:text,type:'error',duration:6500});
+};
+const success=(title,message)=>window.BTSNotify?.toast({title,message,type:'success'});
+const confirmBTS=options=>window.BTSNotify.confirm(options);
+const currentCompanyName=()=>selectedBusiness()?.business_name||'Empresa seleccionada';
 function current(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 async function api(endpoint,method='GET',payload){
  let session=current();if(!session?.refresh_token||!session?.access_token)throw Error('Primero iniciá sesión en el dashboard BTS.');
@@ -38,8 +44,28 @@ function render(){
   const fourth=node('td'),badge=node('span',u.is_active?'Activo':'Suspendido','tag '+(u.is_active?'on':'off'));fourth.append(badge);
   const last=node('td'),buttons=node('div',undefined,'action'),save=node('button','Guardar','btn'),toggle=node('button',u.is_active?'Suspender':'Reactivar','btn warning');
   save.type=toggle.type='button';
-  save.onclick=async()=>{if(role.value===u.role)return notice('Este usuario ya tiene ese rol.');if(!confirm('¿Cambiar los permisos de esta cuenta?'))return;save.disabled=true;try{await api('bts_business_users?id=eq.'+encodeURIComponent(u.id),'PATCH',{role:role.value});await load();notice('Permisos actualizados.')}catch(e){notice(e.message,true)}finally{save.disabled=false}};
-  toggle.onclick=async()=>{if(!confirm((u.is_active?'¿Suspender':'¿Reactivar')+' este acceso empresarial?'))return;toggle.disabled=true;try{await api('bts_business_users?id=eq.'+encodeURIComponent(u.id),'PATCH',{is_active:!u.is_active});await load();notice('Estado actualizado.')}catch(e){notice(e.message,true)}finally{toggle.disabled=false}};
+  save.onclick=async()=>{
+   if(role.value===u.role)return notice('Este usuario ya tiene ese rol.');
+   const approved=await confirmBTS({
+    title:'Actualizar permisos',message:'Vas a cambiar el nivel de acceso de esta cuenta empresarial.',
+    details:[{label:'Empresa',value:business?.business_name||'Empresa'},{label:'Usuario',value:u.display_email||'Usuario empresarial'},{label:'Nuevo permiso',value:role.options[role.selectedIndex]?.text||role.value}],
+    confirmText:'Guardar permisos',type:'warning'
+   });if(!approved)return;
+   save.disabled=true;
+   try{await api('bts_business_users?id=eq.'+encodeURIComponent(u.id),'PATCH',{role:role.value});await load();notice('Permisos actualizados.');success('Permisos actualizados','Se guardó el nuevo rol de '+(u.display_email||'la cuenta')+'.')}
+   catch(e){notice(e.message,true)}finally{save.disabled=false}
+  };
+  toggle.onclick=async()=>{
+   const approved=await confirmBTS({
+    title:u.is_active?'Suspender acceso empresarial':'Reactivar acceso empresarial',
+    message:u.is_active?'Esta persona perderá el acceso a su mini panel hasta que BTS lo reactive.':'La cuenta volverá a tener acceso al mini panel con sus permisos actuales.',
+    details:[{label:'Empresa',value:business?.business_name||'Empresa'},{label:'Cuenta',value:u.display_email||'Usuario empresarial'},{label:'Acción',value:u.is_active?'Suspender':'Reactivar'}],
+    confirmText:u.is_active?'Sí, suspender acceso':'Reactivar acceso',type:u.is_active?'danger':'warning'
+   });if(!approved)return;
+   toggle.disabled=true;
+   try{await api('bts_business_users?id=eq.'+encodeURIComponent(u.id),'PATCH',{is_active:!u.is_active});await load();notice('Estado actualizado.');success(u.is_active?'Acceso suspendido':'Acceso reactivado','Se actualizó correctamente la cuenta empresarial.')}
+   catch(e){notice(e.message,true)}finally{toggle.disabled=false}
+  };
   buttons.append(save,toggle);last.append(buttons);tr.append(first,second,third,fourth,last);tbody.append(tr);
  }
 }
@@ -58,7 +84,7 @@ function renderSupport(){
   const save=node('button','Guardar respuesta','btn');save.type='button';save.onclick=async()=>{
     save.disabled=true;try{
       await api('bts_business_support?id=eq.'+encodeURIComponent(item.id),'PATCH',{status:select.value,bts_reply:text.value.trim()});
-      await loadSupport();notice('Respuesta de soporte guardada.');
+      await loadSupport();notice('Respuesta de soporte guardada.');success('Respuesta guardada','El estado y la respuesta de soporte se actualizaron.');
     }catch(e){notice(e.message,true)}finally{save.disabled=false}
   };
   response.append(text,save);tr.append(c,subject,prio,status,response);host.append(tr);
@@ -219,18 +245,23 @@ async function createPanel(e){
   await load();
   reveal(data);
   $('panelStep').open=true;
-  notice('Acceso creado para '+(selectedBusiness()?.business_name||'la empresa')+'. Copiá las credenciales ahora; no se podrán recuperar después.');
+  notice('Acceso creado para '+(selectedBusiness()?.business_name||'la empresa')+'. Copiá las credenciales ahora; no se podrán recuperar después.');success('Mini panel creado','Copiá el usuario y la contraseña temporal: solo se mostrarán ahora.');
  }catch(err){notice(err.message,true);renderCompany()}finally{b.disabled=!!(selectedBusiness()&&users.some(u=>u.business_id===selectedBusinessId))}
 }
 async function resetPassword(){
  const id=$('passwordUser').value;if(!id)return notice('Seleccioná un acceso empresarial.',true);
- if(!confirm('¿Restablecer contraseña? El cliente deberá usar la nueva clave.'))return;
+ const account=users.find(u=>u.user_id===id&&u.business_id===selectedBusinessId);
+ const approved=await confirmBTS({
+  title:'Generar contraseña nueva',message:'La contraseña actual dejará de funcionar. Entregá la nueva únicamente a la persona autorizada.',
+  details:[{label:'Empresa',value:currentCompanyName()},{label:'Cuenta',value:account?.display_email||'Usuario empresarial'}],
+  confirmText:'Restablecer contraseña',type:'danger',note:'La contraseña generada se mostrará una sola vez.'
+ });if(!approved)return;
  const b=$('resetBusinessPassword');b.disabled=true;
  try{
   const data=await provision('reset_password',{user_id:id});
   $('generatedAccess').hidden=false;$('generatedUrl').value='https://www.btsstudio.net/negocios/';
   $('generatedUsername').value=users.find(x=>x.user_id===id)?.display_email?.split('@')[0]||'';
-  $('generatedPassword').value=data.password;notice('Contraseña nueva generada. Compartila por canal seguro.');
+  $('generatedPassword').value=data.password;notice('Contraseña nueva generada. Compartila por canal seguro.');success('Contraseña actualizada','Copiá las credenciales nuevas y entregalas por un canal seguro.');
  }catch(err){notice(err.message,true)}finally{b.disabled=false}
 }
 function downloadBatchCSV(rows){
@@ -247,7 +278,7 @@ async function fetchCodes(batchId){
  const rows=await api('rpc/bts_admin_batch_codes','POST',{p_batch_id:batchId});
  if(!rows?.length)throw Error('El lote no tiene códigos.');
  downloadBatchCSV(rows);
- notice('Códigos privados descargados: '+rows.length+'. Reservados para programación NFC BTS.');
+ notice('Códigos privados descargados: '+rows.length+'. Reservados para programación NFC BTS.');success('CSV privado descargado',rows.length+' códigos NFC disponibles para programación exclusiva de BTS.');
 }
 function renderBatches(){
  const host=$('batchRows');host.replaceChildren();
@@ -290,11 +321,20 @@ async function createRewardProgram(e){
   if(!benefit||benefit.length>130)throw Error('Revisá el beneficio de la tarjeta.');
   if(!['loyalty','vip'].includes(kind))throw Error('Tipo de programa inválido.');
   const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.is_active&&p.kind===kind);
-  if(existing.length&&!confirm('Esta empresa ya tiene '+existing.length+' programa(s) de este tipo. ¿Crear otro distinto?'))return;
+  if(existing.length){
+   const another=await confirmBTS({title:'Ya existe un programa de este tipo',message:'Esta empresa ya tiene '+existing.length+' programa(s) activos de esta categoría.',
+    details:[{label:'Empresa',value:company.business_name},{label:'Programas existentes',value:String(existing.length)}],
+    confirmText:'Crear otro programa',type:'warning',note:'Si querés usar el programa existente, cancelá y elegilo al generar el lote.'});
+   if(!another)return;
+  }
   const goal=Number($('programGoal').value),months=Number($('programVipMonths').value);
   if(kind==='loyalty'&&(!Number.isInteger(goal)||goal<1||goal>10000))throw Error('La meta debe estar entre 1 y 10000.');
   if(kind==='vip'&&(!Number.isInteger(months)||months<1||months>60))throw Error('La vigencia VIP debe estar entre 1 y 60 meses.');
-  if(!confirm('¿Crear el programa '+title+' para '+company.business_name+'? No se generarán tarjetas hasta que BTS emita un lote.'))return;
+  const approved=await confirmBTS({
+   title:'Configurar programa de tarjetas',message:'El programa quedará disponible para esta empresa, pero todavía no se emitirán códigos NFC.',
+   details:[{label:'Empresa',value:company.business_name},{label:'Programa',value:title},{label:'Tipo',value:kind==='vip'?'Membresía VIP':'Fidelización'},{label:'Beneficio',value:benefit}],
+   confirmText:'Sí, crear programa',type:'info'
+  });if(!approved)return;
   const payload={business_id:businessId,kind,title,reward_label:benefit,is_active:true};
   if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=$('programUnit').value;payload.units_per_visit=1;}
   if(kind==='vip'){payload.vip_benefits=benefit;payload.vip_validity_months=months;}
@@ -307,7 +347,7 @@ async function createRewardProgram(e){
   $('batchQuantity').value='3';
   $('programSetupHint').textContent='Programa listo. Elegí cantidad y presioná «Generar lote NFC» más abajo. Para prueba recomendamos 3 tarjetas.';
   $('batchStep').open=true;
-  notice('Programa creado. Falta emitir el lote de tarjetas desde BTS.');
+  notice('Programa creado. Falta emitir el lote de tarjetas desde BTS.');success('Programa configurado','Ahora podés emitir el lote de tarjetas de '+company.business_name+'.');
  }catch(err){notice('No se pudo crear el programa: '+err.message,true)}finally{button.disabled=false}
 }
 function setBatchPrograms(){
@@ -341,11 +381,18 @@ async function generateBatch(e){
  try{
   if(!Number.isInteger(quantity)||quantity<1||quantity>200)throw Error('Generá entre 1 y 200 tarjetas por lote.');
   if(!batchPrograms.some(x=>x.id===programId&&x.business_id===businessId&&x.is_active))throw Error('Programa inválido.');
-  if(!confirm('¿Generar '+quantity+' tarjetas NFC privadas para esta empresa? Solo BTS tendrá acceso a los códigos.'))return;
+  const company=selectedBusiness(),program=batchPrograms.find(x=>x.id===programId);
+  const approved=await confirmBTS({
+   title:'Generar lote de tarjetas NFC',
+   message:'Vas a emitir códigos privados y únicos para esta empresa. Esta operación creará tarjetas reales en el inventario BTS.',
+   details:[{label:'Empresa',value:company?.business_name||'Empresa'},{label:'Programa',value:program?.title||'Programa NFC'},{label:'Cantidad',value:quantity+' tarjetas NFC'},{label:'Códigos privados',value:'Solo BTS'},{label:'Al finalizar',value:'Descarga de CSV de grabación'}],
+   confirmText:quantity<=3?'Sí, generar prueba':'Sí, generar lote',type:'warning',
+   note:'Los códigos generados no deben compartirse con el negocio.'
+  });if(!approved)return;
   const rows=await api('rpc/bts_issue_nfc_batch','POST',{p_business_id:businessId,p_program_id:programId,p_quantity:quantity,p_note:'Lote BTS'});
   if(!rows?.length||rows.length!==quantity)throw Error('El servidor no confirmó todas las tarjetas.');
   downloadBatchCSV(rows);await loadBatches();
-  notice('Lote emitido correctamente: '+rows.length+' tarjetas. CSV descargado para grabación física.');
+  notice('Lote emitido correctamente: '+rows.length+' tarjetas. CSV descargado para grabación física.');success('Lote generado correctamente','Se crearon '+rows.length+' tarjetas para '+(company?.business_name||'la empresa')+' y se descargó el CSV privado.');
  }catch(err){notice('No se pudo generar lote: '+err.message,true)}
  finally{b.disabled=false}
 }
@@ -392,7 +439,7 @@ async function init(){
   $('resetBusinessPassword').onclick=resetPassword;
   $('copyGenerated').onclick=async()=>{
    const message='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
-   try{await navigator.clipboard.writeText(message);notice('Datos copiados. Compartilos por un canal seguro.')}catch{notice('Copiá los datos manualmente.',true)}
+   try{await navigator.clipboard.writeText(message);notice('Datos copiados. Compartilos por un canal seguro.');success('Datos copiados','Compartí las credenciales por un canal seguro.')}catch{notice('Copiá los datos manualmente.',true)}
   };
   $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;
   $('programSetupForm').onsubmit=createRewardProgram;
