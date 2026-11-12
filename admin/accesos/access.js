@@ -91,6 +91,16 @@ function applyBusinessSelection(id,clearCredentials=true){
  renderCompany();
  render();renderBatches();renderSupport();
 }
+function nextStep(){
+ const b=selectedBusiness();
+ let section='panelStep';
+ if(b){
+  const accounts=users.filter(u=>u.business_id===b.id&&u.is_active);
+  const programs=batchPrograms.filter(p=>p.business_id===b.id&&p.is_active);
+  section=!accounts.length?'panelStep':!programs.length?'programStep':'batchStep';
+ }
+ const target=$(section);target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function renderCompany(){
  const business=selectedBusiness();
  $('companyPicker').value=business?.id||'__new__';
@@ -117,6 +127,7 @@ function renderCompany(){
  if(!business){
   $('companySummaryTitle').textContent='Nueva empresa';
   $('companySummaryText').textContent='Ingresá el nombre y el identificador. BTS creará su panel y sus credenciales una sola vez.';
+  $('companyNextAction').textContent='Registrar empresa nueva';$('companyNextAction').onclick=nextStep;
   noticeBox.hidden=true;form.hidden=false;
   $('createPanel').disabled=false;
   $('createPanel').textContent='Registrar empresa y crear acceso';
@@ -132,6 +143,8 @@ function renderCompany(){
    ' Falta generar un lote de tarjetas en el paso 3.':
    ' Falta configurar el beneficio del programa en el paso 2.';
  $('companySummaryText').textContent=overview+steps;
+ $('companyNextAction').textContent=!accounts.length?'Crear acceso empresarial':!activePrograms.length?'Configurar beneficio':cards.length?'Administrar tarjetas':'Generar primeras tarjetas';
+ $('companyNextAction').onclick=nextStep;
  noticeBox.hidden=accounts.length===0;
  form.hidden=accounts.length>0;
  $('existingPanelTitle').textContent=active.length?'Esta empresa ya tiene su mini panel':'Esta empresa ya tiene panel, pero el acceso está suspendido';
@@ -293,6 +306,7 @@ async function createRewardProgram(e){
   $('batchProgram').value=rows[0].id;
   $('batchQuantity').value='3';
   $('programSetupHint').textContent='Programa listo. Elegí cantidad y presioná «Generar lote NFC» más abajo. Para prueba recomendamos 3 tarjetas.';
+  $('batchStep').open=true;
   notice('Programa creado. Falta emitir el lote de tarjetas desde BTS.');
  }catch(err){notice('No se pudo crear el programa: '+err.message,true)}finally{button.disabled=false}
 }
