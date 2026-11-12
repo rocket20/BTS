@@ -400,6 +400,8 @@ function setProgramKind(){
  $('programVipMonthsField').style.display=vip?'':'none';
  $('programEarnField').style.display=type==='points'?'':'none';
  $('programGoal').required=!vip;$('programEarn').required=type==='points';
+ $('programBenefit').maxLength=vip?600:130;
+ $('programBenefit').placeholder=vip?'Ej. 15 % de descuento, eventos exclusivos y prioridad de atención':'Ej. Regalo o descuento al completar la meta';
  $('programUnit').value=type==='purchases'?'compras':type==='visits'?'visitas':type==='points'?'puntos':'membresía';
  const names={purchases:'Fidelización',visits:'Visitas',points:'Puntos',vip:'VIP'};
  if(!$('programTitle').dataset.manual){
@@ -418,15 +420,10 @@ async function createRewardProgram(e){
   if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
   const title=$('programTitle').value.trim(),benefit=$('programBenefit').value.trim();
   if(title.length<2||title.length>85)throw Error('El nombre del programa debe tener entre 2 y 85 caracteres.');
-  if(!benefit||benefit.length>130)throw Error('Revisá el beneficio de la tarjeta.');
+  if(!benefit||benefit.length>(kind==='vip'?600:130))throw Error('Revisá los beneficios de la tarjeta.');
   if(!['purchases','visits','points','vip'].includes(category))throw Error('Tipo de tarjeta inválido.');
   const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.card_category===category);
-  if(existing.length){
-   const another=await confirmBTS({title:'Ya existe un programa de este tipo',message:'Esta empresa ya tiene '+existing.length+' programa(s) activos de esta categoría.',
-    details:[{label:'Empresa',value:company.business_name},{label:'Programas existentes',value:String(existing.length)}],
-    confirmText:'Crear otro programa',type:'warning',note:'Si querés usar el programa existente, cancelá y elegilo al generar el lote.'});
-   if(!another)return;
-  }
+  if(existing.length)throw Error('Esta empresa ya tiene la categoría '+category+'. Seleccioná el programa existente al generar el lote; no tenés que crearlo otra vez.');
   const goal=Number($('programGoal').value),months=Number($('programVipMonths').value),earn=Number($('programEarn').value);
   if(kind==='loyalty'&&(!Number.isInteger(goal)||goal<1||goal>10000))throw Error('La meta debe estar entre 1 y 10000.');
   if(kind==='vip'&&(!Number.isInteger(months)||months<1||months>60))throw Error('La vigencia VIP debe estar entre 1 y 60 meses.');
@@ -436,7 +433,7 @@ async function createRewardProgram(e){
    details:[{label:'Empresa',value:company.business_name},{label:'Programa',value:title},{label:'Tipo',value:kind==='vip'?'Membresía VIP':'Fidelización'},{label:'Beneficio',value:benefit}],
    confirmText:'Sí, crear programa',type:'info'
   });if(!approved)return;
-  const payload={business_id:businessId,kind,card_category:category,title,reward_label:benefit,is_active:true};
+  const payload={business_id:businessId,kind,card_category:category,title,reward_label:kind==='vip'?'Beneficios VIP':benefit,is_active:true};
   if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=category==='visits'?'visitas':category==='points'?'puntos':'compras';payload.units_per_visit=category==='points'?earn:1;}
   if(kind==='vip'){payload.vip_benefits=benefit;payload.vip_validity_months=months;}
   const rows=await api('bts_reward_programs','POST',payload);
