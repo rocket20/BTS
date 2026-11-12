@@ -52,8 +52,21 @@
  #batchReport tr{break-inside:avoid}
  #batchReport .batch-report-stat{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
-</style><link rel="stylesheet" href="./notifications.css"></head><body><main class="wrap">
+.bts-steps-bar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:16px 0 20px}
+.bts-steps-bar span{font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:850;margin-right:7px}
+.bts-steps-bar button{border:1px solid var(--line);background:var(--surface);border-radius:9px;color:var(--txt);padding:9px 11px;cursor:pointer;font-size:12px;font-weight:750}
+.bts-steps-bar button:hover,.bts-steps-bar button:focus-visible{border-color:var(--wine);outline-offset:2px}
+@media(max-width:650px){.bts-steps-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.bts-steps-bar span{grid-column:1/-1}}
+</style><link rel="stylesheet" href="./notifications.css"><link rel="stylesheet" href="../shared-panel-theme.css"></head><body><main class="wrap">
 <header><div class="eyebrow">BTS STUDIO / TARJETAS NFC</div><h1>Empresas y tarjetas.</h1><p class="muted">Elegí una empresa. BTS te indica si ya tiene su panel, beneficios y tarjetas; no necesitás volver a crear lo que ya existe.</p></header>
+<div class="bts-steps-bar" aria-label="Ir a un apartado">
+ <span>GESTIONAR EMPRESA</span>
+ <button type="button" data-go-step="companyOverviewPanel">1. Seleccionar empresa</button>
+ <button type="button" data-go-step="panelStep">2. Acceso</button>
+ <button type="button" data-go-step="programStep">3. Beneficios</button>
+ <button type="button" data-go-step="batchStep">4. Tarjetas</button>
+ <button type="button" data-go-step="advancedStep">Más herramientas</button>
+</div>
 <div id="notice" role="status" class="status">Comprobando permisos...</div>
 <section class="panel" id="companyOverviewPanel">
  <div class="company-picker"><label class="field">Empresa que querés revisar<select id="companyPicker" aria-label="Seleccionar empresa BTS"></select></label>
@@ -156,4 +169,4 @@
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>SOLICITUD</th><th>PRIORIDAD</th><th>ESTADO</th><th>RESPUESTA BTS</th></tr></thead><tbody id="supportRows"></tbody></table></div></section>
 </div></details>
 <p class="muted">Las empresas entran por <a href="/negocios/" target="_blank" rel="noopener noreferrer">el mini panel empresarial</a>. Nunca compartás el acceso administrativo de BTS.</p></main>
-<script src="./notifications.js" defer></script><script src="./access.js" defer></script></body></html>
+<script src="./notifications.js" defer></script><script src="./access.js" defer></script><script src="../shared-panel-theme.js" defer></script></body></html>

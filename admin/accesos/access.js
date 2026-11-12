@@ -577,6 +577,11 @@ async function init(){
   const admins=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
   if(!admins.length||!['owner','admin'].includes(admins[0].role))throw Error('Tu cuenta no tiene acceso de administración BTS.');
   $('companyPicker').onchange=e=>{applyBusinessSelection(e.target.value);loadBatches()};
+  document.querySelectorAll('[data-go-step]').forEach(btn=>btn.addEventListener('click',()=>{
+   const target=$(btn.dataset.goStep);if(!target)return;
+   if(target.tagName==='DETAILS')target.open=true;
+   target.scrollIntoView({behavior:'smooth',block:'start'});
+  }));
   $('newBusiness').onclick=()=>{applyBusinessSelection('__new__');$('panelStep').open=true;$('panelStep').scrollIntoView({behavior:'smooth',block:'start'})};
   $('manageExistingAccess').onclick=()=>{$('advancedStep').open=true;$('advancedStep').scrollIntoView({behavior:'smooth',block:'start'})};
   $('addProgram').onclick=()=>{$('programSetupPanel').hidden=false;$('addProgram').hidden=true;$('programStep').open=true;$('programTitle').dataset.manual='';setProgramKind()};

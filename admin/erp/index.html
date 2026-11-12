@@ -18,7 +18,7 @@
 dialog{width:min(590px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid #61515c;border-radius:18px;background:#191920;color:var(--ink);padding:23px}dialog::backdrop{background:#050409cc;backdrop-filter:blur(6px)}
 .modal-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}.field{display:grid;gap:5px;font-weight:650;font-size:12px}.field.wide{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;border:1px solid #504a55;border-radius:10px;background:#111219;color:var(--ink);padding:11px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#cf547a}.actions{display:flex;justify-content:flex-end;gap:9px}
 @media(max-width:800px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric strong{font-size:22px}}@media(max-width:480px){.shell{padding:14px 10px 40px}.metrics{gap:7px}.metric{padding:12px}.panel{padding:13px}.formgrid{grid-template-columns:1fr}.field.wide{grid-column:auto}.tools{width:100%}.tools .control{flex:1;min-width:0}}
-</style></head><body>
+</style><link rel="stylesheet" href="../shared-panel-theme.css"></head><body>
 <main class="shell">
 <header class="top"><div><div class="eyebrow">BTS STUDIO / ADMINISTRACIÓN EMPRESARIAL</div><h1>Centro de operaciones.</h1><p>Clientes, servicios contratados, finanzas, inventario NFC y soporte en un solo lugar.</p></div><button type="button" class="btn" id="refresh">Actualizar datos</button></header>
 <div id="notice" class="status" role="status" aria-live="polite">Comprobando permisos...</div>
@@ -41,4 +41,4 @@ dialog{width:min(590px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 </main>
 <dialog id="editor" aria-labelledby="dialogTitle"><form id="form"><div class="modal-head"><h2 id="dialogTitle">Nuevo registro</h2><button type="button" class="btn" id="close">Cerrar</button></div><div class="formgrid" id="formFields"></div><div class="actions"><button type="button" class="btn" id="cancel">Cancelar</button><button type="submit" class="btn primary" id="save">Guardar registro</button></div></form></dialog>
 <script src="./app.js" defer></script>
-</body></html>
+<script src="../shared-panel-theme.js" defer></script></body></html>
