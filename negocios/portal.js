@@ -6,7 +6,12 @@ const state={session:null,assignments:[],business:null,role:'viewer',programs:[]
 const nameRole={owner:'Propietario',manager:'Encargado',staff:'Personal',viewer:'Consulta'};
 const $node=(tag,txt,cls)=>{const x=document.createElement(tag);if(txt!==undefined)x.textContent=String(txt);if(cls)x.className=cls;return x};
 const iso=()=>new Date().toISOString().slice(0,10),date=s=>s?new Date(s.slice(0,10)+'T12:00:00').toLocaleDateString('es-NI'):'Sin fecha';
-function msg(t,bad=false){$('notice').textContent=t;$('notice').classList.toggle('bad',bad)}
+function msg(t,bad=false){
+ $('notice').textContent=t;$('notice').classList.toggle('bad',bad);
+ if(bad)window.BTSNotify?.toast({title:'No se pudo completar',message:t,type:'error',duration:6500});
+}
+function success(title,message){window.BTSNotify?.toast({title,message,type:'success'})}
+const confirmBTS=opts=>window.BTSNotify.confirm(opts);
 function getSaved(){try{return JSON.parse(sessionStorage.getItem(STORE)||'null')}catch{return null}}
 function save(s){state.session=s;if(s)sessionStorage.setItem(STORE,JSON.stringify(s));else sessionStorage.removeItem(STORE)}
 async function request(path,{method='GET',payload=null,token=null}={}){
@@ -127,13 +132,17 @@ async function assignCard(e){
  const id=$('assignSlot').value,slot=state.inventory.find(x=>x.id===id&&x.status==='available');
  if(!slot)return msg('Elegí una tarjeta pendiente de asignar.',true);
  const name=$('assignName').value.trim(),benefit=$('assignBenefit').value.trim();
- if(!confirm('¿Asignar '+slot.reference+' a '+name+' con el beneficio indicado? Esta asignación es permanente.'))return;
+ const approved=await confirmBTS({
+ title:'Asignar tarjeta NFC',message:'Vas a asignar una tarjeta del lote de BTS. Esta operación no puede repetirse con otro cliente.',
+ details:[{label:'Negocio',value:state.business?.business_name||'Negocio'},{label:'Tarjeta',value:slot.reference},{label:'Cliente',value:name},{label:'Beneficio',value:benefit}],
+ confirmText:'Sí, asignar tarjeta',type:'warning'
+ });if(!approved)return;
  const button=$('assignSubmit');button.disabled=true;
  try{
   const result=await api('rpc/bts_business_assign_nfc','POST',{p_slot_id:id,p_full_name:name,p_benefit_label:benefit});
   if(!result?.length)throw Error('No se confirmó la asignación.');
   $('assignCardForm').reset();await loadBusiness();$('assignResult').textContent='Tarjeta '+slot.reference+' asignada correctamente.';
-  msg('Tarjeta asignada. El código NFC sigue reservado a BTS.');
+  msg('Tarjeta asignada. El código NFC sigue reservado a BTS.');success('Tarjeta asignada','Se vinculó '+slot.reference+' a '+name+'. El código NFC sigue reservado a BTS.');
  }catch(error){msg(error.message,true);$('assignResult').textContent=error.message}
  finally{button.disabled=false}
 }
@@ -146,7 +155,7 @@ function renderPromos(){
    const button=$node('button',p.is_active?'Pausar':'Activar','btn');button.type='button';
    button.onclick=async()=>{button.disabled=true;try{
     await api('bts_business_promotions?id=eq.'+encodeURIComponent(p.id)+'&business_id=eq.'+encodeURIComponent(state.business.id),'PATCH',{is_active:!p.is_active});
-    await loadBusiness();msg('Promoción actualizada.');
+    await loadBusiness();msg('Promoción actualizada.');success('Promoción actualizada','Los cambios ya están guardados en tu negocio.');
    }catch(e){msg(e.message,true)}finally{button.disabled=false}};
    row.append(button);
   }
@@ -191,14 +200,20 @@ async function loyaltyEvent(action){
   const p=state.programs.find(p=>p.id===program);
   if(!p||m.current_units<p.goal_units)return msg('La tarjeta todavía no alcanza el premio.',true);
  }
- const description=action==='earn'?'¿Registrar la compra '+receipt+' para '+m.full_name+'?':'¿Confirmar la entrega del premio a '+m.full_name+'?';
- if(!confirm(description))return;
+ const approved=await confirmBTS({
+  title:action==='earn'?'Acreditar compra':'Canjear recompensa',
+  message:action==='earn'?'Se registrará una compra válida y se actualizará el progreso del cliente.':'Se entregará el premio y el contador de compras volverá a cero; el historial permanecerá registrado.',
+  details:[{label:'Cliente',value:m.full_name},{label:'Programa',value:state.programs.find(p=>p.id===program)?.title||'Fidelización'},
+   {label:'Operación',value:action==='earn'?'Registrar compra':'Canjear premio'},
+   ...(action==='earn'?[{label:'Referencia',value:receipt}]:[{label:'Compras acumuladas',value:String(m.current_units)}])],
+  confirmText:action==='earn'?'Sí, acreditar compra':'Confirmar canje',type:action==='earn'?'info':'warning'
+ });if(!approved)return;
  const button=$(action==='earn'?'loyaltyEarn':'loyaltyRedeem');button.disabled=true;
  try{
    const response=await api('rpc/bts_business_loyalty_event','POST',{p_member_id:memberId,p_action:action,p_receipt_ref:action==='earn'?receipt:''});
    if(!response?.length)throw Error('La operación no fue confirmada por el servidor.');
    const message=action==='earn'?'Compra acreditada · saldo '+response[0].new_balance:'Premio canjeado y saldo reiniciado';
-   await loadBusiness();$('loyaltyReceipt').value='';$('loyaltyResult').textContent=message;msg(message);
+   await loadBusiness();$('loyaltyReceipt').value='';$('loyaltyResult').textContent=message;msg(message);success(action==='earn'?'Compra acreditada':'Premio canjeado',message);
  }catch(e){$('loyaltyResult').textContent=e.message;msg(e.message,true)}finally{button.disabled=false}
 }
 function renderVIP(){
@@ -241,13 +256,13 @@ async function submitPromo(e){
  const f=e.currentTarget,b=$('savePromo'),data=Object.fromEntries(new FormData(f));
  if(data.starts_on&&data.ends_on&&data.ends_on<data.starts_on)return msg('El final no puede ser anterior al inicio.',true);
  const payload={business_id:state.business.id,title:data.title.trim(),description:data.description.trim(),starts_on:data.starts_on||null,ends_on:data.ends_on||null,created_by:state.session.user.id};
- b.disabled=true;try{await api('bts_business_promotions','POST',payload);f.reset();await loadBusiness();msg('Promoción creada correctamente.')}catch(err){msg(err.message,true)}finally{b.disabled=false}
+ b.disabled=true;try{await api('bts_business_promotions','POST',payload);f.reset();await loadBusiness();msg('Promoción creada correctamente.');success('Promoción creada','La nueva promoción ya está disponible para tu negocio.');}catch(err){msg(err.message,true)}finally{b.disabled=false}
 }
 async function submitSupport(e){
  e.preventDefault();const f=e.currentTarget,b=$('sendSupport'),data=Object.fromEntries(new FormData(f));
  b.disabled=true;try{
  await api('bts_business_support','POST',{business_id:state.business.id,created_by:state.session.user.id,subject:data.subject.trim(),details:data.details.trim(),priority:data.priority});
- f.reset();await loadBusiness();msg('Solicitud enviada a BTS Studio.');
+ f.reset();await loadBusiness();msg('Solicitud enviada a BTS Studio.');success('Solicitud enviada','El equipo de BTS recibió tu solicitud de soporte.');
  }catch(err){msg(err.message,true)}finally{b.disabled=false}
 }
 async function submitVIP(e){
@@ -260,7 +275,7 @@ async function submitVIP(e){
  const rows=await api('rpc/bts_business_vip_checkin','POST',{p_program_id:programId,p_card_code:code});
  const v=rows?.[0];if(!v)throw Error('No se recibió confirmación del servidor.');
  $('vipResult').textContent='Entrada autorizada: '+v.member_name+' · '+v.tier+' · vigente hasta '+date(v.expires_on);
- $('vipCode').value='';await loadBusiness();
+ $('vipCode').value='';await loadBusiness();success('Acceso VIP validado','Ingreso autorizado para '+v.member_name+'.');
  }catch(err){$('vipResult').textContent='Acceso rechazado: '+err.message;msg(err.message,true)}
  finally{b.disabled=false}
 }
