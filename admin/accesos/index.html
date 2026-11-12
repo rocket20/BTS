@@ -30,6 +30,16 @@
 <div class="scroller" style="margin-top:15px"><table><thead><tr><th>EMPRESA</th><th>PROGRAMA</th><th>LOTE</th><th>CANTIDAD</th><th>CREADO</th><th>CÓDIGOS BTS</th></tr></thead><tbody id="batchRows"></tbody></table></div>
 <p class="muted">La descarga contiene enlaces que BTS debe grabar en cada chip NFC. No compartás este archivo con el negocio.</p>
 </section>
+<section class="panel" id="productionPanel">
+ <div class="toolbar"><div><h2>Preparación y entrega de NFC</h2><p class="muted">Seguimiento interno de cada tarjeta, desde el código emitido hasta la entrega al negocio. Los códigos privados no aparecen aquí.</p></div><button type="button" class="btn" id="productionRefresh">Actualizar producción</button></div>
+ <div class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr));margin:14px 0">
+ <label class="field">Empresa<select id="productionBusiness"></select></label>
+ <label class="field">Lote<select id="productionBatch"></select></label>
+ <label class="field">Buscar referencia<input type="search" id="productionSearch" placeholder="Ej. BTS-XXXXXX-001"></label>
+ </div>
+ <div class="scroller"><table><thead><tr><th>REFERENCIA</th><th>PREPARACIÓN</th><th>ASIGNACIÓN</th><th>ACCIÓN BTS</th></tr></thead><tbody id="productionRows"></tbody></table></div>
+ <p class="muted">Flujo: Generada → Grabada en chip → Verificada → Entregada. Una prueba fallida puede devolver una tarjeta verificada a grabación con una observación obligatoria. La empresa solo puede asignar tarjetas entregadas.</p>
+ </section>
 <section class="panel"><h2>Restablecer acceso de un negocio</h2><p class="muted">Si un cliente olvida su contraseña, BTS puede generar una nueva sin mostrar ni conocer la anterior.</p><div class="controls"><label class="field">Cuenta empresarial<select id="passwordUser"></select></label><button class="btn" type="button" id="resetBusinessPassword">Generar contraseña nueva</button></div></section>
 <section class="panel"><div class="toolbar"><div><h2>Cuentas asignadas</h2><p class="muted">Podés cambiar permisos o suspender una cuenta sin eliminarla.</p></div><button class="btn" id="reload" type="button">Actualizar</button></div>
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>USUARIO</th><th>ROL</th><th>ESTADO</th><th>ACCIONES</th></tr></thead><tbody id="rows"></tbody></table></div>
@@ -37,4 +47,4 @@
 <section class="panel"><div class="toolbar"><div><h2>Solicitudes de soporte empresarial</h2><p class="muted">Consultá y respondé las solicitudes enviadas desde los portales de clientes.</p></div><button class="btn" id="reloadSupport" type="button">Actualizar soporte</button></div>
 <div class="scroller"><table><thead><tr><th>EMPRESA</th><th>SOLICITUD</th><th>PRIORIDAD</th><th>ESTADO</th><th>RESPUESTA BTS</th></tr></thead><tbody id="supportRows"></tbody></table></div></section>
 <p class="muted">Enlace de acceso para tus clientes: <a href="/negocios/" target="_blank" rel="noopener noreferrer">www.btsstudio.net/negocios/</a>. No compartás tu usuario administrativo de BTS.</p></main>
-<script src="./access.js" defer></script></body></html>
+<script src="./access.js" defer></script><script src="./production.js" defer></script></body></html>
