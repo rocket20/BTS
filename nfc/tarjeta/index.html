@@ -6,10 +6,24 @@
 .card:before{content:"";position:absolute;width:200px;height:200px;background:var(--accent);right:-90px;top:-100px;opacity:.16;border-radius:50%}.card[data-theme=wine]{background:linear-gradient(145deg,#300d23,#611937)}.card[data-theme=champagne]{background:linear-gradient(145deg,#28242a,#625544);color:#fff1d6}.card[data-theme=forest]{background:linear-gradient(145deg,#102c23,#34604a)}.card[data-theme=ivory]{background:linear-gradient(145deg,#f8f5eb,#e9e5db);color:#20232c;border-color:#d4d0ca}
 .card-top,.card-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;font-size:11px}.card-top b{max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-center{position:relative;z-index:1;display:grid;gap:5px}.card-center small{font-size:10px;opacity:.75;letter-spacing:.14em}.card-center strong{font-size:clamp(22px,5vw,30px);letter-spacing:-.04em;line-height:1.12}.card-center span{opacity:.8;font-size:12px}.card-bottom{font-size:10px;opacity:.76}
 .info{margin:24px 0 0;text-align:left;background:#1f1f27;border:1px solid #3c3b46;border-radius:17px;padding:20px}.info h1{font-size:20px;letter-spacing:-.04em;margin:0 0 7px}.info p{font-size:13px;line-height:1.6;color:#c8c2cc;margin:7px 0}.progress{height:10px;background:#36343f;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;width:0%;background:var(--accent);transition:width .2s}.stats{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.stats strong{font-size:29px}.stats small{font-size:11px;color:#bdb6bf}.state{padding:10px 12px;background:#33313b;border-radius:10px;font-size:12px}.state.invalid{color:#ffb7c2}.footer{font-size:10px;color:#827f8b;margin-top:24px}.name{color:#f3e7ec;font-weight:780}
+.nfc-alerts{margin:16px 0 0;display:grid;gap:12px;text-align:left}.nfc-alert{border:1px solid #694857;background:#32202c;padding:16px;border-radius:15px}
+.nfc-alert--gift{background:#24372c;border-color:#56755f}.nfc-alert--info{background:#242b3b;border-color:#455473}
+.nfc-alert small{display:block;text-transform:uppercase;letter-spacing:.13em;color:#f0b9cd;font-size:10px;font-weight:800;margin-bottom:6px}
+.nfc-alert--gift small{color:#b5efcb}.nfc-alert strong{display:block;font-size:16px;color:#fff}
+.nfc-alert p{font-size:13px;line-height:1.6;color:#e7dce3;margin:7px 0 0;white-space:pre-wrap}
+.nfc-reward-ready{margin:16px 0 0;background:#244536;border:1px solid #57936c;border-radius:16px;padding:18px;text-align:left}
+.nfc-reward-ready h2{font-size:19px;margin:0 0 7px}.nfc-reward-ready p{font-size:13px;color:#d6f5e0}
+.nfc-ready-button{display:inline-flex;margin-top:8px;color:#15291d;background:#a7e7bd;text-decoration:none;padding:12px 16px;border-radius:10px;font-weight:800;font-size:13px}
 [hidden]{display:none!important}
 </style></head><body><main class="wrapper"><div class="brand">BTS STUDIO · TARJETA DIGITAL</div>
 <div id="card" class="card" data-theme="midnight" hidden><div class="card-top"><b id="brand"></b><span>NFC ◉</span></div><div class="card-center"><small id="kind"></small><strong id="memberName"></strong><span id="subtitle"></span></div><div class="card-bottom"><span id="cardLabel"></span><span id="tier"></span></div></div>
 <div id="info" class="info" hidden><h1 id="program"></h1><p id="description"></p><div id="loyaltyDetails"><div class="stats"><strong id="balance"></strong><small id="units"></small></div><div class="progress"><span id="progress"></span></div><p id="reward"></p><p id="lifetime"></p></div><div id="vipDetails" hidden><p id="benefits"></p><div id="expiry" class="state"></div></div><p class="state" id="status"></p></div>
+<section id="rewardReady" class="nfc-reward-ready" hidden>
+<h2>¡Ya podés retirar tu beneficio!</h2>
+<p id="rewardReadyText">Completaste la meta de tu tarjeta.</p>
+<a class="nfc-ready-button" href="#reward">Ver mi recompensa</a>
+</section>
+<section id="notices" class="nfc-alerts" aria-label="Novedades de mi tarjeta" hidden></section>
 <p id="loading" class="state" role="status">Buscando tu tarjeta digital…</p><div class="footer">TARJETA DIGITAL ADMINISTRADA POR BTS STUDIO</div></main>
 <script>
 (()=>{'use strict';
@@ -27,7 +41,7 @@ async function load(){
  document.documentElement.style.setProperty('--accent',/^#[0-9a-f]{6}$/i.test(c.accent_color||'')?c.accent_color:'#af4568');
  $('card').dataset.theme=c.card_theme||'midnight';
  $('brand').textContent=c.brand_name;$('memberName').textContent=c.member_name;$('cardLabel').textContent=c.card_label;
- $('kind').textContent=c.kind==='vip'?'MEMBRESÍA VIP':'FIDELIZACIÓN';$('tier').textContent=c.kind==='vip'?c.vip_tier:'CLUB REWARDS';
+ $('kind').textContent=c.kind==='vip'?'MEMBRESÍA VIP':c.unit_name==='puntos'?'PUNTOS':c.unit_name==='visitas'?'VISITAS':'FIDELIZACIÓN';$('tier').textContent=c.kind==='vip'?c.vip_tier:'CLUB REWARDS';
  $('subtitle').textContent=c.program_title;$('program').textContent=c.program_title;$('description').textContent=c.program_description;
  $('loyaltyDetails').hidden=c.kind==='vip';$('vipDetails').hidden=c.kind!=='vip';
  if(c.kind==='vip'){
@@ -41,10 +55,34 @@ async function load(){
   $('units').textContent=c.unit_name||'compras';
   $('progress').style.width=Math.min(100,current/goal*100)+'%';
   $('reward').textContent=current>=goal?'¡Alcanzaste tu premio! Consultá al negocio para canjear '+c.reward_label+'.':'Premio al llegar a la meta: '+c.reward_label;
+  $('reward').id='reward';
+  const ready=c.member_active&&current>=goal;
+  $('rewardReady').hidden=!ready;
+  if(ready)$('rewardReadyText').textContent='Completaste '+goal+' '+(c.unit_name||'compras')+'. Tu beneficio: '+c.reward_label+'. Mostrá esta tarjeta al negocio para retirarlo.';
   $('lifetime').textContent='Acumulación histórica: '+c.lifetime_units+' · Premios canjeados: '+c.redeemed_count;
   $('status').textContent=c.member_active?'Tarjeta activa':'Tarjeta suspendida';
  }
  $('loading').hidden=true;$('card').hidden=false;$('info').hidden=false;
+ // Los avisos se consultan con el token del escaneo y no revelan la identidad de otros clientes.
+ try{
+  const nr=await fetch(BASE+'/rest/v1/rpc/bts_reward_public_notices',{
+   method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Accept:'application/json'},
+   body:JSON.stringify({p_card_code:code}),cache:'no-store'
+  });
+  if(nr.ok){
+   const notices=await nr.json(),host=$('notices');host.replaceChildren();
+   for(const n of Array.isArray(notices)?notices:[]){
+    const type=['promotion','gift','info'].includes(n.notice_type)?n.notice_type:'info';
+    const box=document.createElement('article');box.className='nfc-alert nfc-alert--'+type;
+    const category=document.createElement('small');category.textContent={promotion:'Promoción',gift:'Regalía especial',info:'Información'}[type];
+    const title=document.createElement('strong');title.textContent=n.notice_title;
+    const detail=document.createElement('p');detail.textContent=n.notice_message;
+    box.append(category,title,detail);host.append(box);
+   }
+   host.hidden=!host.childElementCount;
+  }
+ }catch(_){/* La tarjeta sigue funcionando aunque falle la consulta de novedades. */}
+
  }catch(e){error('No se pudo cargar la tarjeta. Probá nuevamente.')}
 }
 load();
