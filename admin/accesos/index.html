@@ -38,9 +38,13 @@
 @media print {
  @page{size:A4;margin:17mm}
  html,body{background:#fff!important;color:#000!important}
- body *{visibility:hidden!important}
- #batchReport,#batchReport *{visibility:visible!important}
- #batchReport{position:absolute!important;left:0!important;top:0!important;width:100%!important;border:0!important;box-shadow:none!important;border-radius:0!important;margin:0!important;padding:0!important;display:block!important}
+ body > main.wrap{max-width:none!important;margin:0!important;padding:0!important}
+ body > main.wrap > :not(#batchStep){display:none!important}
+ #batchStep{display:block!important;overflow:visible!important;border:0!important;margin:0!important;padding:0!important;background:#fff!important}
+ #batchStep > summary{display:none!important}
+ #batchStep > .step-body{padding:0!important;display:block!important;background:#fff!important}
+ #batchStep > .step-body > :not(#batchReport){display:none!important}
+ #batchReport{display:block!important;position:static!important;width:100%!important;border:0!important;box-shadow:none!important;border-radius:0!important;margin:0!important;padding:0!important}
  #batchReport .batch-hide-print{display:none!important}
  #batchReport .scroller{overflow:visible!important}
  #batchReport .batch-report-table{min-width:0!important}
