@@ -63,6 +63,13 @@ Deno.serve(async(req:Request)=>{
     slug=String(body.slug||"").trim().toLowerCase();
     if(!validSlug(slug))return json({error:"El enlace debe tener un identificador válido de 3–48 caracteres, sin espacios."},400,origin);
     if(name.length<2||name.length>90)return json({error:"Ingresá el nombre del negocio (2–90 caracteres)"},400,origin);
+    // Preferir la empresa existente en lugar de crear registros duplicados por nombre o URL.
+    const bySlug=await doRequest("/rest/v1/bts_nfc_cards?slug=eq."+encodeURIComponent(slug)+"&select=id,slug,business_name&limit=1");
+    if(bySlug?.length)return json({ok:false,already_exists:true,error:"Ya existe una empresa con ese enlace. Seleccionala en el listado de BTS."},409,origin);
+    const existingBusinesses=await doRequest("/rest/v1/bts_nfc_cards?select=id,slug,business_name&limit=1000");
+    if(existingBusinesses.some((x:any)=>String(x.business_name||"").trim().toLocaleLowerCase("es")===name.toLocaleLowerCase("es"))){
+      return json({ok:false,already_exists:true,error:"Ya registraste una empresa con ese nombre. Elegila en BTS en vez de crearla otra vez."},409,origin);
+    }
     const created=await doRequest("/rest/v1/bts_nfc_cards",{method:"POST",body:{slug,business_name:name,is_active:true,nfc_category:"normal",links:[]}});
     businessId=created?.[0]?.id||"";if(!businessId)throw Error("No se pudo crear la empresa");
     companyCreated=true;
@@ -72,6 +79,21 @@ Deno.serve(async(req:Request)=>{
     const found=await doRequest("/rest/v1/bts_nfc_cards?id=eq."+encodeURIComponent(businessId)+"&select=id,slug,business_name,is_active&limit=1");
     if(!found?.[0]?.is_active)return json({error:"Empresa no encontrada o suspendida"},404,origin);
     slug=found[0].slug;
+   }
+   // No crear un segundo usuario propietario para una empresa que ya tiene panel.
+   // Incluye los accesos suspendidos: deben reactivarse, no duplicarse.
+   const already=await doRequest("/rest/v1/bts_business_users?business_id=eq."+encodeURIComponent(businessId)+"&select=user_id,display_email,role,is_active&order=created_at.asc&limit=20");
+   if(Array.isArray(already)&&already.length){
+     if(companyCreated&&businessId){
+       try{await doRequest("/rest/v1/bts_nfc_cards?id=eq."+encodeURIComponent(businessId),{method:"DELETE"})}
+       catch(e){console.error("Duplicate setup rollback:",errMessage(e))}
+       companyCreated=false;businessId="";
+     }
+     return json({ok:false,already_exists:true,
+       error:"Esta empresa ya tiene un mini panel. Utilizá su acceso existente; no se creará otro usuario.",
+       panel_url:panelUrl(slug),usernames:already.map(x=>x.display_email),
+       existing_active:already.some(x=>x.is_active)
+     },409,origin);
    }
    // Cada panel obtiene un usuario propio, no una cuenta de la plataforma Supabase.
    const username=("bts-"+slug.slice(0,16)+"-"+randomHex(3)).toLowerCase();
