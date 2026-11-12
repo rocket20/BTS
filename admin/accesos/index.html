@@ -20,13 +20,28 @@
 <strong>Acceso generado para entregar a la empresa</strong><p class="muted">Copiá las credenciales ahora. La contraseña solo se mostrará al generarla.</p>
 <div class="controls"><label class="field">Enlace del mini panel<input id="generatedUrl" readonly></label><label class="field">Usuario<input id="generatedUsername" readonly></label><label class="field">Contraseña temporal<input id="generatedPassword" readonly></label><button class="btn" id="copyGenerated" type="button">Copiar acceso</button></div>
 </div></section>
+<section class="panel" id="programSetupPanel">
+ <div class="toolbar"><div><h2>Configurar tarjetas para una empresa</h2>
+ <p class="muted">El mini panel no puede asignar tarjetas hasta que BTS configure un programa y emita su lote. Esto también sirve para empresas existentes.</p></div></div>
+ <form id="programSetupForm" class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr));margin:15px 0">
+ <label class="field">Empresa<select id="programBusiness" required></select></label>
+ <label class="field">Tipo de servicio<select id="programKind"><option value="loyalty">Tarjeta de fidelización</option><option value="vip">Membresía VIP</option></select></label>
+ <label class="field">Nombre del programa<input id="programTitle" maxlength="85" minlength="2" required placeholder="Ej. Fidelización de clientes"></label>
+ <label class="field" id="programGoalField">Meta de compras/visitas<input id="programGoal" type="number" min="1" max="10000" value="6" required></label>
+ <label class="field" id="programUnitField">Unidad de progreso<select id="programUnit"><option value="compras">Compras</option><option value="visitas">Visitas</option><option value="puntos">Puntos</option></select></label>
+ <label class="field">Beneficio del cliente<input id="programBenefit" minlength="1" maxlength="130" required placeholder="Ej. Corte gratis al completar 6 compras"></label>
+ <label class="field" id="programVipMonthsField" style="display:none">Vigencia VIP en meses<input id="programVipMonths" type="number" min="1" max="60" value="12"></label>
+ <button type="submit" class="btn primary" id="programCreate">Guardar programa de tarjetas</button>
+ </form>
+ <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Para una prueba, podés generar solo tres tarjetas.</p>
+ </section>
 <section class="panel">
 <div class="toolbar"><div><h2>Emisión de lotes NFC · Solo BTS</h2><p class="muted">Elegí empresa y programa. BTS genera códigos únicos por cada tarjeta y los prepara para grabación física. El mini panel solo ve referencias enmascaradas y cupos asignados.</p></div><button type="button" class="btn" id="batchRefresh">Actualizar lotes</button></div>
 <form id="batchForm" class="controls">
 <label class="field">Empresa<select id="batchCompany" required></select></label>
 <label class="field">Programa de tarjetas<select id="batchProgram" required></select></label>
-<label class="field">Cantidad de tarjetas<input id="batchQuantity" type="number" min="1" max="200" value="30" required></label>
-<button type="submit" class="btn primary" id="batchGenerate">Generar lote NFC</button></form>
+<label class="field">Cantidad de tarjetas<input id="batchQuantity" type="number" min="1" max="200" value="30" required></label><button type="button" class="btn" id="batchTestThree" title="Elegir tres tarjetas para un ensayo controlado">Preparar prueba de 3</button>
+<button type="submit" class="btn primary" id="batchGenerate">Generar lote NFC</button></form><p class="muted" id="batchPrerequisite" role="status">Seleccioná una empresa y su programa antes de generar los códigos. Cada código generado forma parte del inventario de BTS.</p>
 <div class="scroller" style="margin-top:15px"><table><thead><tr><th>EMPRESA</th><th>PROGRAMA</th><th>LOTE</th><th>CANTIDAD</th><th>CREADO</th><th>CÓDIGOS BTS</th></tr></thead><tbody id="batchRows"></tbody></table></div>
 <p class="muted">La descarga contiene enlaces que BTS debe grabar en cada chip NFC. No compartás este archivo con el negocio.</p>
 </section>

@@ -26,6 +26,11 @@ function render(){
   const business=businesses.find(b=>b.id===u.business_id);
   const tr=node('tr');
   const first=node('td');first.append(node('strong',business?.business_name||'Empresa no disponible'),node('small',u.business_id));
+  if(business?.slug){
+   const link=node('a','Abrir mini panel');link.href='/negocios/?empresa='+encodeURIComponent(business.slug);
+   link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:inline-block;margin-top:6px;font-size:11px;color:#e989a7';
+   first.append(link);
+  }
   const second=node('td');second.append(node('strong',u.display_email||'Cuenta de empresa'),node('small',u.user_id));
   const third=node('td'),role=node('select');role.className='field';
   for(const [key,label] of [['owner','Propietario'],['manager','Encargado'],['staff','Personal'],['viewer','Solo lectura']])role.add(new Option(label,key));
@@ -139,6 +144,53 @@ function renderBatches(){
   td.append(button);tr.append(td);host.append(tr);
  }
 }
+function syncProgramBusiness(){
+ const el=$('programBusiness'),old=el.value;el.replaceChildren();
+ for(const b of businesses.filter(b=>b.is_active))el.add(new Option(b.business_name,b.id));
+ if(businesses.some(b=>b.id===old&&b.is_active))el.value=old;
+}
+function setProgramKind(){
+ const vip=$('programKind').value==='vip';
+ $('programGoalField').style.display=vip?'none':'';
+ $('programUnitField').style.display=vip?'none':'';
+ $('programVipMonthsField').style.display=vip?'':'none';
+ $('programGoal').required=!vip;
+ if(!$('programTitle').dataset.manual){
+  const company=businesses.find(b=>b.id===$('programBusiness').value)?.business_name||'';
+  $('programTitle').value=(vip?'VIP · ':'Fidelización · ')+company.slice(0,65);
+ }
+ $('programSetupHint').textContent=vip?'BTS creará un programa VIP. Luego generá el lote de tarjetas desde la sección siguiente.':'BTS creará el programa de recompensas. Después generá un lote de tarjetas para que el negocio pueda asignarlas.';
+}
+async function createRewardProgram(e){
+ e.preventDefault();
+ const businessId=$('programBusiness').value,kind=$('programKind').value,company=businesses.find(b=>b.id===businessId);
+ const button=$('programCreate');button.disabled=true;
+ try{
+  if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
+  const title=$('programTitle').value.trim(),benefit=$('programBenefit').value.trim();
+  if(title.length<2||title.length>85)throw Error('El nombre del programa debe tener entre 2 y 85 caracteres.');
+  if(!benefit||benefit.length>130)throw Error('Revisá el beneficio de la tarjeta.');
+  if(!['loyalty','vip'].includes(kind))throw Error('Tipo de programa inválido.');
+  const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.is_active&&p.kind===kind);
+  if(existing.length&&!confirm('Esta empresa ya tiene '+existing.length+' programa(s) de este tipo. ¿Crear otro distinto?'))return;
+  const goal=Number($('programGoal').value),months=Number($('programVipMonths').value);
+  if(kind==='loyalty'&&(!Number.isInteger(goal)||goal<1||goal>10000))throw Error('La meta debe estar entre 1 y 10000.');
+  if(kind==='vip'&&(!Number.isInteger(months)||months<1||months>60))throw Error('La vigencia VIP debe estar entre 1 y 60 meses.');
+  if(!confirm('¿Crear el programa '+title+' para '+company.business_name+'? No se generarán tarjetas hasta que BTS emita un lote.'))return;
+  const payload={business_id:businessId,kind,title,reward_label:benefit,is_active:true};
+  if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=$('programUnit').value;payload.units_per_visit=1;}
+  if(kind==='vip'){payload.vip_benefits=benefit;payload.vip_validity_months=months;}
+  const rows=await api('bts_reward_programs','POST',payload);
+  if(!rows?.[0]?.id)throw Error('No se recibió confirmación del programa.');
+  await loadBatches();
+  $('batchCompany').value=businessId;
+  setBatchPrograms();
+  $('batchProgram').value=rows[0].id;
+  $('batchQuantity').value='3';
+  $('programSetupHint').textContent='Programa listo. Elegí cantidad y presioná «Generar lote NFC» más abajo. Para prueba recomendamos 3 tarjetas.';
+  notice('Programa creado. Falta emitir el lote de tarjetas desde BTS.');
+ }catch(err){notice('No se pudo crear el programa: '+err.message,true)}finally{button.disabled=false}
+}
 function setBatchPrograms(){
  const businessId=$('batchCompany').value,sel=$('batchProgram'),old=sel.value;
  sel.replaceChildren();
@@ -189,7 +241,7 @@ async function load(){
   if(businesses.some(x=>x.id===previous&&x.is_active))$('provisionCompany').value=previous;
   $('passwordUser').replaceChildren();
   for(const row of users)$('passwordUser').add(new Option((row.display_email||row.user_id)+' · '+(businesses.find(x=>x.id===row.business_id)?.business_name||'Empresa'),row.user_id));
-  render();await loadSupport();await loadBatches();notice(users.length+' accesos empresariales registrados.');
+  render();syncProgramBusiness();setProgramKind();await loadSupport();await loadBatches();notice(users.length+' accesos empresariales registrados.');
  }catch(e){notice('Error al consultar accesos: '+e.message,true)}
 }
 async function init(){
@@ -207,7 +259,12 @@ async function init(){
    const msg='Enlace: '+$('generatedUrl').value+'\nUsuario: '+$('generatedUsername').value+'\nContraseña: '+$('generatedPassword').value;
    try{await navigator.clipboard.writeText(msg);notice('Acceso copiado. Compartilo por un canal seguro.')}catch{notice('Copiá las credenciales manualmente.',true)}
   };
-  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;$('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;$('batchCompany').onchange=setBatchPrograms;mode();await load();
+  $('reload').onclick=load;$('reloadSupport').onclick=loadSupport;$('programSetupForm').onsubmit=createRewardProgram;
+  $('programBusiness').onchange=setProgramKind;
+  $('programKind').onchange=setProgramKind;
+  $('programTitle').oninput=()=>{$('programTitle').dataset.manual='1'};
+  $('batchTestThree').onclick=()=>{$('batchQuantity').value='3';$('batchPrerequisite').textContent='Prueba preparada: 3 códigos únicos se emitirán únicamente después de presionar «Generar lote NFC» y confirmar.'};
+  $('batchForm').onsubmit=generateBatch;$('batchRefresh').onclick=loadBatches;$('batchCompany').onchange=setBatchPrograms;mode();await load();
  }catch(e){notice(e.message,true);$('createPanel').disabled=true;$('reload').disabled=true}
 }
 init();
