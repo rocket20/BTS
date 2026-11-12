@@ -45,7 +45,7 @@ function render(){
 }
 function renderSupport(){
  const host=$('supportRows');host.replaceChildren();
- if(!support.length){const tr=node('tr'),td=node('td','Todavía no hay solicitudes empresariales.');td.colSpan=5;tr.append(td);host.append(tr);return}
+ if(!support.some(x=>x.business_id===selectedBusinessId)){const tr=node('tr'),td=node('td','Esta empresa no tiene solicitudes de soporte.');td.colSpan=5;tr.append(td);host.append(tr);return}
  for(const item of support.filter(x=>x.business_id===selectedBusinessId)){
   const tr=node('tr'),company=businesses.find(b=>b.id===item.business_id);
   const c=node('td',company?.business_name||'Empresa'),subject=node('td');
@@ -71,6 +71,13 @@ async function loadSupport(){
 
 
 function selectedBusiness(){return businesses.find(b=>b.id===selectedBusinessId)||null}
+function syncPasswordUsers(){
+ const el=$('passwordUser'),old=el.value;el.replaceChildren();
+ for(const u of users.filter(x=>x.business_id===selectedBusinessId))
+  el.add(new Option((u.display_email||u.user_id)+(u.is_active?'':' · suspendido'),u.user_id));
+ if([...el.options].some(o=>o.value===old))el.value=old;
+ $('resetBusinessPassword').disabled=!el.options.length;
+}
 function panelUrl(b){return '/negocios/?empresa='+encodeURIComponent(b?.slug||'')}
 function applyBusinessSelection(id,clearCredentials=true){
  selectedBusinessId=id;
@@ -79,7 +86,7 @@ function applyBusinessSelection(id,clearCredentials=true){
  $('companyPicker').value=id;
  $('provisionMode').value=b?'create_access':'create_company';
  mode();
- syncProgramBusiness();
+ syncProgramBusiness();syncPasswordUsers();
  if(b){$('programBusiness').value=b.id;$('batchCompany').value=b.id;setProgramKind();setBatchPrograms()}
  renderCompany();
  render();renderBatches();renderSupport();
@@ -177,7 +184,7 @@ function mode(){
  $('newCompanyField').style.display=isNew?'':'none';
  $('newSlugField').style.display=isNew?'':'none';
  $('existingCompanyField').style.display=isNew?'none':'';
- $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=!isNew;
+ $('newCompanyName').required=isNew;$('newCompanySlug').required=isNew;$('provisionCompany').required=false;
 }
 async function createPanel(e){
  e.preventDefault();
@@ -343,9 +350,7 @@ async function load(){
   const select=$('provisionCompany');select.replaceChildren();
   for(const business of businesses.filter(b=>b.is_active))select.add(new Option(business.business_name,business.id));
   if(selectedBusinessId!=='__new__')select.value=selectedBusinessId;
-  const password=$('passwordUser');password.replaceChildren();
-  for(const row of users.filter(u=>u.business_id===selectedBusinessId))
-   password.add(new Option((row.display_email||row.user_id)+(row.is_active?'':' · suspendido'),row.user_id));
+  syncPasswordUsers();
   const bSelected=selectedBusiness();
   $('provisionMode').value=bSelected?'create_access':'create_company';
   mode();
