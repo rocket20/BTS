@@ -27,7 +27,7 @@ function render(){
   const tr=node('tr');
   const first=node('td');first.append(node('strong',business?.business_name||'Empresa no disponible'),node('small',u.business_id));
   if(business?.slug){
-   const link=node('a','Abrir mini panel');link.href='../..'+'/negocios/?empresa='+encodeURIComponent(business.slug);
+   const link=node('a','Abrir mini panel');link.href='/negocios/?empresa='+encodeURIComponent(business.slug);
    link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:inline-block;margin-top:6px;font-size:11px;color:#e989a7';
    first.append(link);
   }
