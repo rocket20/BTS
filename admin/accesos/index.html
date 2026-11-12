@@ -7,6 +7,51 @@
 @media(max-width:780px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:14px 10px}.panel{padding:14px}}
 @media(max-width:470px){.controls{grid-template-columns:1fr}}
 .company-picker{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.company-picker .field{flex:1;min-width:220px}.company-summary{margin-top:16px;padding:17px;border:1px solid #46414c;border-radius:13px;background:#14151c}.company-summary h2{margin:0 0 7px}.company-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.company-stat{border:1px solid #403943;border-radius:11px;background:#1d1d27;padding:12px}.company-stat strong{display:block;font-size:21px;line-height:1.3}.company-stat small{color:#aaa2ad}.step{border:1px solid #393540;border-radius:15px;background:#1b1c24;margin:12px 0;overflow:hidden}.step>summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 21px;list-style:none;font-size:16px;font-weight:800}.step>summary::-webkit-details-marker{display:none}.step>summary:after{content:"⌄";font-size:19px;color:#d889a0}.step[open]>summary{border-bottom:1px solid #373540}.step[open]>summary:after{transform:rotate(180deg)}.step-body{padding:17px 21px}.step>.panel{border:0;margin:0;border-radius:0;background:transparent}.step-state{color:#b2aab5;font-size:11px;font-weight:600}.existing-panel{margin:14px 0;padding:16px;border:1px solid #3d594c;background:#17231f;border-radius:12px}.existing-panel strong{color:#bde6ce}.existing-panel .btn{display:inline-block;text-decoration:none;margin-top:10px}.help-line{font-size:12px;color:#bbb0bc;margin:6px 0 12px}.panel[hidden],.controls[hidden],form[hidden],div[hidden]{display:none!important}@media(max-width:650px){.company-stats{grid-template-columns:repeat(3,1fr);gap:5px}.company-stat{padding:8px}.company-stat strong{font-size:17px}.step>summary{padding:13px;flex-wrap:wrap}.step-body{padding:13px}}
+.batch-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}.batch-head h3{font-size:18px;margin:0}
+.batch-list{display:grid;gap:12px}
+.batch-lot{background:#14141c;border:1px solid #453d47;border-radius:15px;padding:17px}
+.batch-lot-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.batch-lot h3{font-size:16px;margin:4px 0 0}.batch-lot-kicker{font-size:11px;color:#e59db3;letter-spacing:.1em;font-weight:750}
+.batch-lot-info{display:flex;flex-wrap:wrap;gap:8px 18px;margin:13px 0;color:#c2b9c3;font-size:12px}
+.batch-lot-actions{display:flex;flex-wrap:wrap;gap:8px}
+.batch-lot-actions .btn{font-size:12px;padding:9px 13px;min-height:39px}
+.batch-status{font-size:11px;font-weight:750;padding:6px 10px;border-radius:100px;border:1px solid #645261;background:#2e2330;color:#f4bbcb}
+.batch-status--sent{background:#1d3d2e;border-color:#3a6750;color:#b7e8c8}
+.batch-report{margin-top:18px;background:#fff;color:#191822;border-radius:14px;border:1px solid #ded8df;padding:25px}
+.batch-report[hidden]{display:none!important}
+.batch-report-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.batch-report-brand{font-size:10px;letter-spacing:.18em;color:#972646;font-weight:900}
+.batch-report h2{font-size:25px;letter-spacing:-.04em;color:#171621;margin:6px 0}
+.batch-report .muted{color:#726773}
+.batch-report-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.batch-report-stat{padding:12px;background:#f6f3f6;border:1px solid #e7dfe6;border-radius:10px;min-width:0;overflow-wrap:anywhere}
+.batch-report-stat strong{display:block;font-size:14px;color:#241b25}
+.batch-report-stat small{display:block;color:#6e6370;font-size:10px;letter-spacing:.05em}
+.batch-report-controls{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.batch-report .btn{border-color:#c7b9c4;color:#4c3441;background:#f9f4f7}
+.batch-report .btn.primary{background:#a9274a;border-color:#a9274a;color:#fff}
+.batch-report-table{min-width:0}
+.batch-report-table th,.batch-report-table td{border-bottom:1px solid #ece5ec;padding:11px 9px;color:#27202b;font-size:12px}
+.batch-report-table th{color:#685a68}
+.batch-report-foot{border-top:1px solid #e5dfe4;margin-top:18px;padding-top:10px;font-size:11px;color:#817481}
+@media(max-width:650px){.batch-report{padding:15px}.batch-report-stats{grid-template-columns:1fr}.batch-lot-actions .btn{flex:1}.batch-report-head{flex-direction:column}}
+@media print {
+ @page{size:A4;margin:17mm}
+ html,body{background:#fff!important;color:#000!important}
+ body > main.wrap{max-width:none!important;margin:0!important;padding:0!important}
+ body > main.wrap > :not(#batchStep){display:none!important}
+ #batchStep{display:block!important;overflow:visible!important;border:0!important;margin:0!important;padding:0!important;background:#fff!important}
+ #batchStep > summary{display:none!important}
+ #batchStep > .step-body{padding:0!important;display:block!important;background:#fff!important}
+ #batchStep > .step-body > :not(#batchReport){display:none!important}
+ #batchReport{display:block!important;position:static!important;width:100%!important;border:0!important;box-shadow:none!important;border-radius:0!important;margin:0!important;padding:0!important}
+ #batchReport .batch-hide-print{display:none!important}
+ #batchReport .scroller{overflow:visible!important}
+ #batchReport .batch-report-table{min-width:0!important}
+ #batchReport thead{display:table-header-group}
+ #batchReport tr{break-inside:avoid}
+ #batchReport .batch-report-stat{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style><link rel="stylesheet" href="./notifications.css"></head><body><main class="wrap">
 <header><div class="eyebrow">BTS STUDIO / TARJETAS NFC</div><h1>Empresas y tarjetas.</h1><p class="muted">Elegí una empresa. BTS te indica si ya tiene su panel, beneficios y tarjetas; no necesitás volver a crear lo que ya existe.</p></header>
 <div id="notice" role="status" class="status">Comprobando permisos...</div>
@@ -64,14 +109,28 @@
 </div></details>
 <details class="step" id="batchStep"><summary><span>3. Tarjetas NFC del negocio</span><span class="step-state" id="batchStepStatus">Sin revisar</span></summary>
 <div class="step-body"><section class="panel">
-<div class="toolbar"><div><h2>Crear lote de tarjetas · Solo BTS</h2><p class="muted">Elegí empresa y programa. BTS genera códigos únicos por cada tarjeta y los prepara para grabación física. El mini panel solo ve referencias enmascaradas y cupos asignados.</p></div><button type="button" class="btn" id="batchRefresh">Actualizar lotes</button></div>
+<div class="toolbar"><div><h2>Pedidos y lotes de tarjetas NFC</h2><p class="muted">Generá tarjetas, revisá su ficha y envialas al mini panel solo cuando estés listo. Los códigos privados quedan únicamente en BTS para grabar los chips.</p></div><button type="button" class="btn" id="batchRefresh">Actualizar lotes</button></div>
 <form id="batchForm" class="controls">
 <label class="field">Empresa<select id="batchCompany" required></select></label>
 <label class="field">Programa de tarjetas<select id="batchProgram" required></select></label>
 <label class="field">Cantidad de tarjetas<input id="batchQuantity" type="number" min="1" max="200" value="30" required></label><button type="button" class="btn" id="batchTestThree" title="Elegir tres tarjetas para un ensayo controlado">Preparar prueba de 3</button>
-<button type="submit" class="btn primary" id="batchGenerate">Generar lote NFC</button></form><p class="muted" id="batchPrerequisite" role="status">Seleccioná una empresa y su programa antes de generar los códigos. Cada código generado forma parte del inventario de BTS.</p>
-<div class="scroller" style="margin-top:15px"><table><thead><tr><th>EMPRESA</th><th>PROGRAMA</th><th>LOTE</th><th>CANTIDAD</th><th>CREADO</th><th>CÓDIGOS BTS</th></tr></thead><tbody id="batchRows"></tbody></table></div>
-<p class="muted">La descarga contiene enlaces que BTS debe grabar en cada chip NFC. No compartás este archivo con el negocio.</p>
+<button type="submit" class="btn primary" id="batchGenerate">Generar lote para revisar</button></form><p class="muted" id="batchPrerequisite" role="status">Al generar, las tarjetas quedan en BTS como pendientes. Para que la empresa pueda asignarlas, abrí la ficha y presioná «Enviar al mini panel».</p>
+<div class="batch-head"><div><h3>Lotes de esta empresa</h3><p class="muted">Cada lote se conserva con su historial. Podés generar tantos lotes adicionales como necesites.</p></div></div>
+<div id="batchRows" class="batch-list" aria-live="polite"></div>
+<section id="batchReport" class="batch-report" hidden aria-labelledby="batchReportTitle">
+  <div class="batch-report-head"><div><div class="batch-report-brand">BTS STUDIO / INVENTARIO NFC</div><h2 id="batchReportTitle">Ficha del lote</h2><p id="batchReportSubtitle" class="muted">Documento de control</p></div><button type="button" id="batchReportClose" class="btn batch-hide-print">Cerrar ficha</button></div>
+  <div class="batch-report-stats" id="batchReportStats"></div>
+  <div class="batch-report-controls batch-hide-print">
+    <button type="button" class="btn primary" id="batchReportPrint">Imprimir / Guardar como PDF</button>
+    <button type="button" class="btn" id="batchReportPrivate">Descargar CSV privado · Solo BTS</button>
+    <button type="button" class="btn" id="batchReportSend">Enviar al mini panel</button>
+    <button type="button" class="btn" id="batchReportAdd">+ Agregar más tarjetas</button>
+  </div>
+  <p id="batchReportInfo" class="muted"></p>
+  <div class="scroller"><table class="batch-report-table"><thead><tr><th>N.º</th><th>REFERENCIA BTS</th><th>ASIGNACIÓN</th></tr></thead><tbody id="batchReportRows"></tbody></table></div>
+  <p class="batch-report-foot">Documento de control interno. No contiene códigos NFC secretos ni enlaces de grabación.</p>
+</section>
+<p class="muted">El CSV contiene los códigos privados necesarios para grabar los chips y permanece exclusivo de BTS. La ficha imprimible solo muestra referencias y estado del lote.</p>
 </section>
 </div></details>
 <details class="step" id="advancedStep"><summary><span>Otras herramientas</span><span class="step-state">Usuarios, contraseñas y soporte</span></summary>
