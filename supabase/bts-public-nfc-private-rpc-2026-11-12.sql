@@ -21,7 +21,7 @@ AS $function$
   join public.bts_nfc_cards c on c.id=e.company_id
   where c.slug=p_company_slug and c.is_active and e.card_code=p_card_code and e.is_active
   limit 1
-$function$
+$function$;
 revoke all on function bts_scan_impl.bts_nfc_public_executive(text, text) from public,anon,authenticated;
 grant execute on function bts_scan_impl.bts_nfc_public_executive(text, text) to anon,authenticated;
 CREATE OR REPLACE FUNCTION public.bts_nfc_public_executive(p_company_slug text, p_card_code text)
@@ -55,7 +55,7 @@ AS $function$
    and m.card_code=p_card_code and p.is_active and b.is_active
    and (inv.id is null or inv.status='assigned')
  limit 1
-$function$
+$function$;
 revoke all on function bts_scan_impl.bts_reward_public_card(text) from public,anon,authenticated;
 grant execute on function bts_scan_impl.bts_reward_public_card(text) to anon,authenticated;
 CREATE OR REPLACE FUNCTION public.bts_reward_public_card(p_card_code text)
@@ -88,7 +88,7 @@ AS $function$
    and n.is_active and (n.starts_on is null or n.starts_on<=current_date)
    and (n.ends_on is null or n.ends_on>=current_date)
  order by n.created_at desc limit 5
-$function$
+$function$;
 revoke all on function bts_scan_impl.bts_reward_public_notices(text) from public,anon,authenticated;
 grant execute on function bts_scan_impl.bts_reward_public_notices(text) to anon,authenticated;
 CREATE OR REPLACE FUNCTION public.bts_reward_public_notices(p_card_code text)
