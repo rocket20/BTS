@@ -187,7 +187,7 @@ function renderCompany(){
   const note=node('p','Programas de esta empresa:');
   list.append(note);
   for(const p of programs){
-   const line=node('div',p.title+' · '+(p.kind==='vip'?'VIP':p.kind==='loyalty'?'Fidelización':'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
+   const names={purchases:'Compras',visits:'Visitas',points:'Puntos',vip:'VIP'};const line=node('div',p.title+' · '+(names[p.card_category]||'Programa')+(p.is_active?' · Activo':' · Inactivo'),'help-line');
    list.append(line);
   }
  }
@@ -394,44 +394,50 @@ function syncProgramBusiness(){
  if(businesses.some(b=>b.id===old&&b.is_active))el.value=old;
 }
 function setProgramKind(){
- const vip=$('programKind').value==='vip';
+ const type=$('programKind').value,vip=type==='vip';
  $('programGoalField').style.display=vip?'none':'';
  $('programUnitField').style.display=vip?'none':'';
  $('programVipMonthsField').style.display=vip?'':'none';
- $('programGoal').required=!vip;
+ $('programEarnField').style.display=type==='points'?'':'none';
+ $('programGoal').required=!vip;$('programEarn').required=type==='points';
+ $('programUnit').value=type==='purchases'?'compras':type==='visits'?'visitas':type==='points'?'puntos':'membresía';
+ const names={purchases:'Fidelización',visits:'Visitas',points:'Puntos',vip:'VIP'};
  if(!$('programTitle').dataset.manual){
   const company=selectedBusiness()?.business_name||'';
-  $('programTitle').value=(vip?'VIP · ':'Fidelización · ')+company.slice(0,65);
+  $('programTitle').value=names[type]+' · '+company.slice(0,65);
  }
- $('programSetupHint').textContent=vip?'BTS creará un programa VIP. Luego generá el lote de tarjetas desde la sección siguiente.':'BTS creará el programa de recompensas. Después generá un lote de tarjetas para que el negocio pueda asignarlas.';
+ $('programSetupHint').textContent=vip?'La membresía ofrece beneficios y vigencia. BTS generará sus tarjetas VIP al emitir un lote.':
+ type==='points'?'Definí los puntos que se obtienen por operación y la meta para retirar el premio.':
+ 'Elegí cuántas '+$('programUnit').value+' debe completar el cliente para obtener el beneficio.';
 }
 async function createRewardProgram(e){
  e.preventDefault();
- const businessId=selectedBusinessId,kind=$('programKind').value,company=selectedBusiness();
+ const businessId=selectedBusinessId,category=$('programKind').value,kind=category==='vip'?'vip':'loyalty',company=selectedBusiness();
  const button=$('programCreate');button.disabled=true;
  try{
   if(!company?.is_active)throw Error('Seleccioná una empresa activa.');
   const title=$('programTitle').value.trim(),benefit=$('programBenefit').value.trim();
   if(title.length<2||title.length>85)throw Error('El nombre del programa debe tener entre 2 y 85 caracteres.');
   if(!benefit||benefit.length>130)throw Error('Revisá el beneficio de la tarjeta.');
-  if(!['loyalty','vip'].includes(kind))throw Error('Tipo de programa inválido.');
-  const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.is_active&&p.kind===kind);
+  if(!['purchases','visits','points','vip'].includes(category))throw Error('Tipo de tarjeta inválido.');
+  const existing=batchPrograms.filter(p=>p.business_id===businessId&&p.card_category===category);
   if(existing.length){
    const another=await confirmBTS({title:'Ya existe un programa de este tipo',message:'Esta empresa ya tiene '+existing.length+' programa(s) activos de esta categoría.',
     details:[{label:'Empresa',value:company.business_name},{label:'Programas existentes',value:String(existing.length)}],
     confirmText:'Crear otro programa',type:'warning',note:'Si querés usar el programa existente, cancelá y elegilo al generar el lote.'});
    if(!another)return;
   }
-  const goal=Number($('programGoal').value),months=Number($('programVipMonths').value);
+  const goal=Number($('programGoal').value),months=Number($('programVipMonths').value),earn=Number($('programEarn').value);
   if(kind==='loyalty'&&(!Number.isInteger(goal)||goal<1||goal>10000))throw Error('La meta debe estar entre 1 y 10000.');
   if(kind==='vip'&&(!Number.isInteger(months)||months<1||months>60))throw Error('La vigencia VIP debe estar entre 1 y 60 meses.');
+  if(category==='points'&&(!Number.isInteger(earn)||earn<1||earn>1000))throw Error('Los puntos por compra deben estar entre 1 y 1000.');
   const approved=await confirmBTS({
    title:'Configurar programa de tarjetas',message:'El programa quedará disponible para esta empresa, pero todavía no se emitirán códigos NFC.',
    details:[{label:'Empresa',value:company.business_name},{label:'Programa',value:title},{label:'Tipo',value:kind==='vip'?'Membresía VIP':'Fidelización'},{label:'Beneficio',value:benefit}],
    confirmText:'Sí, crear programa',type:'info'
   });if(!approved)return;
-  const payload={business_id:businessId,kind,title,reward_label:benefit,is_active:true};
-  if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=$('programUnit').value;payload.units_per_visit=1;}
+  const payload={business_id:businessId,kind,card_category:category,title,reward_label:benefit,is_active:true};
+  if(kind==='loyalty'){payload.goal_units=goal;payload.unit_name=category==='visits'?'visitas':category==='points'?'puntos':'compras';payload.units_per_visit=category==='points'?earn:1;}
   if(kind==='vip'){payload.vip_benefits=benefit;payload.vip_validity_months=months;}
   const rows=await api('bts_reward_programs','POST',payload);
   if(!rows?.[0]?.id)throw Error('No se recibió confirmación del programa.');
@@ -448,7 +454,7 @@ async function createRewardProgram(e){
 function setBatchPrograms(){
  const businessId=selectedBusinessId,sel=$('batchProgram'),old=sel.value;
  sel.replaceChildren();
- for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+(p.kind==='vip'?'VIP':'Fidelización'),p.id));
+ for(const p of batchPrograms.filter(x=>x.business_id===businessId&&x.is_active))sel.add(new Option(p.title+' · '+({purchases:'Compras',visits:'Visitas',points:'Puntos',vip:'VIP'}[p.card_category]||'Tarjeta'),p.id));
  if([...sel.options].some(o=>o.value===old))sel.value=old;
  if(!sel.options.length)sel.add(new Option('Sin programas activos',''));
  sel.disabled=!batchPrograms.some(x=>x.business_id===businessId&&x.is_active);
@@ -457,7 +463,7 @@ function setBatchPrograms(){
 async function loadBatches(){
  try{
   const [programs,batches,cards]=await Promise.all([
-   api('bts_reward_programs?select=id,business_id,kind,title,is_active&order=created_at.desc&limit=500'),
+   api('bts_reward_programs?select=id,business_id,kind,card_category,title,is_active&order=created_at.desc&limit=500'),
    api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at,released_at,released_by&order=created_at.desc&limit=500'),
    api('bts_nfc_inventory?select=id,batch_id,business_id,number,status,reference&order=created_at.desc&limit=5000')
   ]);
