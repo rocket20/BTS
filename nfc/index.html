@@ -23,11 +23,12 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 </style>
 <link rel="stylesheet" href="./skins.css?v=20261109-miniweb3">
 <link rel="stylesheet" href="./corporate.css?v=20261109-compact2">
+<link rel="stylesheet" href="./logistics.css?v=20261113-premium1">
 </head>
 <body>
 <main class="nfc-page">
 <section id="profile" hidden>
- <header class="nfc-hero"><div class="avatar" id="avatar" aria-hidden="true" hidden></div><div class="nfc-intro"><h1 id="name"></h1><p class="tagline" id="tagline"></p><div class="nfc-business-meta" id="nfcBusinessMeta"><span class="nfc-business-role" id="nfcBusinessRole" hidden></span><span class="nfc-business-location" id="nfcBusinessLocation" hidden></span><div class="nfc-business-tags" id="nfcBusinessTags"></div></div><div class="pill">Conectá con nosotros</div></div></header>
+ <header class="nfc-hero"><div class="avatar" id="avatar" aria-hidden="true" hidden></div><div class="nfc-intro"><h1 id="name"></h1><p class="tagline" id="tagline"></p><div class="nfc-business-meta" id="nfcBusinessMeta"><span class="nfc-business-role" id="nfcBusinessRole" hidden></span><span class="nfc-business-location" id="nfcBusinessLocation" hidden></span><div class="nfc-business-tags" id="nfcBusinessTags"></div></div><div class="pill">Conectá con nosotros</div><a id="nfcPremiumCTA" class="nfc-premium-cta" hidden target="_blank" rel="noopener noreferrer nofollow"><span class="cta-symbol" aria-hidden="true">✧</span><span>CONECTÁ CON NOSOTROS</span><span class="cta-arrow" aria-hidden="true">→</span></a></div></header>
  <div class="nfc-corporate-actions" id="nfcCorporateActions"><a class="nfc-save-contact" id="nfcSaveContact" href="#" download="contacto.vcf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg> Guardar contacto</a><button class="nfc-contact-share" id="nfcContactShare" type="button" title="Compartir tarjeta" aria-label="Compartir tarjeta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 14v6h14v-6"/></svg></button></div>
  <nav class="nfc-socials" id="socials" aria-label="Redes sociales"></nav>
  <div class="nfc-content"><section class="nfc-card nfc-primary"><div class="nfc-section-header"><h2>Explorá nuestros enlaces</h2><span>ENLACES</span></div><nav class="links" id="links" aria-label="Enlaces del negocio"></nav></section><aside class="nfc-card nfc-featured"><div class="nfc-section-header"><h2>Contacto y destacados</h2></div><div id="featured" class="nfc-featured-list"></div><div class="nfc-about"><strong>Acerca de nosotros</strong><span id="about"></span></div></aside></div>
@@ -45,7 +46,7 @@ const qs=new URLSearchParams(location.search),previewMode=qs.get('preview')==='1
 const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
 const cardCode=String(qs.get('card')||'').toLowerCase().trim();
 const status=$('message');
-const ALLOWED=['classic','glass','creator','business','food','beauty','portfolio','realestate','wellness'];
+const ALLOWED=['classic','glass','logistics','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
 function validHex(v,fallback){return /^#[a-f\d]{6}$/i.test(String(v||''))?v:fallback;}
@@ -191,6 +192,13 @@ function applyCard(c){
   img.onerror=showInitials;cont.append(img);
  }else if(isExecutive){showInitials();}
  const links=Array.isArray(c.links)?c.links:[];
+ const cta=$('nfcPremiumCTA');cta.hidden=true;cta.removeAttribute('href');
+ if(template==='logistics'){
+   const contactLink=links.find(l=>l&&l.type==='whatsapp'&&safeUrl(l.url))
+    ||links.find(l=>l&&['website','phone'].includes(l.type)&&safeUrl(l.url))
+    ||links.find(l=>l&&safeUrl(l.url));
+   if(contactLink){cta.href=safeUrl(contactLink.url);cta.hidden=false;}
+ }
  const nav=$('links'),social=$('socials'),featured=$('featured');nav.replaceChildren();social.replaceChildren();featured.replaceChildren();
  const socialTypes=new Set(['instagram','facebook','tiktok','whatsapp','youtube','linkedin','x','telegram','pinterest','spotify','threads','snapchat','behance','github']);
  for(const l of links){
