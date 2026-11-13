@@ -65,7 +65,7 @@ function interfaceUI(){
   finally{adminSubmit.disabled=false;adminPassword.value="";updateLoginType();}
  });
  updateLoginType();
- const logout=document.createElement("button");logout.type="button";logout.className="bts-admin-logout";logout.textContent="Salir";logout.title="Cerrar sesión de Supabase";logout.addEventListener("click",reset);
+ const logout=document.createElement("button");logout.type="button";logout.className="bts-admin-logout";logout.textContent="Salir";logout.title="Cerrar sesión de BTS Studio";logout.addEventListener("click",reset);
  document.querySelector(".top-actions")?.appendChild(logout);
 }
 async function decode(res){
@@ -97,7 +97,7 @@ async function verifyAdmin(){
  const uid=session?.user?.id;
  if(!uid)throw Error("No se pudo verificar la identidad");
  const rows=await api("/rest/v1/bts_admins?select=user_id&user_id=eq."+encodeURIComponent(uid));
- if(!Array.isArray(rows)||rows.length===0)throw Error("Este usuario no tiene acceso administrativo. Verificá bts_admins en Supabase.");
+ if(!Array.isArray(rows)||rows.length===0)throw Error("Esta cuenta no tiene acceso administrativo a BTS Studio.");
 }
 async function activate(){
  await verifyAdmin();
