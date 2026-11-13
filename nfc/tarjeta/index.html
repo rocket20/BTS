@@ -15,7 +15,7 @@
 .nfc-reward-ready h2{font-size:19px;margin:0 0 7px}.nfc-reward-ready p{font-size:13px;color:#d6f5e0}
 .nfc-ready-button{display:inline-flex;margin-top:8px;color:#15291d;background:#a7e7bd;text-decoration:none;padding:12px 16px;border-radius:10px;font-weight:800;font-size:13px}
 [hidden]{display:none!important}
-</style></head><body><main class="wrapper"><div class="brand">BTS STUDIO · TARJETA DIGITAL</div>
+</style><link rel="stylesheet" href="../shared-card-design.css"></head><body><main class="wrapper"><div class="brand">BTS STUDIO · TARJETA DIGITAL</div>
 <div id="card" class="card" data-theme="midnight" hidden><div class="card-top"><b id="brand"></b><span>NFC ◉</span></div><div class="card-center"><small id="kind"></small><strong id="memberName"></strong><span id="subtitle"></span></div><div class="card-bottom"><span id="cardLabel"></span><span id="tier"></span></div></div>
 <div id="info" class="info" hidden><h1 id="program"></h1><p id="description"></p><div id="loyaltyDetails"><div class="stats"><strong id="balance"></strong><small id="units"></small></div><div class="progress"><span id="progress"></span></div><p id="reward"></p><p id="lifetime"></p></div><div id="vipDetails" hidden><p id="benefits"></p><div id="expiry" class="state"></div></div><p class="state" id="status"></p></div>
 <section id="rewardReady" class="nfc-reward-ready" hidden>
@@ -25,7 +25,7 @@
 </section>
 <section id="notices" class="nfc-alerts" aria-label="Novedades de mi tarjeta" hidden></section>
 <p id="loading" class="state" role="status">Buscando tu tarjeta digital…</p><div class="footer">TARJETA DIGITAL ADMINISTRADA POR BTS STUDIO</div></main>
-<script>
+<script src="../shared-card-design.js"></script><script>
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const $=id=>document.getElementById(id),code=String(new URLSearchParams(location.search).get('card')||'').trim().toLowerCase();
@@ -63,6 +63,27 @@ async function load(){
   $('status').textContent=c.member_active?'Tarjeta activa':'Tarjeta suspendida';
  }
  $('loading').hidden=true;$('card').hidden=false;$('info').hidden=false;
+ // La estética es una consulta opcional. Nunca se bloquean recompensas si falla.
+ try{
+  const sr=await fetch(BASE+'/rest/v1/rpc/bts_reward_public_style',{
+   method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Accept:'application/json'},
+   body:JSON.stringify({p_card_code:code}),cache:'no-store'
+  });
+  if(sr.ok){
+   const styles=await sr.json(),style=Array.isArray(styles)?styles[0]:null;
+   if(style&&window.BTSCardDesign)window.BTSCardDesign.apply($('card'),{
+    card_gradient_enabled:style.gradient_enabled,
+    card_gradient_from:style.gradient_from,
+    card_gradient_to:style.gradient_to,
+    card_gradient_angle:style.gradient_angle,
+    card_logo_path:style.logo_path,
+    card_logo_opacity:style.logo_opacity,
+    card_logo_scale:style.logo_scale,
+    card_text_color:style.text_color
+   });
+  }
+ }catch(_){/* Sin cambio: mantiene el estilo original de la tarjeta. */}
+
  // Los avisos se consultan con el token del escaneo y no revelan la identidad de otros clientes.
  try{
   const nr=await fetch(BASE+'/rest/v1/rpc/bts_reward_public_notices',{
