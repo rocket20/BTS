@@ -79,7 +79,7 @@ function cellValue(item,key){
 function render(){
  document.querySelectorAll('.tab').forEach(t=>{const active=t.dataset.section===state.section;t.classList.toggle('active',active);t.setAttribute('aria-current',active?'page':'false')});
  $('sectionTitle').textContent=names[state.section];
- $('sectionDesc').textContent=state.section==='audit'?'Movimientos de los registros ERP, con autor y fecha.':'Datos sincronizados con Supabase y visibles únicamente para administradores BTS.';
+ $('sectionDesc').textContent=state.section==='audit'?'Movimientos de los registros ERP, con autor y fecha.':'Información privada disponible para administradores autorizados de BTS.';
  $('add').hidden=state.section==='audit';$('add').textContent='+ '+(state.section==='clients'?'Nuevo cliente':state.section==='services'?'Nuevo servicio':state.section==='transactions'?'Nuevo movimiento':state.section==='cards'?'Nueva tarjeta':'Nuevo ticket');
  $('filter').replaceChildren(new Option('Todos los estados',''),...(filters[state.section]||[]).map(x=>new Option(x.replaceAll('_',' '),x)));
  $('search').value='';
