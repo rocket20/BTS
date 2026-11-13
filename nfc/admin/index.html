@@ -57,6 +57,11 @@ html.nfc-embedded .layout{gap:16px}
 #nfcCorporateFields input{width:100%;min-width:0;background:#101216;color:#f5f6f8;border:1px solid #44494f;border-radius:9px;padding:10px 12px}
 #nfcCorporateFields .field small{display:block;color:#aeb6be;font-size:11px;margin-top:4px}
 @media(max-width:540px){#nfcCorporateFields .nfc-custom-grid{grid-template-columns:1fr}}
+
+/* Logistics Premium: mayor alto de previsualización para ver el logo, CTA y redes sin recortes. */
+html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:650px}
+html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-preview-screen{height:690px}
+@media(max-width:700px){html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:590px}}
 </style><link rel="stylesheet" href="../../admin/shared-panel-theme.css"></head>
 <body><main class="shell">
 <header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
@@ -214,7 +219,7 @@ const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7f
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
 function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim()};}
 function chooseTemplate(id,apply=true){
- if(!COLORS[id])id='classic';$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
+ if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
  $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=['classic','logistics'].includes(id)?'pill':'soft';if(id==='business')$('nfcIconStyle').value='mono';}
  for(const b of $('nfcTemplateGrid').querySelectorAll('button')){b.classList.toggle('selected',b.dataset.template===id);b.setAttribute('aria-pressed',String(b.dataset.template===id));}
