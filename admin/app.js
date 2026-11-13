@@ -45,7 +45,7 @@ async function updateGoogleMetrics(){
  const gaNote=document.getElementById('gaLiveNotice');
  if(gaNote)gaNote.textContent=googleReportStatus==='ready'?
   'Datos reales de Google Analytics 4: propiedad 562792478 · últimos 30 días.':
-  'Reportes GA4 pendientes: '+(googleError||'Falta autorizar la lectura de datos desde Supabase')+'. El seguimiento G-LY7K0LHLTC ya está configurado en la web.';
+  'Reportes GA4 pendientes: '+(googleError||'La conexión con Google Analytics todavía no está autorizada')+'. El seguimiento G-LY7K0LHLTC ya está configurado en la web.';
  renderKpis();renderChart();status();
 }
 
@@ -89,7 +89,7 @@ for(const [i,folder] of NFC_FOLDERS.entries()){
  });
 }
 function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc')selectNfcFolder(currentNfcFolder);if(name==='erp'){const f=$('#btsErpFrame');if(f&&!f.getAttribute('src'))f.src=f.dataset.src;}if(name==='accesos'){const f=$('#btsAccessFrame');if(f&&!f.getAttribute('src'))f.src=f.dataset.src;}window.BTSAdminAudit?.open(name);}
-function status(){const configured=true,connected=!!window.BTSLeads?.invokePublisher;$('#modePill').textContent=connected?'● SUPABASE CONFIGURADO':'● MODO BORRADOR';$('#modePill').style.color=connected?'#72daa5':'';$('#connectionLabel').textContent=connected?'Supabase protege la publicación':'Modo de preparación';$('#repoStatus').textContent=connected?'Verificar función':'No conectado';$('#cmsStatus').textContent=connected?'Pendiente de prueba':'Pendiente';$('#gaStatus').textContent=googleReportStatus==='ready'?'GA4 conectado':content.brand.analyticsId?'ID configurado · informes pendientes':'Sin ID';$('#navLeadCount').textContent=leads.filter(l=>l.status==='Pendiente').length;}
+function status(){const configured=true,connected=!!window.BTSLeads?.invokePublisher;$('#modePill').textContent=connected?'● PANEL CONECTADO':'● EDICIÓN LOCAL';$('#modePill').style.color=connected?'#72daa5':'';$('#connectionLabel').textContent=connected?'Publicación con acceso protegido':'Edición sin conexión';$('#repoStatus').textContent=connected?'Verificar función':'No conectado';$('#cmsStatus').textContent=connected?'Sin verificar':'Pendiente';$('#gaStatus').textContent=googleReportStatus==='ready'?'GA4 conectado':content.brand.analyticsId?'ID configurado · informes pendientes':'Sin ID';$('#navLeadCount').textContent=leads.filter(l=>l.status==='Pendiente').length;}
 function renderKpis(){
  const icon=(name)=>'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="icons/lucide-'+(name==='users-round'||name==='eye'?'ui':'content')+'.svg#'+name+'"></use></svg>';
  const ready=googleReportStatus==='ready'&&googleReport;
@@ -97,8 +97,8 @@ function renderKpis(){
  const items=[
   ['Vistas de página',ready?pretty(googleReport.pageViews):'—','eye',ready?'Últimos 30 días · GA4':pendingFoot,ready?'ga':'pending'],
   ['Visitantes únicos',ready?pretty(googleReport.users):'—','users-round',ready?'Últimos 30 días · GA4':pendingFoot,ready?'ga':'pending'],
-  ['Solicitudes registradas',String(leads.length),'clipboard-list','Registros en Supabase','cloud'],
-  ['Clics a WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Supabase · últimos 30 días':ready?'Eventos GA4 · 30 días':'Sin datos de eventos',whatsappClicks!==null?'cloud':ready?'ga':'pending']
+  ['Solicitudes registradas',String(leads.length),'clipboard-list','Solicitudes guardadas','cloud'],
+  ['Clics a WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Registro de actividad · 30 días':ready?'Eventos GA4 · 30 días':'Sin datos de eventos',whatsappClicks!==null?'cloud':ready?'ga':'pending']
  ];
  const overview=$('#overviewKpis');
  const key=items.map(x=>x[0]).join('|');
@@ -119,14 +119,14 @@ function renderKpis(){
  const other=[
   ['Visitantes',ready?pretty(googleReport.users):'—','users-round',ready?'Google Analytics 4':pendingFoot],
   ['Sesiones',ready?pretty(googleReport.sessions):'—','eye',ready?'Últimos 30 días · GA4':pendingFoot],
-  ['Clics WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Supabase · 30 días':ready?'Eventos GA4':pendingFoot],
+  ['Clics WhatsApp',whatsappClicks!==null?pretty(whatsappClicks):ready?pretty(googleReport.whatsappClicks):'—','message-circle',whatsappClicks!==null?'Actividad registrada · 30 días':ready?'Eventos GA4':pendingFoot],
   ['Tasa de conversión',conv,'percent',ready?'Solicitudes GA4 / sesiones':pendingFoot]
  ];
  const traffic=$('#trafficKpis');
  traffic.innerHTML=other.map(([label,value,ico,foot])=>`<article class="kpi-card"><div class="kpi-top"><span class="kpi-label">${esc(label)}</span><span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value">${esc(value)}</div><div class="kpi-foot">${ready?'GA4':'PENDIENTE'} · ${esc(foot)}</div></article>`).join('');
  const statusNote=$('#gaLiveNotice');
  if(statusNote){
-  statusNote.textContent=ready?'Conectado con Google Analytics 4 · propiedad '+googleReport.propertyId+' · '+googleReport.period+'.':googleReportStatus==='loading'?'Consultando el informe de Google Analytics 4…':(googleError||'Pendiente: autorizar la cuenta de servicio para leer GA4 de forma segura desde Supabase.');
+  statusNote.textContent=ready?'Conectado con Google Analytics 4 · propiedad '+googleReport.propertyId+' · '+googleReport.period+'.':googleReportStatus==='loading'?'Consultando el informe de Google Analytics 4…':(googleError||'Falta autorizar el acceso seguro a los reportes de Google Analytics.');
  }
 }
 function renderChart(){
@@ -136,7 +136,7 @@ function renderChart(){
   chart.innerHTML='<div class="ghost-placeholder" style="min-height:210px"><strong>Esperando métricas de Google Analytics 4</strong><span>No se mostrarán gráficas de demostración como si fueran datos reales.</span></div>';
   source.innerHTML='<p class="tiny-note">Las fuentes de tráfico se mostrarán cuando se autorice la conexión de Google Analytics.</p>';
   funnel.innerHTML='<p class="tiny-note">El embudo aparecerá con datos verificables de Google Analytics cuando estén disponibles.</p>';
-  $('#chartMode').textContent='GA4 pendiente';$('#chartSub').textContent='sin datos simulados';return;
+  $('#chartMode').textContent='GA4 pendiente';$('#chartSub').textContent='sin reportes disponibles';return;
  }
  $('#chartMode').textContent='GA4 · 7 días';$('#chartSub').textContent='datos GA4';
  const daily=Array.isArray(googleReport.daily)?googleReport.daily:[],W=700,H=218,l=40,r=16,t=14,b=38;

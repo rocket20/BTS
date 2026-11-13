@@ -118,7 +118,7 @@
  <label class="field" id="programVipMonthsField" style="display:none">Vigencia VIP en meses<input id="programVipMonths" type="number" min="1" max="60" value="12"></label>
  <button type="submit" class="btn primary" id="programCreate">Guardar tipo de tarjeta</button>
  </form>
- <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Para una prueba, podés generar solo tres tarjetas.</p>
+ <p class="muted" id="programSetupHint" role="status">Una vez configurado, seleccioná esta empresa en Emisión de lotes NFC. Podés comenzar con un lote de tres tarjetas y ampliarlo cuando lo necesités.</p>
  </section>
 <section class="panel" id="adminCardDesignPanel">
  <div class="toolbar"><div><h2>Diseño de las tarjetas</h2><p class="muted">Logo, colores y degradado de los programas de esta empresa. El cliente también puede personalizarlos desde su mini panel.</p></div></div>
@@ -144,7 +144,7 @@
 <form id="batchForm" class="controls">
 <label class="field">Empresa<select id="batchCompany" required></select></label>
 <label class="field">Programa de tarjetas<select id="batchProgram" required></select></label>
-<label class="field">Cantidad de tarjetas<input id="batchQuantity" type="number" min="1" max="200" value="30" required></label><button type="button" class="btn" id="batchTestThree" title="Elegir tres tarjetas para un ensayo controlado">Preparar prueba de 3</button>
+<label class="field">Cantidad de tarjetas<input id="batchQuantity" type="number" min="1" max="200" value="30" required></label><button type="button" class="btn" id="batchTestThree" title="Elegir tres tarjetas para un ensayo controlado">Seleccionar 3 tarjetas</button>
 <button type="submit" class="btn primary" id="batchGenerate">Generar lote para revisar</button></form><p class="muted" id="batchPrerequisite" role="status">Al generar, las tarjetas quedan en BTS como pendientes. Para que la empresa pueda asignarlas, abrí la ficha y presioná «Enviar al mini panel».</p>
 <div class="batch-head"><div><h3>Lotes de esta empresa</h3><p class="muted">Cada lote se conserva con su historial. Podés generar tantos lotes adicionales como necesites.</p></div></div>
 <div id="batchRows" class="batch-list" aria-live="polite"></div>
