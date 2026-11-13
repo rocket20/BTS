@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const STORE='bts-business-session-v1',$=id=>document.getElementById(id);
-const state={session:null,assignments:[],business:null,role:'viewer',programs:[],members:[],movements:[],checkins:[],promos:[],tickets:[],inventory:[],notices:[],tab:'programs'};
+const state={session:null,assignments:[],business:null,role:'viewer',programs:[],members:[],movements:[],checkins:[],promos:[],tickets:[],inventory:[],notices:[],tab:'programs',cardEditor:null};
 const nameRole={owner:'Propietario',manager:'Encargado',staff:'Personal',viewer:'Consulta'};
 const $node=(tag,txt,cls)=>{const x=document.createElement(tag);if(txt!==undefined)x.textContent=String(txt);if(cls)x.className=cls;return x};
 const iso=()=>new Date().toISOString().slice(0,10),date=s=>s?new Date(s.slice(0,10)+'T12:00:00').toLocaleDateString('es-NI'):'Sin fecha';
@@ -65,6 +65,8 @@ async function selectBusiness(id){
  $('roleLabel').textContent='Cuenta empresarial · '+nameRole[a.role];
  const canManage=['owner','manager'].includes(a.role),canCheckin=['owner','manager','staff'].includes(a.role);
  $('assignCardForm').hidden=!canManage;
+ $('businessCardDesign').hidden=!canManage;
+ $('businessDesignReadonly').classList.toggle('hidden',canManage);
  $('promoForm').classList.toggle('hidden',!canManage);
  $('noticesForm').classList.toggle('hidden',!canManage);
  $('noticesPermission').textContent=canManage?'Podés publicar y pausar avisos':'Avisos de solo lectura';
@@ -91,6 +93,7 @@ function render(){
   programs.append(entry(p.title,category+' · '+detail,p.is_active?'Activo':'Suspendido',p.is_active));
  }
  renderMembers();renderAssignable();renderLoyalty();renderPromos();renderNotices();renderVIP();renderSupport();
+ if(state.cardEditor)state.cardEditor.setPrograms(state.programs.map(p=>({...p,business_name:state.business?.business_name})));
 }
 function renderMembers(){
  const host=$('memberRows'),q=$('memberSearch').value.trim().toLowerCase();
@@ -343,7 +346,7 @@ function renderSupport(){
 async function loadBusiness(){
  const id=state.business?.id;if(!id)return;msg('Cargando datos privados de '+state.business.business_name+'...');
  try{
-  const programs=await api('bts_reward_programs?business_id=eq.'+encodeURIComponent(id)+'&select=id,kind,card_category,title,goal_units,unit_name,units_per_visit,reward_label,vip_benefits,vip_validity_months,is_active&order=created_at.desc&limit=100');
+  const programs=await api('bts_reward_programs?business_id=eq.'+encodeURIComponent(id)+'&select=id,business_id,kind,card_category,title,goal_units,unit_name,units_per_visit,reward_label,vip_benefits,vip_validity_months,is_active,card_gradient_enabled,card_gradient_from,card_gradient_to,card_gradient_angle,card_logo_path,card_logo_opacity,card_logo_scale,card_text_color&order=created_at.desc&limit=100');
   state.programs=programs||[];
   const pids=programs.map(x=>x.id);
   const param=pids.length?'program_id=in.('+pids.map(encodeURIComponent).join(',')+')':'program_id=eq.00000000-0000-0000-0000-000000000000';
@@ -390,7 +393,7 @@ async function submitVIP(e){
  finally{b.disabled=false}
 }
 function selectTab(tab){
- const valid=['programs','members','loyalty','promotions','notices','vip','support'];
+ const valid=['programs','members','loyalty','promotions','design','notices','vip','support'];
  if(!valid.includes(tab))tab='programs';
  state.tab=tab;
  document.querySelectorAll('[data-tab]').forEach(n=>{
@@ -402,7 +405,28 @@ function selectTab(tab){
  if(heading)heading.setAttribute('tabindex','-1');
  try{history.replaceState(null,'','#'+tab)}catch(_){}
 }
+function initializeDesignEditor(){
+ state.cardEditor=BTSCardEditor.mount('businessCardDesign',{
+  getUser:async()=>({id:state.session?.user?.id,token:await refresh()}),
+  save:async(programId,design)=>{
+   const program=state.programs.find(p=>p.id===programId);
+   if(!program||!state.business||program.business_id!==state.business.id)throw Error('Programa no pertenece a tu empresa');
+   return api('rpc/bts_business_set_card_design','POST',{
+    p_program_id:programId,p_gradient_enabled:design.card_gradient_enabled,
+    p_gradient_from:design.card_gradient_from,p_gradient_to:design.card_gradient_to,
+    p_gradient_angle:design.card_gradient_angle,p_logo_path:design.card_logo_path,
+    p_logo_opacity:design.card_logo_opacity,p_logo_scale:design.card_logo_scale,
+    p_text_color:design.card_text_color
+   });
+  },
+  onSaved:(id,design)=>{
+   state.programs=state.programs.map(p=>p.id===id?{...p,...design}:p);
+   success('Diseño guardado','La tarjeta pública mostrará los colores y el logo que configuraste.');
+  }
+ });
+}
 async function boot(){
+ initializeDesignEditor();
  const prefillKey='bts-business-login-prefill-v1';
  try{const candidate=sessionStorage.getItem(prefillKey);if(candidate&&/^bts-[a-z0-9-]{5,}$/.test(candidate))$('loginForm').elements.namedItem('email').value=candidate;sessionStorage.removeItem(prefillKey)}catch(_){}
  $('loginForm').addEventListener('submit',login);$('logout').onclick=logout;

@@ -1,0 +1,20 @@
+/* Solo las tarjetas que usan el editor de BTS; no afecta otras piezas de UI. */
+.bts-card-watermark{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;
+ background-position:center center!important;background-repeat:no-repeat!important;filter:none!important}
+.bts-card-custom:before{opacity:.05!important}
+.bts-card-custom :is(.card-top,.card-center,.card-bottom,.physical-top,.physical-center,.physical-bottom,.back-center){position:relative;z-index:1}
+.bts-design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.bts-design-grid .bts-design-wide{grid-column:1/-1}
+.bts-design-control{display:grid;gap:5px;font-size:12px;font-weight:700}
+.bts-design-control input[type=color]{min-height:45px;width:100%;padding:4px}
+.bts-design-control input[type=range]{width:100%;accent-color:#aa2d51}
+.bts-design-preview{position:relative;width:min(100%,425px);aspect-ratio:85.6/53.98;border-radius:17px;padding:20px;overflow:hidden;
+ display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#22242f,#16171f);color:#fff;border:1px solid #68616b;box-shadow:0 16px 45px #0004}
+.bts-design-preview .preview-top,.bts-design-preview .preview-mid,.bts-design-preview .preview-bottom{position:relative;z-index:1}
+.bts-design-preview .preview-top,.bts-design-preview .preview-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px}
+.bts-design-preview .preview-mid{display:grid;gap:5px}.bts-design-preview .preview-mid strong{font-size:clamp(21px,4vw,30px);line-height:1.1}
+.bts-design-muted{font-size:12px;color:var(--muted,#aaa);line-height:1.55}
+.bts-design-actions{display:flex;gap:8px;flex-wrap:wrap}
+.bts-design-actions button{min-width:120px}
+@media(max-width:650px){.bts-design-grid{grid-template-columns:1fr}.bts-design-grid .bts-design-wide{grid-column:auto}}
+@media print{.bts-card-watermark{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
