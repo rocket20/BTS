@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="950" viewBox="0 0 1600 950" fill="none" role="img" aria-label="Red de conexiones y transporte internacional">
+<defs>
+ <linearGradient id="sky" x1="120" y1="40" x2="1440" y2="960" gradientUnits="userSpaceOnUse"><stop stop-color="#092d79"/><stop offset=".37" stop-color="#091b59"/><stop offset=".75" stop-color="#281169"/><stop offset="1" stop-color="#4c128c"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#02bdff" stop-opacity=".55"/><stop offset=".5" stop-color="#0759fa" stop-opacity=".13"/><stop offset="1" stop-color="#0759fa" stop-opacity="0"/></radialGradient>
+ <linearGradient id="wave" x1="0" y1="0" x2="1500" y2="780"><stop stop-color="#00e2ff"/><stop offset=".32" stop-color="#146ef8"/><stop offset=".76" stop-color="#8a37ff"/><stop offset="1" stop-color="#bd2cff"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="720" x2="0" y2="950"><stop stop-color="#263e9e" stop-opacity=".05"/><stop offset="1" stop-color="#071338" stop-opacity=".85"/></linearGradient>
+ <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.45" fill="#44a7ff" opacity=".75"/></pattern>
+ <filter id="soft"><feGaussianBlur stdDeviation="14"/></filter>
+ <filter id="glow"><feGaussianBlur stdDeviation="4"/></filter>
+ <clipPath id="mapShapes">
+  <path d="M150 264l45-29 66-15 28-40 91-21 63 24 38 29-6 37-47 23-19 40-53 13-17 37-48-6-23 60-42-19-19-50-46-11-29-42-29-14z"/>
+  <path d="M395 412l57 31 38 77-8 74 22 45-35 77-39 36-24-46 3-64-42-41-2-49-31-71z"/>
+  <path d="M651 208l52-41 73 5 42 29 60-11 38 21 33-18 60 22 42-21 99 21 73-5 64 44 41 4 40 38-37 44-88-18-38 26-69-14-13 38-64-1-33-30-53 12-27-40-67-3-57-48-54 6z"/>
+  <path d="M746 356l62-15 66 41 29 70-20 77-47 67-28 49-40-27-1-68-42-65-7-72z"/>
+  <path d="M1197 574l54-20 65 13 69 46-24 36-69-4-24 22-73-29z"/>
+  <path d="M1398 200l26 8 17 26-20 26-29-21z"/>
+ </clipPath>
+</defs>
+<rect width="1600" height="950" fill="url(#sky)"/>
+<ellipse cx="165" cy="340" rx="610" ry="445" fill="url(#halo)"/>
+<ellipse cx="1420" cy="676" rx="620" ry="400" fill="#8d31ff" opacity=".2" filter="url(#soft)"/>
+<ellipse cx="950" cy="856" rx="780" ry="250" fill="#264fff" opacity=".24" filter="url(#soft)"/>
+<!-- atmospheric route ribbons -->
+<path d="M-118 238C291-122 628 166 966 103S1471-1 1701 87" stroke="#0fc8ff" stroke-opacity=".33" stroke-width="64" filter="url(#soft)"/>
+<path d="M-118 236C291-118 628 168 966 104S1471 0 1701 87" stroke="url(#wave)" stroke-width="3.5" stroke-opacity=".76"/>
+<path d="M-85 282C334-49 625 219 982 154S1433 58 1644 136" stroke="#23a5ff" stroke-width="1.2" stroke-opacity=".45"/>
+<path d="M-89 796C332 654 510 898 825 773S1363 628 1680 713" stroke="#ad25ff" stroke-opacity=".6" stroke-width="56" filter="url(#soft)"/>
+<path d="M-89 796C332 654 510 898 825 773S1363 628 1680 713" stroke="url(#wave)" stroke-opacity=".95" stroke-width="3.4"/>
+<path d="M-22 830C337 712 550 942 875 809S1407 680 1640 755" stroke="#4fd6ff" stroke-opacity=".63" stroke-width="1.2"/>
+<!-- world map is schematic, not navigational -->
+<g clip-path="url(#mapShapes)"><rect x="130" y="145" width="1340" height="610" fill="url(#dots)" opacity=".66"/></g>
+<g stroke="#62c5ff" stroke-width="1.35" stroke-opacity=".42">
+<path d="M245 290Q650 65 1130 306"/>
+<path d="M410 479Q675 204 1040 281"/>
+<path d="M754 281Q980 125 1241 319"/>
+<path d="M872 504Q1030 246 1360 393"/>
+</g>
+<g fill="#b5f5ff"><circle cx="245" cy="290" r="4.5"/><circle cx="410" cy="479" r="4"/><circle cx="754" cy="281" r="5"/><circle cx="1130" cy="306" r="4.3"/><circle cx="1241" cy="319" r="4.5"/><circle cx="1360" cy="393" r="4"/></g>
+<g fill="#3cf8ff" opacity=".85"><circle cx="245" cy="290" r="15" fill-opacity=".25" filter="url(#glow)"/><circle cx="1130" cy="306" r="14" fill-opacity=".4" filter="url(#glow)"/></g>
+<g opacity=".5" stroke="#88c7ff"><path d="M0 693H1600M0 771H1600" stroke-opacity=".16"/><path d="M0 842H1600" stroke-opacity=".22"/></g>
+<rect x="0" y="645" width="1600" height="305" fill="url(#water)"/>
+<!-- port cranes and stacked containers on horizon -->
+<g opacity=".52" stroke="#44a5dc" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M45 746V612L193 588 268 607M193 588L205 745M77 615L185 588M105 742L105 611M246 609V745M200 606V667M191 665H209" />
+ <path d="M251 744V632L373 601 423 618M373 601L382 744M280 636L369 603M310 740L310 629M419 615V738"/>
+ <path d="M112 750H475M151 714H332M145 681H317"/>
+</g>
+<g opacity=".63">
+ <rect x="30" y="756" width="145" height="43" rx="3" fill="#1d458f" stroke="#267be8"/>
+ <rect x="187" y="756" width="122" height="43" rx="3" fill="#224e98" stroke="#267be8"/>
+ <rect x="108" y="712" width="138" height="40" rx="2" fill="#24427e" stroke="#4c91ff"/>
+ <path d="M41 774H160M196 774H300M121 733H234" stroke="#71a4ff" stroke-opacity=".35"/>
+</g>
+<!-- container vessel silhouette right -->
+<g opacity=".65">
+ <path d="M1218 691H1564L1498 773H1300L1218 691Z" fill="#0a1a4a" stroke="#5076db" stroke-width="3"/>
+ <path d="M1260 654H1523V692H1260Z" fill="#172e71" stroke="#6688e7" stroke-width="2"/>
+ <path d="M1276 617H1525V654H1276Z" fill="#203884" stroke="#6688e7" stroke-width="2"/>
+ <path d="M1306 582H1488V616H1306Z" fill="#263d83" stroke="#6688e7" stroke-width="2"/>
+ <path d="M1430 549H1485L1510 583H1430Z" fill="#19326a" stroke="#6ba4ff"/>
+ <path d="M1463 549V515L1530 542" stroke="#83d7ff" stroke-width="3"/>
+ <path d="M1287 637H1515M1317 596H1480M1301 671H1511" stroke="#5e8bd2" stroke-opacity=".5"/>
+ <circle cx="1408" cy="737" r="3" fill="#00d7ff"/><circle cx="1450" cy="737" r="3" fill="#bd57ff"/>
+</g>
+<!-- cargo truck, discreet at lower right -->
+<g transform="translate(1012 767)" opacity=".87">
+ <path d="M0 2H211V91H0Z" fill="#193b81" stroke="#7c9eee" stroke-width="3"/>
+ <path d="M210 26H252L284 59V91H210Z" fill="#1e367b" stroke="#8bcaff" stroke-width="3"/>
+ <path d="M247 37L268 60H224V37Z" fill="#63b7fa" fill-opacity=".45"/>
+ <path d="M220 91H290M0 91H211" stroke="#b6d4ff" stroke-width="4"/>
+ <circle cx="52" cy="95" r="19" fill="#101943" stroke="#7fc6ff" stroke-width="3"/>
+ <circle cx="217" cy="95" r="19" fill="#101943" stroke="#7fc6ff" stroke-width="3"/>
+ <circle cx="268" cy="95" r="19" fill="#101943" stroke="#7fc6ff" stroke-width="3"/>
+ <path d="M11 22H195" stroke="#4fcfff" stroke-opacity=".35"/>
+ <circle cx="284" cy="72" r="6" fill="#e5faff"/>
+</g>
+<!-- airplane upper-right, subtle -->
+<g transform="translate(1230 415) rotate(-13)" opacity=".65" fill="#9cdefe">
+ <path d="M0 23 86 5 144 10 167 21 141 29 85 27 0 34 15 25Z"/>
+ <path d="M66 25 25 58 47 60 102 26Z"/>
+ <path d="M81 20 49 -13 69 -14 116 18Z"/>
+ <path d="M22 27 10 42 27 41 51 27Z"/>
+</g>
+<path d="M1488 456Q1407 479 1344 515" stroke="#62b6ff" stroke-opacity=".32" stroke-width="3" stroke-dasharray="3 9"/>
+</svg>
