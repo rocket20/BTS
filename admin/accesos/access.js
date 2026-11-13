@@ -1,7 +1,7 @@
 /* BTS Admin · Asignación segura de usuarios empresariales. */
 (()=>{'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',STORE='bts-admin-sb-session-v1';
-const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],adminNotices=[],selectedBusinessId=null,selectedBatchId=null;
+const $=id=>document.getElementById(id);let users=[],businesses=[],support=[],batchRows=[],batchPrograms=[],inventory=[],adminNotices=[],selectedBusinessId=null,selectedBatchId=null,adminBrandEditor=null;
 const notice=(text,bad=false)=>{
  $('notice').textContent=text;$('notice').classList.toggle('bad',bad);
  if(bad)window.BTSNotify?.toast({title:'No se pudo completar',message:text,type:'error',duration:6500});
@@ -151,6 +151,7 @@ function renderCompany(){
  $('batchCompany').disabled=true;
  $('programBusiness').closest('label').hidden=true;
  $('batchCompany').closest('label').hidden=true;
+ if(adminBrandEditor)adminBrandEditor.setPrograms(programs.map(p=>({...p,business_name:business?.business_name})));
  if(!business){
   $('companySummaryTitle').textContent='Nueva empresa';
   $('companySummaryText').textContent='Ingresá el nombre y el identificador. BTS creará su panel y sus credenciales una sola vez.';
@@ -508,7 +509,7 @@ function setBatchPrograms(){
 async function loadBatches(){
  try{
   const [programs,batches,cards,notices]=await Promise.all([
-   api('bts_reward_programs?select=id,business_id,kind,card_category,title,is_active&order=created_at.desc&limit=500'),
+   api('bts_reward_programs?select=id,business_id,kind,card_category,title,is_active,card_gradient_enabled,card_gradient_from,card_gradient_to,card_gradient_angle,card_logo_path,card_logo_opacity,card_logo_scale,card_text_color&order=created_at.desc&limit=500'),
    api('bts_nfc_batches?select=id,business_id,program_id,quantity,created_at,released_at,released_by&order=created_at.desc&limit=500'),
    api('bts_nfc_inventory?select=id,batch_id,business_id,number,status,reference&order=created_at.desc&limit=5000'),
    selectedBusiness()?api('bts_nfc_card_notices?business_id=eq.'+encodeURIComponent(selectedBusinessId)+'&select=id,business_id,program_id,member_id,notice_type,title,message,is_active,created_at&order=created_at.desc&limit=300'):Promise.resolve([])
@@ -571,11 +572,31 @@ async function load(){
   notice('Información de '+(bSelected?.business_name||'empresas')+' actualizada.');
  }catch(err){notice('No se pudieron consultar las empresas: '+err.message,true)}
 }
+function setupAdminCardDesign(){
+ adminBrandEditor=BTSCardEditor.mount('adminCardDesign',{
+  getUser:async()=>{
+   const s=await api('bts_admins?select=user_id&limit=1');
+   const session=current();
+   if(!session?.user?.id||!s.length)throw Error('Tu cuenta no es administradora.');
+   return {id:session.user.id,token:current().access_token};
+  },
+  save:async(id,design)=>{
+   const program=batchPrograms.find(p=>p.id===id&&p.business_id===selectedBusinessId);
+   if(!program)throw Error('El programa no pertenece a la empresa seleccionada.');
+   await api('bts_reward_programs?id=eq.'+encodeURIComponent(id),'PATCH',design);
+  },
+  onSaved:(id,design)=>{
+   batchPrograms=batchPrograms.map(p=>p.id===id?{...p,...design}:p);
+   success('Diseño publicado','Las tarjetas de '+currentCompanyName()+' ya usan el estilo guardado.');
+  }
+ });
+}
 async function init(){
  try{
   const session=current();if(!session?.user?.id)throw Error('Iniciá sesión desde /admin/ para gestionar accesos.');
   const admins=await api('bts_admins?user_id=eq.'+encodeURIComponent(session.user.id)+'&select=user_id,role&limit=1');
   if(!admins.length||!['owner','admin'].includes(admins[0].role))throw Error('Tu cuenta no tiene acceso de administración BTS.');
+  setupAdminCardDesign();
   $('companyPicker').onchange=e=>{applyBusinessSelection(e.target.value);loadBatches()};
   document.querySelectorAll('[data-go-step]').forEach(btn=>btn.addEventListener('click',()=>{
    const target=$(btn.dataset.goStep);if(!target)return;
