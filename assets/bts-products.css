@@ -64,3 +64,65 @@
 .bps-art:has(.bps-banner-image){min-height:390px;overflow:visible}
 @media(max-width:850px){.bps-art:has(.bps-banner-image){min-height:280px}.bps-banner-image{max-height:325px}}
 @media(max-width:550px){.bps-art:has(.bps-banner-image){min-height:230px}.bps-banner-image{max-height:260px}}
+
+
+/* BTS STUDIO · Presentación editorial limpia · 14 noviembre 2026 */
+.bps-slide-index,.bps-pill-list,.bps-eyebrow{display:none!important}
+.bps-slide-copy h3{margin-top:0}
+.bps-slide-copy p{margin-bottom:32px}
+.bps-slide--badge{min-height:715px;padding-top:0;padding-bottom:0}
+.bps-slide--badge .bps-slide-copy{padding-top:55px;padding-bottom:55px}
+.bps-slide--badge .bps-art,
+.bps-slide--badge .bps-art:has(.bps-banner-image){
+  align-self:stretch;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  min-height:715px;
+  height:715px;
+  margin:0;
+  overflow:visible
+}
+.bps-slide--badge .bps-banner-image{
+  position:relative;
+  display:block;
+  flex:none;
+  width:auto;
+  height:895px;
+  max-width:100%;
+  max-height:none;
+  object-fit:contain;
+  object-position:top center;
+  border-radius:0;
+  margin:0;
+  filter:drop-shadow(0 20px 28px #0006)
+}
+.bps-slide--badge .bps-art::before{
+  inset:12% 2% 4%;
+  filter:blur(42px);
+  background:radial-gradient(ellipse,#781a3140,transparent 65%);
+}
+@media(max-width:950px){
+  .bps-slide--badge{min-height:auto;padding:36px 26px 0;grid-template-columns:1fr}
+  .bps-slide--badge .bps-slide-copy{padding:0}
+  .bps-slide--badge .bps-art,
+  .bps-slide--badge .bps-art:has(.bps-banner-image){
+    width:100%;
+    min-height:0;
+    height:auto;
+    align-items:flex-start;
+    padding-top:18px;
+    overflow:visible
+  }
+  .bps-slide--badge .bps-banner-image{
+    width:min(100%,650px);
+    height:auto;
+    max-height:none
+  }
+}
+@media(max-width:550px){
+  .bps-slide--badge{padding:28px 20px 0}
+  .bps-slide--badge .bps-art,
+  .bps-slide--badge .bps-art:has(.bps-banner-image){padding-top:18px}
+  .bps-slide--badge .bps-banner-image{width:100%;height:auto}
+}
