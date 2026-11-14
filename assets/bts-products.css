@@ -58,3 +58,9 @@
 @media(max-width:850px){.bps-slide{grid-template-columns:1fr;padding:34px 26px 45px;min-height:650px}.bps-art{min-height:290px}.bps-card{width:min(360px,74%)}.bps-badge{height:265px;padding-top:63px}.bps-badge::before{height:48px;top:-42px}.bps-topline h2{font-size:34px}}
 @media(max-width:550px){.bts-product-showcase{padding:55px 0 68px}.bts-product-showcase .bps-shell{width:calc(100% - 28px)}.bps-topline{align-items:start}.bps-topline h2{font-size:26px}.bps-nav{gap:5px}.bps-arrow{height:34px;width:34px;font-size:22px}.bps-slide{padding:26px 20px 35px;min-height:650px}.bps-slide h3{font-size:35px;margin:16px 0}.bps-slide p{font-size:14px;margin-bottom:19px}.bps-pill-list{margin-bottom:23px}.bps-btn{width:100%;padding:13px}.bps-art{min-height:250px}.bps-card .brand{font-size:19px}.bps-card .card-caption{font-size:8px}.bps-card .loyalty-dots i{width:21px;height:21px}.bps-badge{height:245px;padding:53px 12px 15px}.bps-badge .brand{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.bps-track{transition:none}.bps-btn{transition:none}}
+
+/* Mostrar los banners originales sin distorsión */
+.bps-banner-image{display:block;width:100%;max-width:730px;max-height:445px;object-fit:contain;border-radius:14px;filter:drop-shadow(0 25px 30px #0007)}
+.bps-art:has(.bps-banner-image){min-height:390px;overflow:visible}
+@media(max-width:850px){.bps-art:has(.bps-banner-image){min-height:280px}.bps-banner-image{max-height:325px}}
+@media(max-width:550px){.bps-art:has(.bps-banner-image){min-height:230px}.bps-banner-image{max-height:260px}}
