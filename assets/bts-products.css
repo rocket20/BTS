@@ -212,11 +212,9 @@ html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot{
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot[aria-current="true"]{
  background:#fff2f7!important;
 }
-/* The original BTS product PNGs already contain true transparency.
-   Recolor only the visible artwork, retaining pixel-exact positions and sizes
-   for smooth light/dark switches; background stays fully transparent. */
+/* The white mockups are separate transparent assets, never filtered dark artwork. */
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-banner-image{
- filter:invert(1) hue-rotate(180deg) saturate(2.1) contrast(1.09) drop-shadow(0 22px 25px rgba(20,4,12,.28))!important;
+ filter:drop-shadow(0 20px 24px rgba(29,8,19,.18))!important;
 }
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide-index{
  color:#f1bfd0!important;
@@ -235,3 +233,69 @@ html[data-bts-site-theme="light"] .bts-product-showcase .bps-pill-list span{
 /* Stable dimensions for images on both themes while carousel moves. */
 .bts-product-showcase .bps-art .bps-banner-image{object-fit:contain;object-position:center center}
 @media(prefers-reduced-motion:reduce){.bts-product-showcase .bps-banner-image{transition:none!important}}
+
+/* Two transparent images occupy precisely the same artwork box.
+   Fading opacity creates an in-place theme transition with no layout shift. */
+.bts-product-showcase .bps-image-stack{
+ position:relative;
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ grid-template-rows:minmax(0,1fr);
+ align-items:center;
+ justify-items:center;
+ width:100%;
+ max-width:730px;
+ min-width:0;
+ isolation:isolate;
+}
+.bts-product-showcase .bps-image-stack .bps-banner-image{
+ grid-column:1!important;
+ grid-row:1!important;
+ width:100%;
+ height:auto;
+ max-width:100%;
+ max-height:445px;
+ object-fit:contain;
+ object-position:center center;
+ pointer-events:none;
+ transition:opacity .42s ease, filter .42s ease!important;
+}
+.bts-product-showcase .bps-image-stack .bps-banner-dark{opacity:1}
+.bts-product-showcase .bps-image-stack .bps-banner-light{opacity:0}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-image-stack .bps-banner-dark{opacity:0}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-image-stack .bps-banner-light{opacity:1}
+.bts-product-showcase .bps-slide--badge .bps-image-stack{
+ width:100%;
+ height:895px;
+ max-width:100%;
+ align-items:start;
+}
+.bts-product-showcase .bps-slide--badge .bps-image-stack .bps-banner-image{
+ width:auto;
+ height:895px;
+ max-height:none;
+ max-width:100%;
+ object-fit:contain;
+ object-position:top center;
+ margin:0;
+}
+@media(max-width:950px){
+ .bts-product-showcase .bps-slide--badge .bps-image-stack{
+  height:auto;
+ }
+ .bts-product-showcase .bps-slide--badge .bps-image-stack .bps-banner-image{
+  width:min(100%,650px);
+  height:auto;
+  max-height:none;
+ }
+}
+@media(max-width:850px){
+ .bts-product-showcase .bps-image-stack .bps-banner-image{max-height:325px}
+}
+@media(max-width:550px){
+ .bts-product-showcase .bps-image-stack .bps-banner-image{max-height:260px}
+ .bts-product-showcase .bps-slide--badge .bps-image-stack .bps-banner-image{max-height:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .bts-product-showcase .bps-image-stack .bps-banner-image{transition:none!important}
+}
