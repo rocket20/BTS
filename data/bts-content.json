@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-05T20:03:21.294Z",
+  "updatedAt": "2026-11-14T09:56:19.138Z",
   "brand": {
     "studioName": "BTS Studio",
     "heroTitle": "",
@@ -8,7 +8,7 @@
     "contactEmail": "btsstudio.info@gmail.com",
     "whatsapp": "50557775064",
     "instagram": "https://www.instagram.com/btsstudio.ni/?hl=es",
-    "analyticsId": "G-LY7K0LHLTC"
+    "analyticsId": ""
   },
   "events": [
     {
@@ -64,7 +64,7 @@
   "packages": [
     {
       "id": "esencial",
-      "title": "Esencial Pro Max",
+      "title": "Esencial",
       "description": "Cobertura fotográfica de los momentos que importan.",
       "features": [
         "Hasta 2 horas de cobertura",
