@@ -25,6 +25,7 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 <link rel="stylesheet" href="./corporate.css?v=20261109-compact2">
 <link rel="stylesheet" href="./logistics.css?v=20261114-corporate1">
 <link rel="stylesheet" href="./architecture.css?v=20261114-atelier2">
+<link rel="stylesheet" href="./architectural-glass.css?v=20261114-arcasupply1">
 
 <style id="bts-nfc-links-clean">
 /* BTS NFC: botones con iconos integrados, titulo y destino oculto */
@@ -110,7 +111,7 @@ const qs=new URLSearchParams(location.search),previewMode=qs.get('preview')==='1
 const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
 const cardCode=String(qs.get('card')||'').toLowerCase().trim();
 const status=$('message');
-const ALLOWED=['classic','glass','logistics','architecture','creator','business','food','beauty','portfolio','realestate','wellness'];
+const ALLOWED=['classic','glass','logistics','architecture','archglass','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 /* Blob solo en la vista previa, nunca en una tarjeta publicada ni en sus enlaces. */
 function previewImageUrl(value){
@@ -266,7 +267,7 @@ function applyCard(c){
  $('about').textContent=String(c.tagline||'Comunicate con nosotros y conocé más de nuestros servicios.').slice(0,180);
  const rawAvatar=String(c.avatar_url||'');
  const draftImage=previewMode&&rawAvatar.length<400000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(rawAvatar);
- const avatar=draftImage?rawAvatar:previewImageUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true,isArchitecture=template==='architecture';
+ const avatar=draftImage?rawAvatar:previewImageUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true,isArchitecture=['architecture','archglass'].includes(template);
  cont.replaceChildren();cont.hidden=!avatar&&!isExecutive&&!isArchitecture;
  function showInitials(){
   cont.replaceChildren();cont.hidden=!isExecutive&&!isArchitecture;
@@ -296,13 +297,13 @@ function applyCard(c){
   const type=String(l.type||'other').toLowerCase();
   const label=String(l.label||window.BTSIcons?.names?.[type]||'Enlace').slice(0,55);
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+label);
-  const badge=template==='architecture'?null:document.createElement('span');if(badge){badge.className='glyph';setIcon(badge,type);}
+  const badge=['architecture','archglass'].includes(template)?null:document.createElement('span');if(badge){badge.className='glyph';setIcon(badge,type);}
   const title=document.createElement('strong');title.textContent=label;
   
   const copy=document.createElement('span');copy.className='nfc-link-copy';copy.append(title);
   const arrow=makeLinkArrow();
   if(badge)a.append(badge);a.append(copy,arrow);nav.append(a);if(currentExecutiveId){a.addEventListener('click',()=>recordEvent(type==='whatsapp'?'whatsapp_click':'link_click',type));}
-  if(template!=='architecture'&&socialTypes.has(type)){
+  if(!['architecture','archglass'].includes(template)&&socialTypes.has(type)){
    const s=document.createElement('a');s.href=url;s.target='_blank';s.rel='noopener noreferrer nofollow';s.title=label;s.setAttribute('aria-label',label);setIcon(s,type);social.append(s);
   }
   if(featured.children.length<4){
