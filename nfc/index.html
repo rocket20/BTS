@@ -89,6 +89,7 @@ html .links a .arrow svg{width:17px;height:17px;display:block}
  }
 }
 </style>
+<link rel="stylesheet" href="./archglass-outline-icons.css?v=outline-20261114">
 </head>
 <body>
 <main class="nfc-page">
@@ -102,6 +103,7 @@ html .links a .arrow svg{width:17px;height:17px;display:block}
 <footer class="foot">TARJETA DIGITAL · <b>BTS STUDIO</b></footer>
 </main>
 <script src="./brand-icons.js"></script>
+<script src="./archglass-outline-icons.js?v=outline-20261114"></script>
 <script>
 (()=>{'use strict';
 const ENDPOINT='https://xwehejgwufwhpkpzjzyt.supabase.co';
@@ -166,6 +168,7 @@ function addBusinessContact(nav,href,label,subtitle,kind,options={}){
  const a=document.createElement('a');a.href=href;a.className='nfc-form-link';
  a.setAttribute('aria-label',label+': '+subtitle);
  const badge=document.createElement('span');badge.className='glyph';makeUiGlyph(badge,kind);
+ if(document.documentElement.dataset.nfcTemplate==='archglass'&&document.documentElement.dataset.archglassIcons==='on')badge.classList.add('nfc-form-outline');
  const copy=document.createElement('span');copy.className='nfc-link-copy';
  const title=document.createElement('strong');title.textContent=label;
  copy.append(title);
@@ -250,6 +253,8 @@ function applyCard(c){
  if(!c||typeof c!=='object')return;
  const template=ALLOWED.includes(c.template_id)?c.template_id:'classic';
  const opt=c.theme_options&&typeof c.theme_options==='object'&&!Array.isArray(c.theme_options)?c.theme_options:{};
+ const showArchglassIcons=template==='archglass' && opt.archglassOutlineIcons!==false;
+ document.documentElement.dataset.archglassIcons=showArchglassIcons?'on':'off';
  document.documentElement.dataset.nfcTemplate=template;
  document.documentElement.dataset.nfcExecutive=c.is_executive?'true':'false';
  document.documentElement.dataset.nfcShape=['pill','square','soft'].includes(opt.shape)?opt.shape:'soft';
@@ -259,6 +264,10 @@ function applyCard(c){
  document.documentElement.style.setProperty('--nfc-glass',numberClamp(opt.blur,0,40,18)+'px');
  const root=document.documentElement.style;
  root.setProperty('--accent',validHex(c.accent_color,'#ff0037'));
+ const outlineColor=opt.archglassIconMode==='custom'
+   ? validHex(opt.archglassIconColor,validHex(c.accent_color,'#4bc4ff'))
+   : validHex(c.accent_color,'#4bc4ff');
+ root.setProperty('--archglass-social-icon-color',outlineColor);
  root.setProperty('--bg',validHex(c.background_color,'#0a0a10'));
  root.setProperty('--ink',validHex(opt.textColor, ['business','food','beauty','wellness'].includes(template)?'#243244':'#f8f7fb'));
  root.setProperty('--muted',validHex(opt.mutedColor,['business','food','beauty','wellness'].includes(template)?'#617082':'#b9b3c8'));
@@ -311,7 +320,12 @@ function applyCard(c){
   const type=String(l.type||'other').toLowerCase();
   const label=String(l.label||window.BTSIcons?.names?.[type]||'Enlace').slice(0,55);
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+label);
-  const badge=['architecture','archglass'].includes(template)?null:document.createElement('span');if(badge){badge.className='glyph';setIcon(badge,type);}
+  const badge=(template==='architecture'||(template==='archglass'&&!showArchglassIcons))?null:document.createElement('span');
+  if(badge){
+   badge.className='glyph';
+   if(template==='archglass'&&window.BTSArchglassIcons)window.BTSArchglassIcons.set(badge,type);
+   else setIcon(badge,type);
+  }
   const title=document.createElement('strong');title.textContent=label;
   
   const copy=document.createElement('span');copy.className='nfc-link-copy';copy.append(title);
