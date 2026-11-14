@@ -1,83 +1,34 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0c0b10"><title>Demo personalizable | BTS Studio</title>
-<meta name="description" content="Editor interactivo de tarjetas NFC, fidelización, VIP y gafetes corporativos BTS Studio. Personalizá ambas caras y descargá vistas previas.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d0c11">
+<title>Cotizar tarjetas y gafetes | BTS Studio</title>
+<meta http-equiv="refresh" content="0; url=../cotizar-tarjeta/">
 <style>
-:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0c0b10;--panel:#1b171f;--line:#40343f;--ink:#f9f4f7;--muted:#b7aab6;--accent:#d61742}
-*{box-sizing:border-box}body{margin:0;color:var(--ink);min-height:100vh;background:radial-gradient(circle at 85% 0,#52152b55,transparent 40%),var(--bg)}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{width:min(1450px,calc(100% - 40px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:24px 0;border-bottom:1px solid #ffffff1d}
-.logo{font-size:22px;font-weight:950;letter-spacing:-.055em}.logo i{color:#ed1747;font-style:normal}.go-back{font-size:12px;border:1px solid #ffffff3e;border-radius:24px;padding:11px 17px}
-.container{width:min(1450px,calc(100% - 40px));margin:0 auto;padding:33px 0 80px}
-.kicker{font-size:11px;letter-spacing:.16em;font-weight:800;color:#e49baf;text-transform:uppercase}
-h1{font-size:clamp(34px,4.3vw,59px);letter-spacing:-.065em;line-height:1.08;margin:12px 0}h1 span{color:#e51b48}
-.intro{max-width:850px;color:var(--muted);line-height:1.6;margin:0 0 28px;font-size:14px}
-.workspace{display:grid;grid-template-columns:minmax(295px,365px) minmax(0,1fr);align-items:start;gap:19px}
-.controls{border:1px solid var(--line);border-radius:19px;background:#1a171e;overflow:hidden}
-.control-heading{display:flex;justify-content:space-between;align-items:center;padding:21px 20px;border-bottom:1px solid #ffffff17}
-.control-heading h2{font-size:18px;margin:0;letter-spacing:-.03em}.control-heading span{font-size:10px;color:#d47f98;font-weight:800}
-.control-section{padding:18px 20px;border-bottom:1px solid #ffffff15}
-.control-section h3{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#eee4ea;margin:0 0 16px}
-.field{display:flex;flex-direction:column;gap:7px;margin:0 0 14px}.field:last-child{margin-bottom:0}.field label{font-size:11px;font-weight:750;color:#cfc3cb}.field input:not([type=file]),.field select,.field textarea{width:100%;background:#100f15;border:1px solid #594a57;border-radius:9px;padding:10px 12px;color:#fff;outline:none;min-height:43px}
-.field textarea{min-height:66px;resize:vertical}.field input[type=file]{width:100%;font-size:11px;color:#b8a6b5}.field input[type=file]::file-selector-button{background:#4d2433;border:1px solid #945369;color:#fff;border-radius:8px;padding:8px;cursor:pointer;margin-right:8px}
-.field input[type=range]{width:100%;accent-color:#de214a}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cols .field{min-width:0}
-.field input[type=color]{padding:3px!important;width:100%;min-height:43px;cursor:pointer}
-.btns{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #ffffff3d;border-radius:9px;color:#eee3eb;background:#28222c;padding:11px 13px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn:hover{border-color:#ec5a7c}.btn.primary{background:linear-gradient(110deg,#b50f37,#dc1b49);border-color:#ce1643;color:#fff}.btn.ghost{background:transparent}.btn.wide{width:100%}.btn:disabled{opacity:.4;cursor:not-allowed}
-.label-choice{display:flex;gap:7px}.label-choice button{flex:1;padding:10px 7px;color:#c0b0bb;font-weight:800;font-size:11px;background:#17141b;border:1px solid #514250;border-radius:9px}.label-choice button[aria-pressed=true]{background:#79213d;border-color:#d83259;color:#fff}
-.layers{display:grid;gap:8px;max-height:200px;overflow:auto;margin-bottom:13px}.layer{display:flex;align-items:center;justify-content:space-between;gap:7px;color:#dcd1d8;border:1px solid #ffffff2a;background:#15131a;border-radius:9px;padding:9px 11px;font-size:11px;text-align:left}.layer[data-selected=true]{border-color:#ec476c;background:#542038}.layer span{max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.layer-actions{display:flex;gap:6px;flex-wrap:wrap}
-.inspector{padding-top:14px;border-top:1px solid #ffffff22}.inspector[hidden],.field[hidden],.control-section[hidden]{display:none!important}
-.tip{font-size:11px;color:#a997a4;line-height:1.55;margin:11px 0 0}.error{color:#ffc6d3;font-size:12px;line-height:1.5}
-.stage{background:linear-gradient(145deg,#1c1820,#121015);border:1px solid var(--line);border-radius:19px;min-width:0;padding:20px}
-.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.stage-top h2{font-size:17px;letter-spacing:-.025em;margin:0}.stage-top p{font-size:11px;color:#baaeb8;margin:4px 0 0}
-.stage-badges{display:flex;gap:7px}.stage-badges button{border:1px solid #ffffff31;border-radius:20px;padding:8px 12px;font-size:11px;font-weight:750;color:#e2d7e0;background:#ffffff09}.stage-badges button[aria-pressed=true]{background:#b8133e;border-color:#d82e55}
-.card-area{background:radial-gradient(circle at center,#6b183445,transparent 55%),linear-gradient(125deg,#131118,#0d0b11);border:1px solid #ffffff17;border-radius:16px;padding:clamp(20px,4vw,50px) 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2vw,35px);align-items:center;min-height:320px}
-.face-wrap{min-width:0;display:flex;flex-direction:column;align-items:center;gap:14px;cursor:pointer}
-.face-wrap.is-active canvas{outline:2px solid #e32a55;outline-offset:4px}
-.face-label{font-size:11px;letter-spacing:.18em;color:#d7c6d2;font-weight:850}
-.face-wrap canvas{display:block;background:#17151a;width:100%;max-width:480px;aspect-ratio:1.585;border-radius:12px;box-shadow:0 25px 35px #0009;touch-action:none;cursor:grab}
-.face-wrap canvas.vertical{max-width:270px;aspect-ratio:.63}
-.face-wrap canvas:active{cursor:grabbing}.demo-mark{color:#a89aa5;font-weight:800;text-align:center;letter-spacing:.22em;text-transform:uppercase;font-size:11px;margin-top:17px}
-.stage-desc{font-size:12px;color:#b7a7b3;line-height:1.6;margin:20px 0}
-.download-actions{display:flex;gap:10px;flex-wrap:wrap}.download-actions .btn{flex:1}
-.stage-foot{padding:18px 0 0;color:#9d8a99;font-size:11px;line-height:1.55}
-#previewNotice{min-height:18px;font-size:11px;color:#ffc4d2}
-@media(max-width:1070px){.workspace{grid-template-columns:300px minmax(0,1fr)}.card-area{grid-template-columns:1fr}.face-wrap canvas{max-width:420px}}
-@media(max-width:730px){.workspace{grid-template-columns:1fr}.control-section{padding:17px}.container,header{width:calc(100% - 28px)}.stage{padding:15px}.card-area{grid-template-columns:repeat(2,minmax(0,1fr));padding:20px 10px;gap:11px}.face-wrap canvas{max-width:100%}.face-wrap canvas.vertical{max-width:180px}.stage-top{align-items:start;flex-wrap:wrap}.stage-badges{width:100%}.download-actions{display:grid;grid-template-columns:1fr 1fr}.download-actions a{grid-column:span 2}}
-@media(max-width:450px){.card-area{grid-template-columns:1fr}.face-wrap canvas{max-width:300px}.face-wrap canvas.vertical{max-width:190px}.cols{gap:8px}}
-</style></head>
-<body><header><a class="logo" href="../"><i>◀</i> BTS STUDIO</a><a href="../" class="go-back">← Volver al sitio</a></header>
-<main class="container"><span class="kicker">BTS STUDIO / SIMULADOR INTERACTIVO</span><h1>Tu tarjeta. <span>Tu diseño.</span></h1><p class="intro">Personalizá ambas caras: cargá tus artes, agregá logos y textos, cambiá colores, ajustá tamaños y mové los elementos arrastrándolos. Al terminar, descargá tu vista previa o pedí una cotización.</p>
-<div class="workspace">
-<aside class="controls" aria-label="Editor de diseño">
-<div class="control-heading"><h2>Personalización</h2><span>EDICIÓN EN VIVO</span></div>
-<section class="control-section"><h3>Producto y cara</h3><div class="field"><label for="type">Tipo de tarjeta</label><select id="type"><option value="vip">Tarjeta VIP</option><option value="fidelizacion">Tarjeta de fidelización</option><option value="gafete">Gafete corporativo</option></select></div>
-<div class="field"><label>Cara que estás editando</label><div class="label-choice"><button type="button" class="face-tab" data-face="front" aria-pressed="true">Frente</button><button type="button" class="face-tab" data-face="back" aria-pressed="false">Reverso</button></div></div>
-</section>
-<section class="control-section"><h3>Fondo y estilo</h3>
-<div class="field"><label for="bgImage">Subir diseño como fondo de esta cara</label><input id="bgImage" type="file" accept="image/png,image/jpeg,image/webp"></div>
-<div class="field"><label for="bgMode">Ajuste del diseño</label><select id="bgMode"><option value="cover">Cubrir toda la tarjeta</option><option value="contain">Mostrar diseño completo</option></select></div>
-<div class="cols"><div class="field"><label for="bgStart">Color inicial</label><input type="color" id="bgStart"></div><div class="field"><label for="bgEnd">Color final</label><input type="color" id="bgEnd"></div></div>
-<div class="cols"><div class="field"><label for="bgAngle">Ángulo del degradado</label><input type="range" id="bgAngle" min="0" max="360" step="1"></div><div class="field"><label for="corner">Redondeo</label><input type="range" id="corner" min="0" max="65" step="1"></div></div>
-<div class="field"><label for="bgZoom">Zoom del diseño de fondo</label><input type="range" id="bgZoom" min="50" max="250" value="100" step="1"></div>
-<div class="btns"><button class="btn ghost" type="button" id="removeBg">Quitar imagen de fondo</button></div>
-</section>
-<section class="control-section"><h3>Agregar contenido</h3><div class="btns"><button id="addTitle" class="btn" type="button">+ Título</button><button id="addSubtitle" class="btn" type="button">+ Texto</button><button id="addShape" class="btn" type="button">+ Forma</button></div>
-<div class="field" style="margin-top:14px"><label for="addImage">Agregar logo o imagen como capa</label><input id="addImage" type="file" accept="image/png,image/jpeg,image/webp"></div><p class="tip">Seleccioná un elemento de la tarjeta y arrastralo para cambiar su posición. Podés modificar cada capa o eliminarla.</p>
-</section>
-<section class="control-section"><h3>Capas de la cara seleccionada</h3><div class="layers" id="layers"></div><div class="layer-actions"><button class="btn" id="moveUp" type="button">↑ Subir</button><button class="btn" id="moveDown" type="button">↓ Bajar</button><button class="btn ghost" id="deleteLayer" type="button">Eliminar</button></div>
-<div class="inspector" id="inspector" hidden>
-<div class="field" id="textField"><label for="layerText">Texto</label><textarea id="layerText" maxlength="200"></textarea></div>
-<div class="cols"><div class="field" id="fontField"><label for="layerFont">Tipografía</label><select id="layerFont"><option value="Inter">Inter / Moderna</option><option value="Georgia">Georgia / Elegante</option><option value="Arial">Arial / Clásica</option><option value="monospace">Monoespaciada</option></select></div><div class="field" id="weightField"><label for="layerWeight">Grosor</label><select id="layerWeight"><option value="400">Regular</option><option value="600">Semibold</option><option value="800">Bold</option><option value="900">Black</option></select></div></div>
-<div class="cols"><div class="field"><label for="layerColor">Color</label><input id="layerColor" type="color"></div><div class="field"><label for="layerSize">Tamaño</label><input id="layerSize" type="range" min="12" max="180" step="1"></div></div>
-<div class="cols"><div class="field"><label for="layerOpacity">Opacidad</label><input id="layerOpacity" type="range" min="0" max="100"></div><div class="field"><label for="layerRotation">Rotación</label><input id="layerRotation" type="range" min="-180" max="180"></div></div>
-<div class="cols"><div class="field"><label for="layerWidth">Ancho de capa</label><input id="layerWidth" type="range" min="30" max="1000"></div><div class="field"><label for="layerHeight">Alto de capa</label><input id="layerHeight" type="range" min="15" max="1000"></div></div>
-</div>
-</section>
-<section class="control-section"><div class="btns"><button id="resetSide" class="btn ghost" type="button">Restablecer esta cara</button><button id="resetAll" class="btn ghost" type="button">Restablecer ambas</button></div><p class="tip">Las imágenes que subís se mantienen en tu navegador. No se envían a nuestros servidores.</p></section>
-</aside>
-<section class="stage" aria-label="Vista previa en tiempo real"><div class="stage-top"><div><h2>Vista previa del diseño</h2><p>Seleccioná una cara para editarla o mover sus elementos.</p></div><div class="stage-badges"><button type="button" class="preview-tab" data-face="front" aria-pressed="true">Frente</button><button type="button" class="preview-tab" data-face="back" aria-pressed="false">Reverso</button></div></div>
-<div class="card-area"><div class="face-wrap is-active" data-face="front"><span class="face-label">FRENTE</span><canvas id="frontCanvas" width="1000" height="630" aria-label="Editar frente de la tarjeta"></canvas></div><div class="face-wrap" data-face="back"><span class="face-label">REVERSO</span><canvas id="backCanvas" width="1000" height="630" aria-label="Editar reverso de la tarjeta"></canvas></div></div>
-<div class="demo-mark">Demo BTS Studio</div><p class="stage-desc">Vista previa referencial. Antes de imprimir se revisan la resolución, el sangrado y la ubicación de elementos.</p><div class="download-actions"><button class="btn" type="button" id="downloadFront">Descargar frente PNG ↓</button><button class="btn" type="button" id="downloadBack">Descargar reverso PNG ↓</button><a class="btn primary" id="quote" href="../cotizar-tarjeta/?tipo=vip">Solicitar cotización ↗</a></div><div id="previewNotice" role="status"></div>
-<div class="stage-foot">Editor visual de demostración · BTS Studio. No reemplaza el archivo final de impresión.</div></section>
-</div></main><script src="../assets/bts-mockup-editor.js" defer></script></body></html>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;background:#0d0c11;color:#faf6f8;display:grid;place-items:center}
+main{max-width:460px;padding:32px;text-align:center}
+a{display:inline-block;padding:13px 19px;border-radius:10px;background:#c91641;color:#fff;text-decoration:none;font-weight:750}
+p{line-height:1.6;color:#b7aab4}
+</style>
+<script>
+(()=>{'use strict';
+ const incoming=new URLSearchParams(location.search).get('tipo');
+ const allowed=['vip','fidelizacion','gafete'];
+ const type=allowed.includes(incoming)?incoming:'vip';
+ location.replace('../cotizar-tarjeta/?tipo='+encodeURIComponent(type));
+})();
+</script>
+</head>
+<body>
+<main>
+<h1>Cotizá tu tarjeta BTS</h1>
+<p>La herramienta de demostración ya no está disponible. Podés solicitar directamente una cotización de tarjetas VIP, fidelización o gafetes corporativos.</p>
+<a href="../cotizar-tarjeta/">Solicitar cotización</a>
+</main>
+</body>
+</html>
