@@ -64,6 +64,10 @@ html.nfc-editor-open .nfc-editor-back{display:inline-flex!important}
 #nfcCorporateFields .field small{display:block;color:#aeb6be;font-size:11px;margin-top:4px}
 @media(max-width:540px){#nfcCorporateFields .nfc-custom-grid{grid-template-columns:1fr}}
 
+/* Architecture Atelier: controles exclusivos y cabecera con banner editable. */
+#architectureBannerControls[hidden]{display:none!important}
+#architectureBannerControls .nfc-design-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:500px){#architectureBannerControls .nfc-design-grid{grid-template-columns:1fr}}
 /* Logistics Corporate: previsualización completa del perfil empresarial. */
 html[data-nfc-preview-template="architecture"] .nfc-preview-device.desktop .nfc-preview-screen{height:760px}
 html[data-nfc-preview-template="architecture"] .nfc-preview-device.mobile .nfc-preview-screen{height:760px}
@@ -82,9 +86,18 @@ html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-prev
 <div class="field"><label for="slug">Identificador de enlace *</label><input id="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="48" minlength="3" required placeholder="cafe-central"><small>Podés cambiar este identificador después de crear la página. Si cambia, la URL anterior dejará de funcionar y los NFC programados con ella deberán actualizarse.</small></div>
 <div id="slugChangeWarning" class="slug-change-warning" hidden role="status"></div><div class="field"><label for="tagline">Descripción breve</label><textarea id="tagline" rows="2" maxlength="180" placeholder="Conectá con nuestras redes y encontranos fácilmente."></textarea></div>
 <div class="media-fields">
-<div class="field"><label for="avatarFile">Foto o logo del negocio</label><label class="upload-tile" for="avatarFile"><span class="upload-image" id="avatarThumb">◎</span><span><b>Subir foto de perfil</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="avatar" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearAvatar">Quitar foto</button></div>
-<div class="field"><label for="backgroundFile">Imagen de fondo</label><label class="upload-tile" for="backgroundFile"><span class="upload-image cover-image" id="backgroundThumb">▧</span><span><b>Subir fondo</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="background" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearBackground">Quitar fondo</button></div></div>
+<div class="field"><label for="avatarFile">Logo del negocio / foto de perfil</label><label class="upload-tile" for="avatarFile"><span class="upload-image" id="avatarThumb">◎</span><span><b>Subir logo o foto</b><small>PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="avatar" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearAvatar">Quitar foto</button></div>
+<div class="field"><label for="backgroundFile">Banner de portada / imagen de fondo</label><label class="upload-tile" for="backgroundFile"><span class="upload-image cover-image" id="backgroundThumb">▧</span><span><b>Subir banner personalizado</b><small>Para Architecture Atelier: foto horizontal de tu proyecto · PNG, JPG o WEBP · máximo 4 MB</small></span></label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp" class="file-input"><input id="background" type="hidden" maxlength="1000"><button type="button" class="mini clear-image" id="clearBackground">Quitar fondo</button></div></div>
 
+<fieldset class="nfc-design-controls" id="architectureBannerControls" hidden>
+ <legend>Banner arquitectónico</legend>
+ <p class="design-hint">Subí la imagen desde «Banner de portada» y ajustá cómo se recorta en la cabecera. La vista previa muestra el resultado antes de guardarlo. Si no subís un logo, aparece un monograma con las iniciales de la empresa.</p>
+ <div class="nfc-design-grid">
+  <div class="field"><label for="nfcBannerX" class="range-label">Posición horizontal <output id="nfcBannerXValue">50%</output></label><input id="nfcBannerX" type="range" min="0" max="100" step="1" value="50"></div>
+  <div class="field"><label for="nfcBannerY" class="range-label">Posición vertical <output id="nfcBannerYValue">50%</output></label><input id="nfcBannerY" type="range" min="0" max="100" step="1" value="50"></div>
+ </div>
+ <button type="button" class="mini" id="centerBanner">Centrar banner</button>
+</fieldset>
 <fieldset class="nfc-design-controls"><legend>Plantillas por rubro</legend><p class="design-hint">Seleccioná un diseño; podés cambiarlo después sin alterar la URL NFC.</p><div id="nfcTemplateGrid" class="nfc-template-grid" role="group" aria-label="Diseños NFC"></div><input type="hidden" id="nfcTemplate" value="classic"></fieldset>
 
 <fieldset class="nfc-design-controls" id="nfcCorporateFields" hidden>
@@ -227,11 +240,11 @@ const TEMPLATES=[
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
 const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#101c2c','#456f94','#1b3148','#f3f7fb','#354a60','#f3f7fb','#192b40'],architecture:['#111f2b','#d8bc9d','#263541','#f7f4ee','#8b857c','#f7f4ee','#20303c'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
-function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked};}
+function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked,bannerX:Number($('nfcBannerX').value),bannerY:Number($('nfcBannerY').value)};}
 function chooseTemplate(id,apply=true){
- if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
+ if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';$('architectureBannerControls').hidden=id!=='architecture';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
- $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics','architecture'].includes(id))$('nfcIconStyle').value='mono';if(['logistics','architecture'].includes(id))$('nfcBlur').value=id==='architecture'?'8':'0';}
+ $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics','architecture'].includes(id))$('nfcIconStyle').value='mono';if(['logistics','architecture'].includes(id))$('nfcBlur').value=id==='architecture'?'8':'0';if(id==='architecture'){$('nfcBannerX').value='50';$('nfcBannerY').value='50';}}
  for(const b of $('nfcTemplateGrid').querySelectorAll('button')){b.classList.toggle('selected',b.dataset.template===id);b.setAttribute('aria-pressed',String(b.dataset.template===id));}
  syncLivePreview();
 }
@@ -290,7 +303,7 @@ function currentPreviewCard(){
 }
 function syncLivePreview(){
  const draftSlug=normalized($('slug').value);$('contactFormPreviewUrl').textContent=draftSlug?'https://www.btsstudio.net/contacto/?empresa='+draftSlug:'Guardá el negocio para obtener el enlace.';
- $('avatarXValue').textContent=$('avatarX').value+'%';$('avatarYValue').textContent=$('avatarY').value+'%';$('avatarZoomValue').textContent=$('avatarZoom').value+'%';$('nfcBlurValue').textContent=$('nfcBlur').value+'px';
+ $('avatarXValue').textContent=$('avatarX').value+'%';$('avatarYValue').textContent=$('avatarY').value+'%';$('avatarZoomValue').textContent=$('avatarZoom').value+'%';$('nfcBlurValue').textContent=$('nfcBlur').value+'px';$('nfcBannerXValue').textContent=$('nfcBannerX').value+'%';$('nfcBannerYValue').textContent=$('nfcBannerY').value+'%';
  const card=currentPreviewCard();for(const id of ['nfcDesktopFrame','nfcMobileFrame']){const f=$(id);if(f?.contentWindow)f.contentWindow.postMessage({source:'bts-nfc-editor-preview',card},location.origin);}
 }
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.source==='bts-nfc-preview-ready')syncLivePreview();});
@@ -376,7 +389,7 @@ function reset(){
  clearConflict();
  clearPreviewBlobs();
  editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';
- $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;
+ $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;$('nfcBannerX').value=50;$('nfcBannerY').value=50;
  $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';$('contactFormEnabled').checked=false;
  for(const id of ['nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).value='';chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
@@ -410,7 +423,7 @@ function showCard(c){
  editing=c.id;$('name').value=c.business_name;$('slug').value=c.slug;$('slug').disabled=false;$('tagline').value=c.tagline||'';$('avatar').value=c.avatar_url||'';$('background').value=c.background_url||'';$('color').value=c.accent_color||'#ff0037';$('bgColor').value=c.background_color||'#0a0a10';
  $('avatarX').value=c.avatar_position_x??50;
  $('avatarY').value=c.avatar_position_y??50;
- $('avatarZoom').value=c.avatar_zoom??100;
+ $('avatarZoom').value=c.avatar_zoom??100;$('nfcBannerX').value=c.theme_options?.bannerX??50;$('nfcBannerY').value=c.theme_options?.bannerY??50;
  $('buttonBg').value=c.button_bg_color||'#181820';
  $('buttonText').value=c.button_text_color||'#ffffff';
  $('buttonBorder').value=c.button_border_color||'#42404b';$('contactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;chooseTemplate(c.template_id||'classic',false);const o=c.theme_options||{};
@@ -597,13 +610,14 @@ async function save(e){
 }
 $('name').addEventListener('input',()=>{if(!editing){$('slug').value=normalized($('name').value);}preview();});
 $('slug').addEventListener('input',()=>{clearConflict();preview();});
-for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','buttonBg','buttonText','buttonBorder','nfcShape','nfcFont','nfcAlign','nfcIconStyle','nfcTextColor','nfcSurfaceColor','nfcBlur','nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).addEventListener('input',syncLivePreview);
+for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','buttonBg','buttonText','buttonBorder','nfcShape','nfcFont','nfcAlign','nfcIconStyle','nfcTextColor','nfcSurfaceColor','nfcBlur','nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags','nfcBannerX','nfcBannerY'])$(id).addEventListener('input',syncLivePreview);
  $('centerAvatar').addEventListener('click',()=>{
   $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;syncLivePreview();
  });
  $('resetButtonColors').addEventListener('click',()=>{
   $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';syncLivePreview();
  });
+$('centerBanner').addEventListener('click',()=>{$('nfcBannerX').value=50;$('nfcBannerY').value=50;syncLivePreview();});
 $('contactFormEnabled').addEventListener('change',syncLivePreview);
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));
