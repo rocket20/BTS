@@ -224,6 +224,12 @@ function applyCard(c){
    f.append(fi,t,arr);featured.append(f);
   }
  }
+ if(opt.contactFormEnabled===true && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(c.slug||''))){
+  const contactUrl=location.origin+'/contacto/?empresa='+encodeURIComponent(c.slug);
+  if(!links.some(l=>{try{return new URL(l?.url||'',location.origin).pathname.replace(/\\/$/,'')==='/contacto';}catch{return false;}})){
+   addBusinessContact(nav,contactUrl,'Formulario de contacto','Dejanos tu mensaje','email');
+  }
+ }
  if(template==='business')configureCorporate(c,opt);
  if(!nav.children.length){const p=document.createElement('p');p.className='state';p.textContent='Este negocio todavía no agregó enlaces.';nav.append(p);}
  if(!featured.children.length){const p=document.createElement('p');p.textContent='Próximamente';featured.append(p);}
