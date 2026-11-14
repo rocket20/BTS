@@ -49,6 +49,19 @@
   <label class="span2">Descripción de la empresa<input id="settingsTagline" maxlength="180"></label>
   <label class="span2">Logotipo (URL) <input type="url" id="settingsLogo" maxlength="1000" placeholder="https://..."></label>
   <label class="span2" style="display:flex;align-items:center;gap:12px;border:1px solid #47404c;border-radius:12px;padding:13px;margin-top:4px;cursor:pointer"><input id="settingsContactFormEnabled" type="checkbox" style="width:19px;height:19px;accent-color:#b13659"> <span><b>Formulario de contacto</b><small style="display:block;color:#aca5b3;font-weight:400">Mostrar el botón en la página de la empresa y en las tarjetas de sus ejecutivos. Los mensajes llegarán al panel BTS.</small></span></label>
+  <div class="span2" id="corporateContactButtonDesign" style="display:grid;gap:12px;border:1px solid #47404c;border-radius:12px;padding:15px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px">
+      <label>Texto del botón<input id="settingsContactFormLabel" type="text" maxlength="55" placeholder="Formulario de contacto"></label>
+      <label>Posición<select id="settingsContactFormPosition"><option value="last">Después de los enlaces</option><option value="first">De primero</option></select></label>
+      <label>Ícono<select id="settingsContactFormIcon"><option value="email">Correo / formulario</option><option value="message">Mensaje</option><option value="star">Estrella / reseñas</option><option value="phone">Teléfono</option></select></label>
+    </div>
+    <label style="display:flex;align-items:center;gap:9px"><input id="settingsContactFormCustomColors" type="checkbox"> Colores personalizados para el botón</label>
+    <div id="corporateContactColors" hidden style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+      <label>Fondo<input id="settingsContactFormBg" type="color" value="#181820"></label>
+      <label>Texto<input id="settingsContactFormText" type="color" value="#ffffff"></label>
+      <label>Borde<input id="settingsContactFormBorder" type="color" value="#42404b"></label>
+    </div>
+  </div>
   <div class="span2 form-footer"><button type="submit" class="btn primary" id="saveSettings">Guardar datos corporativos</button><span class="hint">El identificador de la empresa permanece fijo para proteger las tarjetas NFC.</span></div>
  </form>
 </section>
@@ -168,7 +181,16 @@ window.BTSNFCPreviewData=()=>({company:currentCompany(),people:people.slice(),pr
 }:null});
 function notifyPreview(){window.dispatchEvent(new Event('bts-nfc-corporate-data'));}
 function whatsAppNumber(links){return Array.isArray(links)?(links.find(x=>x.type==='whatsapp')?.url||'').replace(/^https?:\/\/(?:www\.)?wa\.me\//,'').replace(/[^+\d]/g,''):'';}
-function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('settingsContactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
+function renderSettings(){const c=currentCompany();$('companySettings').hidden=!c;if(!c)return;$('settingsName').value=c.business_name||'';$('settingsTagline').value=c.tagline||'';$('settingsLogo').value=c.avatar_url||'';$('settingsWhatsapp').value=whatsAppNumber(c.links);$('settingsContactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;
+ const co=c.theme_options||{},isHex=v=>/^#[a-f0-9]{6}$/i.test(String(v||''));
+ $('settingsContactFormLabel').value=String(co.contactFormLabel||'Formulario de contacto').slice(0,55);
+ $('settingsContactFormPosition').value=co.contactFormPosition==='first'?'first':'last';
+ $('settingsContactFormIcon').value=['email','message','star','phone'].includes(co.contactFormIcon)?co.contactFormIcon:'email';
+ $('settingsContactFormCustomColors').checked=co.contactFormCustomColors===true;
+ $('settingsContactFormBg').value=isHex(co.contactFormBg)?co.contactFormBg:'#181820';
+ $('settingsContactFormText').value=isHex(co.contactFormText)?co.contactFormText:'#ffffff';
+ $('settingsContactFormBorder').value=isHex(co.contactFormBorder)?co.contactFormBorder:'#42404b';
+ syncCorporateFormColorControls();$('openCompanyPage').href=ROOT+encodeURIComponent(c.slug);}
 function normalizedSlug(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);}
 function companyUrl(p){return ROOT+encodeURIComponent(selectedCompany.slug)+'&card='+p.card_code;}
 function money(value){return new Intl.NumberFormat('es-NI',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));}
@@ -176,6 +198,11 @@ function setCompanyCreator(visible){
  $('companyCreator').hidden=!visible;
  if(visible){$('companyCreator').scrollIntoView({behavior:'smooth',block:'start'});$('companyName').focus();}
 }
+function syncCorporateFormColorControls(){
+ const box=document.getElementById('corporateContactColors');
+ if(box)box.hidden=!document.getElementById('settingsContactFormCustomColors').checked;
+}
+document.getElementById('settingsContactFormCustomColors').addEventListener('change',syncCorporateFormColorControls);
 async function saveSettings(e){
  e.preventDefault();
  const company=currentCompany();if(!company)return notice('Seleccioná una empresa.',true);
@@ -186,7 +213,14 @@ async function saveSettings(e){
  const existing=Array.isArray(company.links)?company.links:[];
  const links=existing.filter(x=>x.type!=='whatsapp');
  if(number)links.unshift({type:'whatsapp',label:'WhatsApp general',url:'https://wa.me/'+number.replace(/[^0-9]/g,'')});
- const payload={business_name:name,tagline:$('settingsTagline').value.trim(),avatar_url:logo,links,theme_options:{...(company.theme_options||{}),contactFormEnabled:$('settingsContactFormEnabled').checked}};
+ const payload={business_name:name,tagline:$('settingsTagline').value.trim(),avatar_url:logo,links,theme_options:{...(company.theme_options||{}),contactFormEnabled:$('settingsContactFormEnabled').checked,
+ contactFormLabel:$('settingsContactFormLabel').value.trim().slice(0,55)||'Formulario de contacto',
+ contactFormPosition:$('settingsContactFormPosition').value,
+ contactFormIcon:$('settingsContactFormIcon').value,
+ contactFormCustomColors:$('settingsContactFormCustomColors').checked,
+ contactFormBg:$('settingsContactFormBg').value,
+ contactFormText:$('settingsContactFormText').value,
+ contactFormBorder:$('settingsContactFormBorder').value}};
  const btn=$('saveSettings');btn.disabled=true;
  try{
   await api('/rest/v1/bts_nfc_cards?id=eq.'+encodeURIComponent(company.id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
