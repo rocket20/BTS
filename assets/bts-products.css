@@ -60,7 +60,7 @@
 @media(prefers-reduced-motion:reduce){.bps-track{transition:none}.bps-btn{transition:none}}
 
 /* Mostrar los banners originales sin distorsión */
-.bps-banner-image{display:block;width:100%;max-width:730px;max-height:445px;object-fit:contain;border-radius:14px;filter:drop-shadow(0 25px 30px #0007)}
+.bps-banner-image{display:block;width:100%;max-width:730px;max-height:445px;object-fit:contain;border-radius:14px;filter:drop-shadow(0 25px 30px #0007);transition:filter .38s ease;will-change:filter}
 .bps-art:has(.bps-banner-image){min-height:390px;overflow:visible}
 @media(max-width:850px){.bps-art:has(.bps-banner-image){min-height:280px}.bps-banner-image{max-height:325px}}
 @media(max-width:550px){.bps-art:has(.bps-banner-image){min-height:230px}.bps-banner-image{max-height:260px}}
@@ -212,8 +212,11 @@ html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot{
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot[aria-current="true"]{
  background:#fff2f7!important;
 }
+/* The original BTS product PNGs already contain true transparency.
+   Recolor only the visible artwork, retaining pixel-exact positions and sizes
+   for smooth light/dark switches; background stays fully transparent. */
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-banner-image{
- filter:drop-shadow(0 22px 25px rgba(20,4,12,.38))!important;
+ filter:invert(1) hue-rotate(180deg) saturate(2.1) contrast(1.09) drop-shadow(0 22px 25px rgba(20,4,12,.28))!important;
 }
 html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide-index{
  color:#f1bfd0!important;
@@ -228,3 +231,7 @@ html[data-bts-site-theme="light"] .bts-product-showcase .bps-pill-list span{
   box-shadow:0 13px 32px rgba(38,9,23,.25)!important;
  }
 }
+
+/* Stable dimensions for images on both themes while carousel moves. */
+.bts-product-showcase .bps-art .bps-banner-image{object-fit:contain;object-position:center center}
+@media(prefers-reduced-motion:reduce){.bts-product-showcase .bps-banner-image{transition:none!important}}
