@@ -1,0 +1,248 @@
+/* BTS Studio NFC · ARCHITECTURE ATELIER
+   Plantilla optativa para tarjetas de arquitectura.
+   Imagen de portada de la empresa (si existe) reemplaza el arte predeterminado.
+   Redes y nombres de enlaces proceden de cada ficha real. */
+html[data-nfc-template="architecture"]{
+ --nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ --architecture-sand:#d8bc9d;
+ --architecture-ink:#111f2b;
+ color-scheme:dark;
+}
+html[data-nfc-template="architecture"] body{
+ color:#f7f4ee!important;
+ background:linear-gradient(153deg,#111b25 0%,#1b2b37 48%,#0f1b26 100%)!important;
+}
+html[data-nfc-template="architecture"] body::before{
+ display:none!important;
+}
+html[data-nfc-template="architecture"] body::after{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background:linear-gradient(90deg,#ffffff05 1px,transparent 1px),
+ linear-gradient(0deg,#ffffff05 1px,transparent 1px);
+ background-size:72px 72px;
+ opacity:.22;
+}
+html[data-nfc-template="architecture"] main.nfc-page{
+ position:relative;z-index:1;width:min(1060px,calc(100% - 36px))!important;
+ padding:clamp(22px,4vw,50px) 5px 34px!important;
+}
+html[data-nfc-template="architecture"] #profile{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:17px!important;width:100%!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero{
+ display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:flex-start!important;
+ text-align:left!important;isolation:isolate;position:relative;overflow:hidden;
+ min-height:430px!important;width:100%!important;
+ padding:clamp(24px,4vw,45px)!important;gap:18px!important;
+ border:1px solid #b5a99a85!important;border-radius:25px!important;
+ box-shadow:0 18px 46px #070e188c!important;
+ background:linear-gradient(90deg,#172634ed 0%,#172634a8 43%,#192b3718 84%),
+ url("./architecture-scene.svg") right center / cover no-repeat!important;
+}
+html[data-nfc-template="architecture"] body[data-cover="yes"] .nfc-hero{
+ background:linear-gradient(90deg,#172634e8 0%,#172634aa 44%,#192b371a 100%),
+ var(--nfc-cover) center / cover no-repeat!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero::before{
+ content:"";position:absolute;inset:12px;z-index:-1;pointer-events:none;
+ border:1px solid #eee2d02c;border-radius:17px;
+ background:none;
+}
+html[data-nfc-template="architecture"] .nfc-hero::after{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ right:1%;bottom:2%;width:53%;height:34%;
+ background:url("./architecture-blueprint.svg") right bottom / contain no-repeat;
+ opacity:.67;
+}
+html[data-nfc-template="architecture"] .nfc-hero .avatar,
+html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+ width:91px!important;height:91px!important;min-width:91px!important;
+ display:grid;place-items:center;border-radius:50%!important;
+ background:#1a2633d9!important;border:1.5px solid #dac1a4!important;
+ box-shadow:0 0 0 4px #15243040!important;flex:none;
+}
+html[data-nfc-template="architecture"] .nfc-hero .avatar[hidden]{display:none!important}
+html[data-nfc-template="architecture"] .nfc-hero .avatar img{object-fit:cover}
+html[data-nfc-template="architecture"] .nfc-intro{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ flex:none!important;width:100%!important;max-width:560px!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero h1{
+ margin:0!important;color:#f7f3ec!important;font-size:clamp(29px,4.1vw,51px)!important;
+ font-weight:550!important;letter-spacing:-.045em!important;
+ line-height:1.12!important;text-align:left!important;max-width:560px!important;
+ text-shadow:0 2px 12px #0b152c66!important;overflow-wrap:anywhere;
+}
+html[data-nfc-template="architecture"] .nfc-hero h1::after{
+ content:"";display:block;width:50px;height:2px;margin:18px 0 0;
+ background:#d9b994;border-radius:2px;
+}
+html[data-nfc-template="architecture"] .nfc-hero .tagline{
+ color:#eee6da!important;font-size:clamp(13px,1.65vw,16px)!important;
+ line-height:1.6!important;max-width:430px!important;
+ text-align:left!important;margin:13px 0 0!important;
+ text-shadow:0 1px 9px #0b182a9c!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero .pill,
+html[data-nfc-template="architecture"] .nfc-premium-cta{
+ display:none!important;
+}
+html[data-nfc-template="architecture"] .nfc-socials{
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ gap:10px!important;flex-wrap:wrap!important;width:100%;margin:0!important;
+}
+html[data-nfc-template="architecture"] .nfc-socials:empty{display:none!important}
+html[data-nfc-template="architecture"] .nfc-socials a{
+ display:grid!important;place-items:center!important;
+ width:48px!important;height:48px!important;
+ border:1px solid #b5a99a59!important;border-radius:13px!important;
+ background:#26343edb!important;
+ box-shadow:inset 0 1px #ffffff0c!important;backdrop-filter:blur(6px);
+ transition:border-color .2s,background .2s;
+}
+html[data-nfc-template="architecture"] .nfc-socials a:hover{
+ transform:none!important;background:#364651!important;
+ border-color:#dac1a4!important;box-shadow:none!important;
+}
+html[data-nfc-template="architecture"] .nfc-socials img{
+ width:25px!important;height:25px!important;object-fit:contain;
+ filter:none!important;
+}
+html[data-nfc-template="architecture"] .nfc-socials svg{width:25px!important;height:25px!important}
+html[data-nfc-template="architecture"] .nfc-content{
+ display:block!important;width:100%!important;margin:0!important;
+}
+html[data-nfc-template="architecture"] .nfc-card.nfc-primary{
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:clamp(20px,3vw,32px)!important;
+ border-radius:23px!important;border:1px solid #b9ae9e6d!important;
+ background:linear-gradient(155deg,#263541ed,#1c2c37f5 70%,#1a2934)!important;
+ box-shadow:0 16px 42px #070e186e!important;
+ backdrop-filter:blur(8px)!important;
+}
+html[data-nfc-template="architecture"] .nfc-card.nfc-primary::after{
+ content:"";display:block;pointer-events:none;margin:15px -10px -22px;
+ height:115px;background:url("./architecture-blueprint.svg") center bottom / contain no-repeat;
+ opacity:.5;
+}
+html[data-nfc-template="architecture"] .nfc-section-header{
+ margin:0 0 22px!important;padding:0!important;
+}
+html[data-nfc-template="architecture"] .nfc-section-header h2{
+ font-size:clamp(20px,2.5vw,27px)!important;font-weight:550!important;
+ letter-spacing:-.035em!important;color:#f7f4ee!important;line-height:1.25;
+}
+html[data-nfc-template="architecture"] .nfc-section-header h2::after{
+ content:"";display:block;width:48px;height:2px;margin:12px 0 0;
+ border-radius:2px;background:#d9b994;
+}
+html[data-nfc-template="architecture"] .nfc-section-header>span{display:none!important}
+html[data-nfc-template="architecture"] .links{
+ display:grid!important;gap:10px!important;width:100%!important;
+}
+html[data-nfc-template="architecture"] .links a{
+ display:grid!important;grid-template-columns:30px minmax(0,1fr) 18px!important;
+ gap:13px!important;align-items:center!important;
+ min-height:60px!important;padding:12px 15px!important;
+ border:1px solid #a6a49c79!important;border-radius:13px!important;
+ color:#f7f4ee!important;
+ background:color-mix(in srgb,var(--nfc-button-bg,#243440) 18%,#283742)!important;
+ box-shadow:inset 0 1px #ffffff08!important;
+ transition:background .17s,border-color .17s!important;
+}
+html[data-nfc-template="architecture"] .links a:hover,
+html[data-nfc-template="architecture"] .links a:focus-visible{
+ transform:translateY(-1px)!important;filter:none!important;
+ background:#34434d!important;border-color:#dac1a4!important;
+}
+html[data-nfc-template="architecture"] .links .glyph{
+ width:29px!important;height:29px!important;border:0!important;
+ box-shadow:none!important;background:transparent!important;
+}
+html[data-nfc-template="architecture"] .links .glyph img{
+ width:25px!important;height:25px!important;object-fit:contain!important;filter:none!important;
+}
+html[data-nfc-template="architecture"] .links a strong{
+ color:#f7f4ee!important;font-weight:650!important;font-size:14px!important;
+ text-align:left!important;white-space:normal!important;
+}
+html[data-nfc-template="architecture"] .links a .arrow{
+ color:#ddc4a6!important;opacity:.95!important;
+}
+html[data-nfc-template="architecture"] .nfc-featured,
+html[data-nfc-template="architecture"] .nfc-business-meta,
+html[data-nfc-template="architecture"] .nfc-corporate-actions{
+ display:none!important;
+}
+html[data-nfc-template="architecture"] .foot,
+html[data-nfc-template="architecture"] .foot b{color:#acaba8!important}
+@media(min-width:751px){
+ html[data-nfc-template="architecture"] main.nfc-page{
+  width:min(940px,calc(100% - 46px))!important;
+  padding:clamp(35px,5vw,70px) 12px 35px!important;
+ }
+ html[data-nfc-template="architecture"] #profile{
+  display:flex!important;flex-direction:column!important;max-width:none!important;
+  gap:20px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero{
+  min-height:420px!important;padding:40px!important;
+  align-items:flex-start!important;justify-content:flex-start!important;
+  flex-direction:column!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .avatar{
+  width:94px!important;height:94px!important;min-width:94px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-content{display:block!important}
+ html[data-nfc-template="architecture"] .nfc-card.nfc-primary{
+  width:100%!important;padding:30px!important;
+ }
+}
+@media(max-width:750px){
+ html[data-nfc-template="architecture"] main.nfc-page{
+  width:100%!important;padding:16px 16px 28px!important;
+ }
+ html[data-nfc-template="architecture"] #profile{gap:16px!important}
+ html[data-nfc-template="architecture"] .nfc-hero{
+  min-height:385px!important;padding:26px 22px!important;
+  border-radius:21px!important;gap:18px!important;
+  align-items:flex-start!important;
+  background-position:center,right center!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .avatar,
+ html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+  width:82px!important;height:82px!important;min-width:82px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero h1{
+  font-size:clamp(27px,7vw,39px)!important;max-width:320px!important;
+  text-align:left!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .tagline{
+  font-size:13px!important;text-align:left!important;max-width:270px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero::after{
+  width:62%;height:32%;opacity:.55;
+ }
+ html[data-nfc-template="architecture"] .nfc-content{display:block!important}
+ html[data-nfc-template="architecture"] .nfc-card.nfc-primary{
+  padding:20px!important;border-radius:20px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-section-header h2{font-size:20px!important}
+ html[data-nfc-template="architecture"] .links a{
+  min-height:57px!important;padding:11px 13px!important;
+  grid-template-columns:28px minmax(0,1fr) 18px!important;
+ }
+ html[data-nfc-template="architecture"] .links .glyph{width:28px!important;height:28px!important}
+ html[data-nfc-template="architecture"] .links .glyph img{width:24px!important;height:24px!important}
+}
+@media(max-width:355px){
+ html[data-nfc-template="architecture"] .nfc-hero{padding:22px 18px!important;min-height:350px!important}
+ html[data-nfc-template="architecture"] .nfc-hero h1{font-size:26px!important}
+ html[data-nfc-template="architecture"] .nfc-socials a{width:43px!important;height:43px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-nfc-template="architecture"] .links a,
+ html[data-nfc-template="architecture"] .nfc-socials a{transition:none!important}
+}
