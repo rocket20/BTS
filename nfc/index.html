@@ -226,7 +226,7 @@ function applyCard(c){
  }
  if(opt.contactFormEnabled===true && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(c.slug||''))){
   const contactUrl=location.origin+'/contacto/?empresa='+encodeURIComponent(c.slug);
-  if(!links.some(l=>{try{return new URL(l?.url||'',location.origin).pathname.replace(/\\/$/,'')==='/contacto';}catch{return false;}})){
+  if(!links.some(l=>{try{return ['/contacto','/contacto/'].includes(new URL(l?.url||'',location.origin).pathname);}catch{return false;}})){
    addBusinessContact(nav,contactUrl,'Formulario de contacto','Dejanos tu mensaje','email');
   }
  }
