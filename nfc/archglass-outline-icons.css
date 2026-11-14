@@ -1,0 +1,43 @@
+/* BTS Studio · Arcasupply / Architectural Glass: iconos de redes en puro trazo */
+html[data-nfc-template="archglass"] .links a{
+ grid-template-columns:32px minmax(0,1fr) 20px!important;
+ column-gap:13px!important;
+}
+html[data-nfc-template="archglass"] .links .glyph.archglass-outline-glyph,
+html[data-nfc-template="archglass"] .links .glyph.nfc-form-outline{
+ display:grid!important;place-items:center!important;
+ width:30px!important;height:30px!important;min-width:30px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ border-radius:0!important;outline:0!important;
+ color:var(--archglass-social-icon-color,var(--accent,#4bc4ff))!important;
+ padding:0!important;margin:0!important;
+ line-height:0!important;
+}
+html[data-nfc-template="archglass"] .links .glyph.archglass-outline-glyph svg,
+html[data-nfc-template="archglass"] .links .glyph.nfc-form-outline svg{
+ display:block!important;width:25px!important;height:25px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.75!important;stroke-linejoin:round!important;stroke-linecap:round!important;
+ opacity:1!important;filter:none!important;
+}
+html[data-nfc-template="archglass"] .links .glyph.archglass-outline-glyph img{display:none!important}
+html[data-nfc-template="archglass"] .links a:hover .archglass-outline-glyph,
+html[data-nfc-template="archglass"] .links a:focus-visible .archglass-outline-glyph{
+ color:var(--archglass-social-icon-color,var(--accent,#4bc4ff))!important;
+}
+html[data-nfc-template="archglass"][data-archglass-icons="off"] .links a{
+ grid-template-columns:minmax(0,1fr) 20px!important;
+}
+html[data-nfc-template="archglass"] .nfc-form-link .glyph{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ color:var(--archglass-social-icon-color,var(--accent,#4bc4ff))!important;
+}
+@media(max-width:750px){
+ html[data-nfc-template="archglass"] .links a{
+  grid-template-columns:30px minmax(0,1fr) 18px!important;
+  column-gap:11px!important;
+ }
+ html[data-nfc-template="archglass"][data-archglass-icons="off"] .links a{
+  grid-template-columns:minmax(0,1fr) 18px!important;
+ }
+}
