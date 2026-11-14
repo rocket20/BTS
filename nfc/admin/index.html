@@ -65,6 +65,8 @@ html.nfc-editor-open .nfc-editor-back{display:inline-flex!important}
 @media(max-width:540px){#nfcCorporateFields .nfc-custom-grid{grid-template-columns:1fr}}
 
 /* Logistics Corporate: previsualización completa del perfil empresarial. */
+html[data-nfc-preview-template="architecture"] .nfc-preview-device.desktop .nfc-preview-screen{height:760px}
+html[data-nfc-preview-template="architecture"] .nfc-preview-device.mobile .nfc-preview-screen{height:760px}
 html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:650px}
 html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-preview-screen{height:690px}
 @media(max-width:700px){html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:590px}}
@@ -215,6 +217,7 @@ const TEMPLATES=[
 ['classic','Clásica BTS','Minimalista','#17111e','#7e3148','#fff'],
 ['glass','Glass Premium','Cristal y tecnología','#244d91','#a275cf','#fff'],
  ['logistics','Logistics Corporate','Logística empresarial · azul marino y acero','#101c2c','#456f94','#fff'],
+ ['architecture','Architecture Atelier','Arquitectura · hormigón, cristal y arena','#172634','#d8bc9d','#fff'],
 ['creator','Creator Neon','Artistas y creativos','#190b34','#9f157d','#fff'],
 ['business','Corporate Executive','Tarjeta corporativa oscura','#1a1d20','#373c40','#fff'],
 ['food','Food & Services','Restaurantes','#f9ebd7','#c58b62','#382218'],
@@ -222,13 +225,13 @@ const TEMPLATES=[
 ['portfolio','Portfolio Noir','Fotografía','#14141b','#47434e','#fff'],
 ['realestate','Estate Luxury','Inmobiliarias','#101f2a','#806c4e','#fff'],
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
-const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#101c2c','#456f94','#1b3148','#f3f7fb','#354a60','#f3f7fb','#192b40'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
+const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#101c2c','#456f94','#1b3148','#f3f7fb','#354a60','#f3f7fb','#192b40'],architecture:['#111f2b','#d8bc9d','#263541','#f7f4ee','#8b857c','#f7f4ee','#20303c'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
 function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked};}
 function chooseTemplate(id,apply=true){
  if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
- $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics'].includes(id))$('nfcIconStyle').value='mono';if(id==='logistics')$('nfcBlur').value='0';}
+ $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics','architecture'].includes(id))$('nfcIconStyle').value='mono';if(['logistics','architecture'].includes(id))$('nfcBlur').value=id==='architecture'?'8':'0';}
  for(const b of $('nfcTemplateGrid').querySelectorAll('button')){b.classList.toggle('selected',b.dataset.template===id);b.setAttribute('aria-pressed',String(b.dataset.template===id));}
  syncLivePreview();
 }
