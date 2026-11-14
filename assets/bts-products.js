@@ -13,7 +13,7 @@ const slides=[
 let active=0, timer=null;
 slides.forEach((item,index)=>{
  const el=document.createElement("article");el.className="bps-slide bps-slide--"+item.className;el.setAttribute("aria-roledescription","diapositiva");el.setAttribute("aria-label",item.number);
- el.innerHTML='<div class="bps-slide-copy"><h3>'+item.title+'</h3><p>'+item.description+'</p><div class="bps-actions"><a class="bps-btn" href="cotizar-tarjeta/?tipo='+item.type+'">Solicitar cotización ↗</a><a class="bps-btn ghost" href="mockup/?tipo='+item.type+'">Ver demo ↗</a></div></div><div class="bps-art bps-art--'+item.className+'" aria-label="Representación visual de '+item.type+'">'+item.art+'</div>';
+ el.innerHTML='<div class="bps-slide-copy"><h3>'+item.title+'</h3><p>'+item.description+'</p><div class="bps-actions"><a class="bps-btn" href="cotizar-tarjeta/?tipo='+item.type+'">Solicitar cotización ↗</a></div></div><div class="bps-art bps-art--'+item.className+'" aria-label="Representación visual de '+item.type+'">'+item.art+'</div>';
  track.appendChild(el);
  const dot=document.createElement("button");dot.type="button";dot.className="bps-dot";dot.setAttribute("aria-label","Ver producto "+(index+1));dot.addEventListener("click",()=>go(index));dots.appendChild(dot);
 });
