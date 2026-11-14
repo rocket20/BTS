@@ -24,10 +24,13 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 <link rel="stylesheet" href="./skins.css?v=20261109-miniweb3">
 <link rel="stylesheet" href="./corporate.css?v=20261109-compact2">
 <link rel="stylesheet" href="./logistics.css?v=20261114-corporate1">
+<link rel="stylesheet" href="./architecture.css?v=20261114-atelier1">
 
 <style id="bts-nfc-links-clean">
 /* BTS NFC: botones con iconos integrados, titulo y destino oculto */
 .nfc-socials{display:none!important}
+/* En la plantilla Arquitectura, los accesos rápidos sociales son parte del diseño. */
+html[data-nfc-template="architecture"] .nfc-socials{display:flex!important}
 .nfc-section-header>span{display:none!important}
 .links{gap:10px!important}
 html .links a,html[data-nfc-template="business"] .links a{
@@ -109,7 +112,7 @@ const qs=new URLSearchParams(location.search),previewMode=qs.get('preview')==='1
 const slug=String(qs.get('slug')||location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase().trim();
 const cardCode=String(qs.get('card')||'').toLowerCase().trim();
 const status=$('message');
-const ALLOWED=['classic','glass','logistics','creator','business','food','beauty','portfolio','realestate','wellness'];
+const ALLOWED=['classic','glass','logistics','architecture','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
 function validHex(v,fallback){return /^#[a-f\d]{6}$/i.test(String(v||''))?v:fallback;}
