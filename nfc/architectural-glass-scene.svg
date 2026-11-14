@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 880" width="1440" height="880" role="img" aria-label="Arquitectura contemporánea de vidrio iluminado en azul">
+<defs>
+<linearGradient id="night" x1="0" y1="0" x2=".86" y2="1"><stop stop-color="#021329"/><stop offset=".45" stop-color="#062b4d"/><stop offset="1" stop-color="#020c1a"/></linearGradient>
+<linearGradient id="facade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#183754"/><stop offset=".63" stop-color="#07172b"/><stop offset="1" stop-color="#09111d"/></linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#52c4f7" stop-opacity=".32"/><stop offset=".4" stop-color="#8bddff" stop-opacity=".07"/><stop offset="1" stop-color="#74d4ff" stop-opacity=".20"/></linearGradient>
+<linearGradient id="reflect" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#104566"/><stop offset="1" stop-color="#01101f"/></linearGradient>
+<linearGradient id="glow" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#2c91d0" stop-opacity=".1"/><stop offset=".6" stop-color="#63ceff"/><stop offset="1" stop-color="#006bd3" stop-opacity=".04"/></linearGradient>
+<radialGradient id="light"><stop stop-color="#e4ac6e" stop-opacity=".85"/><stop offset="1" stop-color="#b16b34" stop-opacity="0"/></radialGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="17"/></filter>
+<filter id="edge"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<rect width="1440" height="880" fill="url(#night)"/>
+<path d="M0 400C240 332 436 316 622 342s465-54 818-21v559H0Z" fill="#071d32" opacity=".93"/>
+<path d="M0 500c172-39 332-70 560-23s440-9 880-43v446H0Z" fill="#0a1b2c"/>
+<g opacity=".7" fill="#020d1a"><path d="M48 529q-39-133 27-181 64 89 42 181zM159 531q-32-108 26-150 44 49 38 150zM1342 540q-34-133 29-178 45 52 46 178z"/></g>
+<g stroke="#020d1a" stroke-width="7"><path d="M81 545V368M186 537V414M1373 548V391"/></g>
+<!-- Cantilevered glass architecture with warm interior -->
+<path d="M495 255L1349 217V592L495 604Z" fill="url(#facade)"/>
+<path d="M575 337l687-17v242H575Z" fill="#131e2b"/>
+<path d="M609 351l625-17v199H609Z" fill="#986b45"/>
+<rect x="609" y="346" width="625" height="207" fill="url(#light)" opacity=".55"/>
+<path d="M609 351l625-17v199H609Z" fill="#172438" opacity=".54"/>
+<path d="M495 253L1349 217V290L495 317Z" fill="#1c3447" stroke="#244760" stroke-width="5"/>
+<path d="M490 310L1360 283V317L490 346Z" fill="#0e1d2e"/>
+<path d="M560 346v221m168-220v224m183-225v226m177-228v228m157-230v224" stroke="#031221" stroke-width="13"/>
+<path d="M572 359l677-20M570 555h688" stroke="#6ea9c0" stroke-width="2" opacity=".3"/>
+<path d="M507 569L1345 557v52l-841 16Z" fill="#152d3d"/>
+<path d="M486 617h918" stroke="#5c93af" stroke-width="4" opacity=".4"/>
+<!-- Mirror pool -->
+<path d="M0 621h1440v259H0Z" fill="url(#reflect)"/>
+<g stroke="#62c8fa" stroke-opacity=".22" fill="none"><path d="M0 633h1440M0 680q350-16 720 4t720-2M0 750q300-15 720 1t720 0M0 827q400-13 850 5t590-5"/></g>
+<g stroke="#e8ae66" stroke-width="3" stroke-opacity=".25"><path d="M580 656l740-2M638 696l636-1M640 724l600-1"/></g>
+<!-- Architectural glass monolith inspired by large format glass panels -->
+<path d="M350 201L580 258V647L350 589Z" fill="url(#glass)" stroke="#56bdec" stroke-width="5"/>
+<path d="M363 213L569 265v366L363 580Z" fill="none" stroke="#b3e7ff" stroke-width="1.5" opacity=".65"/>
+<path d="M349 202L580 257V648L349 590Z" fill="none" stroke="#2bb7ff" stroke-width="13" opacity=".7" filter="url(#edge)"/>
+<path d="M350 201L580 258V647L350 589Z" fill="none" stroke="#72d9ff" stroke-width="3"/>
+<path d="M399 228L472 246l-19 364-57-18Z" fill="#a4e9ff" fill-opacity=".035"/>
+<path d="M350 591l-22 83h279l-27-27-231-56Z" fill="#2eafe4" opacity=".18" filter="url(#blur)"/>
+<path d="M352 604v48M464 627v50M580 649v45" stroke="#54cbff" stroke-width="10" stroke-opacity=".67" filter="url(#edge)"/>
+<path d="M352 604v48M464 627v50M580 649v45" stroke="#91dcff" stroke-width="2"/>
+<path d="M0 650h900" stroke="url(#glow)" stroke-width="3" opacity=".4"/>
+</svg>
