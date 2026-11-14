@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="1400" height="850" aria-hidden="true">
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#283c4c"/><stop offset=".64" stop-color="#4b5357"/><stop offset="1" stop-color="#8b7360"/></linearGradient>
+ <linearGradient id="concrete" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#73797c"/><stop offset=".5" stop-color="#50575b"/><stop offset="1" stop-color="#333c40"/></linearGradient>
+ <linearGradient id="interior" x1="0" y1="0" x2="1" y2=".5"><stop stop-color="#f4ce93"/><stop offset=".38" stop-color="#dbab73"/><stop offset="1" stop-color="#624c42"/></linearGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c3beb0" stop-opacity=".27"/><stop offset=".5" stop-color="#111b28" stop-opacity=".15"/><stop offset="1" stop-color="#101c2a" stop-opacity=".8"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#41505a"/><stop offset=".35" stop-color="#152e40"/><stop offset="1" stop-color="#0b1b29"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#ffe1a9" stop-opacity=".64"/><stop offset="1" stop-color="#f2c18f" stop-opacity="0"/></radialGradient>
+ <pattern id="panels" width="110" height="90" patternUnits="userSpaceOnUse"><path d="M110 0V90M0 90H110" fill="none" stroke="#1a2329" stroke-width="1" opacity=".28"/><circle cx="6" cy="5" r="2" fill="#1a2025" opacity=".24"/></pattern>
+</defs>
+<rect width="1400" height="850" fill="url(#sky)"/>
+<path d="M0 555C160 489 250 504 381 538C500 500 650 520 850 535L1400 525V850H0Z" fill="#1b2830" opacity=".94"/>
+<path d="M0 595c225-90 310-75 475-19s263-44 430-36l495 22v288H0Z" fill="#15222b"/>
+<g fill="#15272b" opacity=".9"><path d="M153 551q-16-95 25-112 48 28 31 112z"/><path d="M244 553q-32-130 22-166 49 52 34 166z"/><path d="M1309 556q-35-141 21-185 64 58 40 185z"/></g>
+<g fill="none" stroke="#0f1b21" stroke-width="6"><path d="M177 558V448M267 561V401M1331 563V402"/></g>
+<!-- Ground level glazing and warm lit lobby -->
+<path d="M559 369L1326 366V622H559Z" fill="#1b2329"/>
+<path d="M587 391H1278V596H587Z" fill="url(#interior)"/>
+<rect x="626" y="406" width="604" height="170" fill="url(#light)" opacity=".83"/>
+<g fill="#746052" opacity=".58"><path d="M650 503h212v35H650z"/><path d="M866 516h246v42H866z"/><path d="M923 481h188v14H923z"/></g>
+<g fill="#252a2a" opacity=".76"><path d="M619 401h15v187h-15zM851 401h14v187h-14zM1095 401h16v187h-16zM1240 401h18v187h-18z"/></g>
+<rect x="600" y="392" width="671" height="199" fill="url(#glass)"/>
+<!-- Upper cantilever facade -->
+<path d="M656 127L1364 116V384L641 392Z" fill="url(#concrete)" stroke="#292e32" stroke-width="4"/>
+<path d="M656 127L1364 116V384L641 392Z" fill="url(#panels)" opacity=".55"/>
+<path d="M661 138L772 133V384L661 388Z" fill="#283139"/>
+<path d="M695 166L762 163V360L695 365Z" fill="#d8ae7b"/>
+<path d="M706 174L752 171V356L706 361Z" fill="#f5d6a7" opacity=".66"/>
+<path d="M768 142V385" stroke="#171f25" stroke-width="14"/>
+<path d="M767 142L1060 131V385L767 388Z" fill="#242c32" opacity=".75"/>
+<g stroke="#192126" stroke-width="10"><path d="M880 142V385M1012 137V383"/></g>
+<g stroke="#a8b2ad" stroke-width="2" opacity=".17"><path d="M665 245L1359 230M664 327L1354 313"/></g>
+<path d="M612 382L1369 375L1342 419L569 430Z" fill="#42494b" stroke="#293038" stroke-width="3"/>
+<path d="M569 430L1342 419V439L563 454Z" fill="#232a30"/>
+<path d="M1245 385L1300 386V614L1245 614Z" fill="#2b3337" opacity=".95"/>
+<!-- Foreground reflecting pool -->
+<path d="M0 605H1400V850H0Z" fill="url(#water)"/>
+<g fill="none" stroke-linecap="round"><path d="M0 632Q470 610 1400 647" stroke="#d4c5a5" stroke-width="3" opacity=".3"/><path d="M60 674q312-15 621-3t645-2M25 738q341-17 612 3t732-5M100 804q290-18 566-3t610-2" stroke="#778b8b" stroke-width="2" opacity=".24"/><path d="M587 641h650M621 658h588M645 692h505M690 718h490" stroke="#dbab73" stroke-width="2" opacity=".24"/></g>
+<path d="M0 604L1400 611" stroke="#d6b798" stroke-opacity=".35" stroke-width="3"/>
+<!-- Architectural CAD overlay, like a drawing on tracing paper -->
+<g fill="none" stroke="#e7dacb" stroke-width="1.7" opacity=".47" stroke-linejoin="round">
+ <path d="M824 663l196-61 215 42-197 71-214-52z"/>
+ <path d="M824 663v87l214 43 197-76v-73M1038 715v78M1020 602v87"/>
+ <path d="M852 672v73m49-89v102m59-122v131m168-143v134"/>
+ <path d="M1038 715l0-80m-214 115 214 43"/>
+ <path d="M799 676l234-72 229 42M823 778l215 42 213-82"/>
+</g>
+</svg>
