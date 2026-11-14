@@ -246,3 +246,160 @@ html[data-nfc-template="architecture"] .foot b{color:#acaba8!important}
  html[data-nfc-template="architecture"] .links a,
  html[data-nfc-template="architecture"] .nfc-socials a{transition:none!important}
 }
+
+/* Atelier v2: portada real editable, marca visible y enlaces sin iconos.
+   Mantener este bloque al final para prevalecer sobre reglas responsive genéricas. */
+html[data-nfc-template="architecture"] .nfc-socials,
+html[data-nfc-template="architecture"] #socials{
+ display:none!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero{
+ display:grid!important;
+ grid-template-columns:86px minmax(0,1fr)!important;
+ grid-template-rows:min-content 1fr!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ column-gap:16px!important;
+ row-gap:0!important;
+ min-height:445px!important;
+ padding:27px!important;
+ background:
+  linear-gradient(90deg,rgba(12,24,35,.83) 0%,rgba(13,26,39,.54) 38%,rgba(13,26,39,.09) 82%),
+  url("./architecture-scene.svg") var(--nfc-banner-x,50%) var(--nfc-banner-y,50%) / cover no-repeat!important;
+}
+html[data-nfc-template="architecture"] body[data-cover="yes"] .nfc-hero{
+ background:
+  linear-gradient(90deg,rgba(12,24,35,.79) 0%,rgba(13,26,39,.44) 40%,rgba(13,26,39,.07) 85%),
+  var(--nfc-cover) var(--nfc-banner-x,50%) var(--nfc-banner-y,50%) / cover no-repeat!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero .avatar,
+html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+ grid-column:1!important;grid-row:1!important;
+ display:grid!important;
+ width:82px!important;height:82px!important;min-width:82px!important;
+ border:1.5px solid #e4d0b5!important;
+ background:rgba(14,28,40,.85)!important;
+ box-shadow:0 0 0 3px rgba(18,31,45,.32)!important;
+ z-index:2;
+}
+html[data-nfc-template="architecture"] .nfc-hero .avatar .avatar-fallback{
+ color:#e1c3a0!important;
+ font-size:29px!important;
+ font-weight:600!important;
+ letter-spacing:-.04em!important;
+}
+html[data-nfc-template="architecture"] .nfc-intro{
+ grid-column:2!important;grid-row:1!important;
+ width:100%!important;max-width:none!important;
+ min-height:0!important;align-items:flex-start!important;
+ justify-content:flex-start!important;
+ padding-top:6px!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero h1{
+ font-size:clamp(25px,4vw,43px)!important;
+ margin:0!important;
+ max-width:100%!important;
+ line-height:1.15!important;
+ text-align:left!important;
+ font-weight:680!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero h1::after{
+ margin:17px 0 0!important;
+ width:50px!important;
+ height:2px!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero .tagline{
+ max-width:440px!important;
+ margin:14px 0 0!important;
+ font-size:clamp(13px,1.8vw,16px)!important;
+ text-align:left!important;
+ color:#f1e8db!important;
+ line-height:1.55!important;
+}
+html[data-nfc-template="architecture"] .nfc-hero::after{
+ right:12px!important;bottom:10px!important;
+ width:50%!important;height:28%!important;
+ opacity:.35!important;
+}
+html[data-nfc-template="architecture"] .nfc-card.nfc-primary{
+ background:linear-gradient(155deg,#243643,#1b2b37 88%)!important;
+ border:1px solid #c0b19b65!important;
+ box-shadow:0 10px 34px #08141d70!important;
+}
+html[data-nfc-template="architecture"] .links a{
+ grid-template-columns:minmax(0,1fr) 20px!important;
+ column-gap:14px!important;
+ min-height:63px!important;
+ padding:13px 17px!important;
+ border:1px solid #b7ab9860!important;
+ border-radius:14px!important;
+ background:rgba(223,232,233,.045)!important;
+}
+html[data-nfc-template="architecture"] .links .glyph{display:none!important}
+html[data-nfc-template="architecture"] .links .nfc-link-copy{
+ padding:0!important;
+ gap:0!important;
+}
+html[data-nfc-template="architecture"] .links .nfc-link-copy strong{
+ font-size:14px!important;font-weight:650!important;
+ color:#f6f1e9!important;
+}
+html[data-nfc-template="architecture"] .links a .arrow{
+ color:#e2c29e!important;
+ opacity:1!important;
+ justify-self:end!important;
+}
+@media(min-width:751px){
+ html[data-nfc-template="architecture"] #profile{
+  display:flex!important;flex-direction:column!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero{
+  min-height:445px!important;
+  grid-template-columns:92px minmax(0,1fr)!important;
+  padding:36px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .avatar,
+ html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+  width:90px!important;height:90px!important;min-width:90px!important;
+ }
+}
+@media(max-width:750px){
+ html[data-nfc-template="architecture"] main.nfc-page{
+  padding:14px 12px 25px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero{
+  grid-template-columns:72px minmax(0,1fr)!important;
+  min-height:400px!important;
+  padding:20px 18px!important;
+  column-gap:13px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .avatar,
+ html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+  width:70px!important;height:70px!important;min-width:70px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero h1{
+  font-size:clamp(21px,6.9vw,31px)!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .tagline{
+  font-size:12px!important;max-width:100%!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero::after{
+  width:65%!important;height:23%!important;
+ }
+ html[data-nfc-template="architecture"] .links a{
+  grid-template-columns:minmax(0,1fr) 20px!important;
+  padding:13px 14px!important;
+ }
+}
+@media(max-width:355px){
+ html[data-nfc-template="architecture"] .nfc-hero{
+  grid-template-columns:62px minmax(0,1fr)!important;
+  padding:18px 14px!important;
+  column-gap:11px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero .avatar,
+ html[data-nfc-template="architecture"] .nfc-hero .avatar:not([hidden]){
+  width:60px!important;height:60px!important;min-width:60px!important;
+ }
+ html[data-nfc-template="architecture"] .nfc-hero h1{font-size:21px!important}
+}
