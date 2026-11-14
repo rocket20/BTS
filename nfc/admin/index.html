@@ -129,6 +129,22 @@ html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-prev
 <div class="field"><label for="nfcFont">Tipografía</label><select id="nfcFont"><option value="modern">Moderna</option><option value="serif">Serif</option><option value="editorial">Creativa</option></select></div>
 <div class="field"><label for="nfcAlign">Alineación</label><select id="nfcAlign"><option value="left">Web editorial</option><option value="center">Centrada</option></select></div>
 <div class="field"><label for="nfcIconStyle">Iconos de redes</label><select id="nfcIconStyle"><option value="brand">Colores originales</option><option value="mono">Monocromáticos</option></select></div>
+<div id="archglassIconSettings" class="field" hidden style="grid-column:1/-1">
+ <div style="border:1px solid #3b5365;border-radius:12px;padding:14px;background:#091e30">
+  <label style="display:flex;gap:10px;align-items:center;cursor:pointer;color:#e0f1fc;font-size:13px">
+   <input id="archglassOutlineIcons" type="checkbox" checked style="width:19px;height:19px;accent-color:#3db8f2"> Mostrar íconos de redes en contorno y sin fondo
+  </label>
+  <div class="nfc-custom-grid" style="margin-top:12px">
+   <div class="field"><label for="archglassIconMode">Color del trazo</label>
+    <select id="archglassIconMode"><option value="brand">Usar color de la marca</option><option value="custom">Elegir color propio</option></select>
+   </div>
+   <div class="field" id="archglassIconColorField" hidden><label for="archglassIconColor">Color personalizado</label>
+    <input type="color" class="color" id="archglassIconColor" value="#4bc4ff">
+   </div>
+  </div>
+  <p class="design-hint" style="margin:9px 0 0;color:#a5c4d7">Íconos SVG de trazo limpio y transparente dentro de cada enlace. Se ven en web y celular.</p>
+ </div>
+</div>
 <div class="field"><label for="nfcTextColor">Texto</label><input type="color" class="color" id="nfcTextColor" value="#f8f7fb"></div>
 <div class="field"><label for="nfcSurfaceColor">Paneles</label><input type="color" class="color" id="nfcSurfaceColor" value="#17171f"></div>
 <div class="field"><label for="nfcBlur">Efecto glass <output id="nfcBlurValue">18px</output></label><input type="range" min="0" max="40" step="2" id="nfcBlur" value="18"></div>
@@ -267,7 +283,7 @@ const TEMPLATES=[
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
 const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#101c2c','#456f94','#1b3148','#f3f7fb','#354a60','#f3f7fb','#192b40'],architecture:['#111f2b','#d8bc9d','#263541','#f7f4ee','#8b857c','#f7f4ee','#20303c'],archglass:['#03162c','#3db8f2','#123955','#f4faff','#377b9d','#f4faff','#0a2943'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
-function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked,
+function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,archglassOutlineIcons:$('archglassOutlineIcons').checked,archglassIconMode:$('archglassIconMode').value,archglassIconColor:$('archglassIconColor').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked,
  contactFormLabel:$('contactFormLabel').value.trim().slice(0,55)||'Formulario de contacto',
  contactFormIcon:$('contactFormIcon').value,
  contactFormPosition:$('contactFormPosition').value,
@@ -276,9 +292,9 @@ function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').v
  contactFormText:$('contactFormText').value,
  contactFormBorder:$('contactFormBorder').value,bannerX:Number($('nfcBannerX').value),bannerY:Number($('nfcBannerY').value)};}
 function chooseTemplate(id,apply=true){
- if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';$('architectureBannerControls').hidden=!['architecture','archglass'].includes(id);
+ if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';$('architectureBannerControls').hidden=!['architecture','archglass'].includes(id);$('archglassIconSettings').hidden=id!=='archglass';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
- $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics','architecture','archglass'].includes(id))$('nfcIconStyle').value='mono';if(['logistics','architecture','archglass'].includes(id))$('nfcBlur').value=['architecture','archglass'].includes(id)?'8':'0';if(['architecture','archglass'].includes(id)){$('nfcBannerX').value='50';$('nfcBannerY').value='50';}}
+ $('nfcFont').value=['food','portfolio','realestate'].includes(id)?'serif':'modern';$('nfcAlign').value=['classic','logistics'].includes(id)?'center':'left';$('nfcShape').value=id==='classic'?'pill':'soft';if(['business','logistics','architecture','archglass'].includes(id))$('nfcIconStyle').value='mono';if(['logistics','architecture','archglass'].includes(id))$('nfcBlur').value=['architecture','archglass'].includes(id)?'8':'0';if(['architecture','archglass'].includes(id)){$('nfcBannerX').value='50';$('nfcBannerY').value='50';}if(id==='archglass'){$('archglassOutlineIcons').checked=true;$('archglassIconMode').value='brand';$('archglassIconColor').value='#4bc4ff';}}
  for(const b of $('nfcTemplateGrid').querySelectorAll('button')){b.classList.toggle('selected',b.dataset.template===id);b.setAttribute('aria-pressed',String(b.dataset.template===id));}
  syncLivePreview();
 }
@@ -426,7 +442,7 @@ function reset(){
  $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;$('nfcBannerX').value=50;$('nfcBannerY').value=50;
  $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';$('contactFormEnabled').checked=false;
  $('contactFormLabel').value='Formulario de contacto';$('contactFormIcon').value='email';$('contactFormPosition').value='last';
- $('contactFormCustomColors').checked=false;$('contactFormBg').value='#181820';$('contactFormText').value='#ffffff';$('contactFormBorder').value='#42404b';syncContactColorFields();
+ $('contactFormCustomColors').checked=false;$('contactFormBg').value='#181820';$('contactFormText').value='#ffffff';$('contactFormBorder').value='#42404b';syncContactColorFields();$('archglassOutlineIcons').checked=true;$('archglassIconMode').value='brand';$('archglassIconColor').value='#4bc4ff';syncArchglassIconControls();
  for(const id of ['nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).value='';chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
@@ -476,7 +492,7 @@ function showCard(c){
  $('nfcShape').value=['soft','pill','square'].includes(o.shape)?o.shape:'soft';
  $('nfcFont').value=['modern','serif','editorial'].includes(o.font)?o.font:'modern';
  $('nfcAlign').value=['left','center'].includes(o.align)?o.align:'left';
- $('nfcIconStyle').value=o.icons==='mono'?'mono':'brand';
+ $('nfcIconStyle').value=o.icons==='mono'?'mono':'brand';$('archglassOutlineIcons').checked=o.archglassOutlineIcons!==false;$('archglassIconMode').value=o.archglassIconMode==='custom'?'custom':'brand';$('archglassIconColor').value=/^#[0-9a-f]{6}$/i.test(o.archglassIconColor||'')?o.archglassIconColor:'#4bc4ff';syncArchglassIconControls();
  $('nfcBlur').value=Number.isFinite(Number(o.blur))?Math.max(0,Math.min(40,Number(o.blur))):18;
  $('nfcTextColor').value=/^#[0-9a-f]{6}$/i.test(o.textColor||'')?o.textColor:COLORS[chosenTemplate()][5];
  $('nfcSurfaceColor').value=/^#[0-9a-f]{6}$/i.test(o.surfaceColor||'')?o.surfaceColor:COLORS[chosenTemplate()][6];for(const [id,key] of [['nfcRole','role'],['nfcLocation','location'],['nfcPhone','phone'],['nfcEmail','email'],['nfcTags','tags']])$(id).value=String(o[key]||'');
@@ -664,6 +680,11 @@ for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','b
   $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';syncLivePreview();
  });
 $('centerBanner').addEventListener('click',()=>{$('nfcBannerX').value=50;$('nfcBannerY').value=50;syncLivePreview();});
+function syncArchglassIconControls(){$('archglassIconColorField').hidden=$('archglassIconMode').value!=='custom';}
+$('archglassOutlineIcons').addEventListener('change',syncLivePreview);
+$('archglassIconMode').addEventListener('change',()=>{syncArchglassIconControls();syncLivePreview();});
+$('archglassIconColor').addEventListener('input',syncLivePreview);
+syncArchglassIconControls();
 $('contactFormEnabled').addEventListener('change',syncLivePreview);
 function syncContactColorFields(){$('contactFormColorSettings').hidden=!$('contactFormCustomColors').checked;}
 for(const id of ['contactFormLabel','contactFormIcon','contactFormPosition','contactFormBg','contactFormText','contactFormBorder'])$(id).addEventListener('input',syncLivePreview);
