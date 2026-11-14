@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#111116">
+<title>Formulario de contacto | BTS Studio</title>
+<style>
+:root{color-scheme:dark;--accent:#a13c5b;--bg:#0c0d11;--paper:#17181e;--line:#34343c;--ink:#f7f5f7;--muted:#a6a3ae;font:15px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;color:var(--ink);background:radial-gradient(ellipse 65% 32% at 50% -5%,#6a284240,transparent),var(--bg);padding:32px 16px 70px}
+.shell{width:min(100%,660px);margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:29px}
+.brand{font-size:12px;letter-spacing:.14em;font-weight:900}.brand span{color:#b76582}
+.back{color:var(--muted);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:7px}.back:hover{color:#fff}
+.card{background:linear-gradient(145deg,#1c1c22,#131419);border:1px solid #ffffff18;border-radius:24px;padding:clamp(22px,5vw,40px);box-shadow:0 24px 70px #0006}
+.company{display:flex;align-items:center;gap:13px;margin-bottom:22px}.company img{width:52px;height:52px;border:1px solid #ffffff30;border-radius:14px;background:#25252d;object-fit:cover}
+.company b{display:block;font-size:14px}.company small{color:var(--muted);font-size:12px}
+.eyebrow{display:block;font-size:10px;font-weight:800;letter-spacing:.15em;color:#c7a8b7;text-transform:uppercase}
+h1{font-weight:750;letter-spacing:-.055em;font-size:clamp(29px,6vw,42px);line-height:1.15;margin:8px 0 8px}
+.intro{color:var(--muted);margin:0 0 26px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.field{display:grid;gap:7px}.full{grid-column:1/-1}
+label{font-size:12px;font-weight:650;color:#d7d3da}
+input,select,textarea{font:inherit;color:var(--ink);background:#0e0f14;border:1px solid #47434d;border-radius:11px;padding:12px 13px;width:100%;outline:none;min-height:47px;transition:border-color .2s,box-shadow .2s}textarea{min-height:130px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:#ae6e84;box-shadow:0 0 0 3px #af52712a}
+input::placeholder,textarea::placeholder{color:#77717d} .hint{font-size:11px;color:var(--muted)}
+button{font:inherit;cursor:pointer}button[type=submit]{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:51px;margin-top:24px;border:1px solid #d193a5;border-radius:13px;background:linear-gradient(125deg,#7c2948,#a64a68);color:white;font-weight:750;box-shadow:0 9px 24px #6a20333a}
+button:disabled{opacity:.55;cursor:wait}.small{font-size:11px;color:#95909b;margin:13px 0 0;text-align:center}
+.state{border:1px solid #744253;border-radius:12px;background:#52283a33;padding:12px 15px;margin:12px 0 0;font-size:13px;color:#f4c9d8}
+.success{text-align:center;padding:30px 5px}.success .check{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 18px;border-radius:50%;background:#345b47;color:#adf5c3;font-size:28px}.success a{display:inline-block;margin-top:15px;padding:11px 20px;border-radius:10px;border:1px solid #5b5660;color:var(--ink);text-decoration:none}
+footer{text-align:center;margin:23px auto;color:#7d7982;font-size:11px}
+.honey{position:absolute;left:-10000px;width:1px;height:1px;opacity:0}
+[hidden]{display:none!important}
+@media(max-width:520px){body{padding:20px 12px 50px}.card{border-radius:20px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.top{margin-bottom:19px}}
+</style>
+</head>
+<body>
+<div class="shell">
+ <div class="top"><div class="brand">BTS <span>STUDIO</span></div><a class="back" id="back" href="/nfc/">← Volver a la tarjeta</a></div>
+ <main class="card">
+  <div class="company" id="company" hidden><img id="logo" alt="" hidden><div><small>Estás contactando a</small><b id="companyName"></b></div></div>
+  <div id="loading">Cargando el formulario de contacto…</div>
+  <div id="formBlock" hidden>
+   <span class="eyebrow">Comunicate con nosotros</span><h1>Hablemos.</h1>
+   <p class="intro">Completá el formulario y tu solicitud quedará registrada para que el equipo pueda darle seguimiento.</p>
+   <form id="contact" autocomplete="on">
+    <div class="grid">
+     <div class="field"><label for="fullName">Nombre completo *</label><input id="fullName" name="name" maxlength="130" minlength="2" autocomplete="name" required placeholder="Tu nombre completo"></div>
+     <div class="field"><label for="phone">WhatsApp o teléfono</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+505 8888 8888"></div>
+     <div class="field full"><label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="nombre@correo.com"><small class="hint">Ingresá al menos un medio de contacto: correo o teléfono.</small></div>
+     <div class="field full"><label for="subject">Asunto *</label><input id="subject" name="subject" maxlength="140" minlength="2" required placeholder="¿En qué podemos ayudarte?"></div>
+     <div class="field full"><label for="message">Tu mensaje *</label><textarea id="message" name="message" rows="5" minlength="5" maxlength="3000" required placeholder="Contanos qué necesitás"></textarea></div>
+    </div>
+    <div class="honey" aria-hidden="true"><label for="website">Sitio web</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+    <p id="notice" class="state" role="alert" hidden></p>
+    <button type="submit" id="send">Enviar mensaje <span aria-hidden="true">↗</span></button>
+    <p class="small">Tus datos se usarán únicamente para gestionar tu solicitud de contacto.</p>
+   </form>
+  </div>
+  <div id="success" class="success" hidden><span class="check">✓</span><h1>Mensaje enviado.</h1><p class="intro">Gracias por escribirnos. Tu solicitud quedó registrada correctamente.</p><a id="successBack" href="/nfc/">Volver a la tarjeta</a></div>
+  <p id="error" class="state" role="alert" hidden></p>
+ </main>
+ <footer>Formulario de contacto · BTS Studio</footer>
+</div>
+<script>
+(()=>{
+'use strict';
+const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co';
+const KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
+const $=id=>document.getElementById(id);
+const slug=(new URLSearchParams(location.search).get('empresa')||'').trim().toLowerCase();
+let company=null, sending=false;
+const showError=message=>{$('loading').hidden=true;$('formBlock').hidden=true;$('error').textContent=message;$('error').hidden=false;};
+async function load(){
+ if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3)return showError('No encontramos la empresa de este formulario.');
+ const back='/nfc/?slug='+encodeURIComponent(slug);$('back').href=back;$('successBack').href=back;
+ try{
+  const q='/rest/v1/bts_nfc_cards?slug=eq.'+encodeURIComponent(slug)+'&is_active=eq.true&select=id,slug,business_name,avatar_url,accent_color,theme_options&limit=1';
+  const res=await fetch(BASE+q,{headers:{apikey:KEY,Accept:'application/json'},cache:'no-store'});
+  if(!res.ok)throw Error('No se pudo cargar la empresa');
+  const rows=await res.json();company=Array.isArray(rows)?rows[0]:null;
+  if(!company||company.theme_options?.contactFormEnabled!==true)return showError('El formulario de esta empresa no está disponible.');
+  const color=String(company.accent_color||'');if(/^#[0-9a-f]{6}$/i.test(color))document.documentElement.style.setProperty('--accent',color);
+  $('companyName').textContent=company.business_name;
+  if(/^https:\/\//i.test(company.avatar_url||'')){$('logo').src=company.avatar_url;$('logo').hidden=false;}
+  $('company').hidden=false;$('loading').hidden=true;$('formBlock').hidden=false;
+  document.title='Contacto · '+company.business_name;
+ }catch(e){showError('No pudimos abrir este formulario. Probá nuevamente más tarde.');}
+}
+$('contact').addEventListener('submit',async event=>{
+ event.preventDefault();if(sending||!company)return;
+ const full_name=$('fullName').value.trim(),email=$('email').value.trim(),phone=$('phone').value.trim(),subject=$('subject').value.trim(),message=$('message').value.trim();
+ $('notice').hidden=true;
+ if(!email&&!phone){$('notice').textContent='Ingresá un teléfono o correo para poder responderte.';$('notice').hidden=false;return;}
+ if(full_name.length<2||subject.length<2||message.length<5){$('notice').textContent='Completá los campos obligatorios.';$('notice').hidden=false;return;}
+ if($('website').value.trim()){$('formBlock').hidden=true;$('success').hidden=false;return;}
+ sending=true;$('send').disabled=true;$('send').textContent='Enviando…';
+ try{
+  const payload={company_id:company.id,company_slug:company.slug,company_name:company.business_name,full_name,email,phone,subject,message};
+  const r=await fetch(BASE+'/rest/v1/bts_business_contacts',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
+  if(!r.ok)throw Error('No fue posible registrar el mensaje');
+  $('formBlock').hidden=true;$('success').hidden=false;
+ }catch(e){$('notice').textContent='No pudimos enviar tu mensaje. Revisá tu conexión e intentá de nuevo.';$('notice').hidden=false;}
+ finally{sending=false;$('send').disabled=false;$('send').innerHTML='Enviar mensaje <span aria-hidden="true">↗</span>';}
+});
+load();
+})();
+</script>
+</body></html>
