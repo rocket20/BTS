@@ -1,75 +1,79 @@
-/* BTS Studio NFC · LOGISTICS GLASS
-   Tema opcional: se aplica solo a data-nfc-template="logistics".
-   Optimizado para la miniweb y la vista previa responsive del editor. */
+/* BTS Studio NFC · LOGISTICS CORPORATE
+   El ID "logistics" se conserva para no alterar tarjetas NFC existentes.
+   Estética empresarial: azul marino, acero, superficies planas y sin neón.
+   Los enlaces, la edición y las vistas previas comparten este estilo. */
 html[data-nfc-template="logistics"]{
  --nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- --bg:#071444;--ink:#fff;--muted:#d2ddfc;--surface:#14235a;
- --nfc-logistics-blue:#00ceff;--nfc-logistics-violet:#9146ff;
+ --nfc-logistics-navy:#101c2c;
+ --nfc-logistics-panel:#192b40;
+ --nfc-logistics-accent:#456f94;
+ --nfc-logistics-line:#354a60;
+ --nfc-logistics-muted:#b8c8d8;
  color-scheme:dark;
 }
 html[data-nfc-template="logistics"] body{
- --bg-art:linear-gradient(140deg,#092765,#11174e 55%,#311168);
+ --bg-art:none;
  margin:0!important;min-height:100svh!important;
- background:linear-gradient(180deg,#06153a70,#07143a3d 42%,#0d1044b3),
- url("./logistics-scene.svg") center top / cover fixed no-repeat,
- linear-gradient(140deg,#102a70,#1c135e 65%,#371267)!important;
- color:#f9fbff!important;
+ color:#edf3f9!important;
+ background:
+  radial-gradient(ellipse at 50% -30%,#213b52 0%,transparent 58%),
+  linear-gradient(160deg,#0e1b2b 0%,#142235 57%,#0c1828 100%)!important;
 }
+/* El mapa logístico es un detalle tenue, no una fuente de luces neón. */
 html[data-nfc-template="logistics"] body::before{
- display:none!important;
+ content:"";display:block!important;position:fixed;inset:0;z-index:0;
+ pointer-events:none;
+ background-image:var(--nfc-cover,none);
+ background-size:cover;background-position:center;
+ opacity:.1!important;
 }
 html[data-nfc-template="logistics"] body::after{
- content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
- background:
-  radial-gradient(ellipse at 51% 19%,#3cafff1c,transparent 42%),
-  linear-gradient(180deg,transparent 45%,#07133e33 100%);
+ content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+ background:url("./logistics-scene.svg") center / cover no-repeat;
+ filter:grayscale(.85) saturate(.4);
+ opacity:.065;
 }
 html[data-nfc-template="logistics"] main.nfc-page{
  position:relative;z-index:1;
- width:min(1140px,calc(100% - 40px))!important;
- padding:clamp(34px,5vw,66px) clamp(8px,2vw,28px) 30px!important;
+ width:min(1080px,calc(100% - 40px))!important;
+ padding:clamp(32px,5vw,64px) clamp(8px,2vw,26px) 32px!important;
  min-height:100svh!important;
 }
 html[data-nfc-template="logistics"] #profile{
  display:flex!important;flex-direction:column!important;
- width:100%!important;align-items:center!important;
- gap:22px!important;
+ width:100%!important;align-items:center!important;gap:23px!important;
 }
 html[data-nfc-template="logistics"] .nfc-hero{
  display:flex!important;flex-direction:column!important;align-items:center!important;
  justify-content:center!important;text-align:center!important;
- width:100%!important;min-height:490px!important;
- padding:clamp(28px,6vw,54px) 35px!important;
- gap:22px!important;border-radius:36px!important;
- border:1px solid #b3e2ff8c!important;
- background:linear-gradient(135deg,#1970bb32 0%,#15276a90 48%,#52227e58 100%)!important;
- box-shadow:inset 0 1px #f4ffff4a,inset 0 0 75px #1c9af813,
-  0 25px 90px #000b,0 0 50px #1b86fa30!important;
- backdrop-filter:blur(19px) saturate(1.35)!important;
- -webkit-backdrop-filter:blur(19px) saturate(1.35)!important;
+ width:100%!important;min-height:390px!important;
+ padding:clamp(30px,5vw,52px) 34px!important;
+ gap:19px!important;border-radius:24px!important;
+ border:1px solid #354b63!important;
+ background:linear-gradient(160deg,#1b3148,#15253a 65%,#17293e)!important;
+ box-shadow:0 15px 45px #030a1480,inset 0 1px #ffffff0c!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
  position:relative;isolation:isolate;overflow:hidden;
 }
 html[data-nfc-template="logistics"] .nfc-hero::before{
  content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
- background:radial-gradient(ellipse at 50% 0%,#149eff33,transparent 57%),
- linear-gradient(120deg,transparent 32%,#ffffff0c 50%,transparent 64%);
+ background:linear-gradient(105deg,transparent 50%,#ffffff06 100%);
 }
 html[data-nfc-template="logistics"] .nfc-hero::after{
- content:"";position:absolute;inset:auto 7% 0;height:2px;
- background:linear-gradient(90deg,transparent,#00d8ff 30%,#a75aff 73%,transparent);
- opacity:.8;box-shadow:0 -5px 34px #53cfff;
+ content:"";position:absolute;left:34px;right:34px;bottom:0;height:1px;
+ background:linear-gradient(90deg,transparent,#57758f,transparent);
+ opacity:.6;box-shadow:none;
 }
 html[data-nfc-template="logistics"] .nfc-hero .avatar,
 html[data-nfc-template="logistics"] .nfc-hero .avatar:not([hidden]){
  display:grid;place-items:center;
- width:clamp(110px,16vw,145px)!important;
- height:clamp(110px,16vw,145px)!important;
- min-width:clamp(110px,16vw,145px)!important;
- border:3px solid #7ad5ff!important;
+ width:clamp(100px,13vw,130px)!important;
+ height:clamp(100px,13vw,130px)!important;
+ min-width:clamp(100px,13vw,130px)!important;
+ border:2px solid #627f9c!important;
  border-radius:50%!important;
- background:linear-gradient(145deg,#1446ad,#15194e)!important;
- box-shadow:inset 0 0 25px #4acaff48,0 0 0 6px #2caafa26,
-  0 0 38px #00caff91,0 10px 44px #0008!important;
+ background:#233d56!important;
+ box-shadow:0 0 0 5px #ffffff0b,0 9px 20px #08142270!important;
  flex:none;
 }
 html[data-nfc-template="logistics"] .nfc-hero .avatar[hidden]{display:none!important}
@@ -79,157 +83,140 @@ html[data-nfc-template="logistics"] .nfc-intro{
  width:100%!important;flex:none!important;min-width:0!important;
 }
 html[data-nfc-template="logistics"] .nfc-hero h1{
- margin:0!important;text-align:center!important;line-height:1.07!important;
- max-width:900px!important;
- font-size:clamp(37px,5.8vw,72px)!important;font-weight:850!important;
- letter-spacing:-.055em!important;color:#fff!important;
- text-shadow:0 3px 23px #18266366;
- overflow-wrap:anywhere;
+ margin:0!important;max-width:880px!important;
+ text-align:center!important;line-height:1.13!important;
+ font-size:clamp(32px,4.7vw,57px)!important;font-weight:780!important;
+ letter-spacing:-.045em!important;color:#f5f8fc!important;
+ text-shadow:none!important;overflow-wrap:anywhere;
 }
 html[data-nfc-template="logistics"] .nfc-hero h1::after{
- content:"";display:block;width:82px;height:4px;border-radius:999px;
- margin:18px auto 0;
- background:linear-gradient(90deg,#04e2ff,#6b67ff);
- box-shadow:0 0 16px #16c5ff;
+ content:"";display:block;width:48px;height:2px;border-radius:2px;
+ margin:18px auto 0;background:#6486a4;box-shadow:none;
 }
 html[data-nfc-template="logistics"] .nfc-hero .tagline{
- font-size:clamp(15px,2vw,19px)!important;color:#e0ebff!important;
- max-width:720px!important;line-height:1.6!important;
- text-align:center!important;margin:15px auto 20px!important;
- text-shadow:0 1px 8px #0c184a;
+ font-size:clamp(13px,1.65vw,16px)!important;
+ color:#b9c9d9!important;max-width:680px!important;
+ line-height:1.65!important;text-align:center!important;
+ margin:13px auto 20px!important;text-shadow:none!important;
 }
 html[data-nfc-template="logistics"] .nfc-hero .pill{display:none!important}
 html[data-nfc-template="logistics"] .nfc-premium-cta:not([hidden]){
- display:inline-flex!important;align-items:center;justify-content:center;gap:15px;
- max-width:100%;min-height:59px;padding:12px 31px;
- text-decoration:none!important;font-weight:800;font-size:14px!important;
- letter-spacing:.035em;color:#fff!important;
- border:1px solid #bcf5ffb3;border-radius:999px;
- background:linear-gradient(105deg,#00c4ed,#245eff 48%,#9940d7);
- box-shadow:inset 0 1px #ffffffb0,0 0 0 3px #2775ff36,
-  0 10px 38px #08c4ff38,0 10px 35px #5d3ef858;
- transition:transform .2s ease,filter .2s ease,box-shadow .2s ease;
+ display:inline-flex!important;align-items:center;justify-content:center;gap:12px;
+ max-width:100%;min-height:50px;padding:12px 25px;
+ text-decoration:none!important;font-weight:750;font-size:12px!important;
+ letter-spacing:.035em;color:#f8fbff!important;
+ border:1px solid #577da0!important;border-radius:11px;
+ background:#2b587e!important;
+ box-shadow:0 5px 15px #07152457!important;
+ transition:background .2s ease,transform .2s ease,border-color .2s ease;
 }
 html[data-nfc-template="logistics"] .nfc-premium-cta:hover,
 html[data-nfc-template="logistics"] .nfc-premium-cta:focus-visible{
- transform:translateY(-3px);filter:brightness(1.15);
- box-shadow:0 13px 47px #00bcff8a,0 12px 43px #7637ff76;
+ transform:translateY(-2px);filter:none!important;
+ background:#376a94!important;border-color:#7699b8!important;
+ box-shadow:0 7px 18px #07152480!important;
 }
-html[data-nfc-template="logistics"] .nfc-premium-cta .cta-symbol{
- font-size:19px;line-height:1;border-right:1px solid #fff7;
- padding-right:13px;
-}
-html[data-nfc-template="logistics"] .nfc-premium-cta .cta-arrow{font-size:21px}
+html[data-nfc-template="logistics"] .nfc-premium-cta .cta-symbol{display:none!important}
+html[data-nfc-template="logistics"] .nfc-premium-cta .cta-arrow{font-size:17px}
 html[data-nfc-template="logistics"] .nfc-socials{
- display:flex!important;align-items:center!important;justify-content:center!important;
- flex-wrap:wrap!important;gap:15px!important;width:100%;
+ display:flex;align-items:center!important;justify-content:center!important;
+ flex-wrap:wrap!important;gap:12px!important;width:100%;
 }
 html[data-nfc-template="logistics"] .nfc-socials:empty{display:none!important}
 html[data-nfc-template="logistics"] .nfc-socials a{
- display:grid!important;place-items:center;
- width:58px!important;height:58px!important;
- border-radius:17px!important;
- background:linear-gradient(135deg,#385fbe94,#4b2a91a0)!important;
- border:1px solid #8acbff8c!important;
- box-shadow:inset 0 1px #ffffff35,0 10px 26px #03072c99,
-  0 0 12px #2185ef3a!important;
- backdrop-filter:blur(12px);
- transition:transform .2s ease,box-shadow .2s ease;
+ display:grid!important;place-items:center;width:48px!important;height:48px!important;
+ border-radius:12px!important;background:#1a3046!important;
+ border:1px solid #39536b!important;box-shadow:none!important;
+ backdrop-filter:none!important;transition:background .2s ease,border-color .2s ease;
 }
 html[data-nfc-template="logistics"] .nfc-socials a:hover{
- transform:translateY(-4px);box-shadow:0 12px 30px #078dffe0!important;
+ transform:none;background:#243f59!important;border-color:#7290a9!important;
+ box-shadow:none!important;
 }
 html[data-nfc-template="logistics"] .nfc-socials img{
- width:29px!important;height:29px!important;object-fit:contain;
- filter:none!important;
+ width:25px!important;height:25px!important;object-fit:contain;filter:none!important;
 }
-html[data-nfc-template="logistics"] .nfc-socials svg{
- width:27px!important;height:27px!important;
-}
+html[data-nfc-template="logistics"] .nfc-socials svg{width:25px!important;height:25px!important}
 html[data-nfc-template="logistics"] .nfc-content{
- display:grid!important;grid-template-columns:1fr 0.75fr!important;
- gap:22px!important;width:100%;margin-top:5px;
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(260px,.68fr)!important;
+ align-items:start;gap:22px!important;width:100%;margin-top:0!important;
 }
 html[data-nfc-template="logistics"] .nfc-card{
- background:linear-gradient(130deg,#1d409c94,#2421649c 75%,#511d8492)!important;
- border:1px solid #7bc4ff6d!important;border-radius:24px!important;
- box-shadow:inset 0 1px #ffffff37,0 15px 42px #040b35a3!important;
- backdrop-filter:blur(18px)!important;
+ background:color-mix(in srgb,var(--surface,#172a40) 18%,#16283c)!important;
+ border:1px solid #354b63!important;border-radius:19px!important;
+ box-shadow:0 12px 32px #030a1452!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
 html[data-nfc-template="logistics"] .nfc-section-header h2{
- color:#ffffff!important;font-size:19px!important;
+ color:#f1f5fa!important;font-size:19px!important;letter-spacing:-.025em;
 }
 html[data-nfc-template="logistics"] .nfc-section-header span,
-html[data-nfc-template="logistics"] .nfc-about{color:#cad9ff!important}
-html[data-nfc-template="logistics"] .nfc-about strong{color:#fff!important}
+html[data-nfc-template="logistics"] .nfc-about{color:#b7c7d7!important}
+html[data-nfc-template="logistics"] .nfc-about strong{color:#f4f7fa!important}
 html[data-nfc-template="logistics"] .nfc-featured{display:block!important}
 html[data-nfc-template="logistics"] .links a,
 html[data-nfc-template="logistics"] .nfc-feature{
- background:#132c77ad!important;
- border:1px solid #7595de85!important;
- border-radius:15px!important;
- box-shadow:inset 0 1px #ffffff16!important;
- color:#f9fbff!important;
- transition:transform .2s ease,border-color .2s ease!important;
+ background:color-mix(in srgb,var(--nfc-button-bg,#1b3148) 24%,#192d42)!important;
+ border:1px solid color-mix(in srgb,var(--nfc-button-border,#38546b) 27%,#354c62)!important;
+ border-radius:11px!important;box-shadow:none!important;
+ color:#f1f6fb!important;
+ transition:background .2s ease,border-color .2s ease,transform .2s ease!important;
 }
 html[data-nfc-template="logistics"] .links a:hover,
+html[data-nfc-template="logistics"] .links a:focus-visible,
 html[data-nfc-template="logistics"] .nfc-feature:hover{
- transform:translateY(-2px)!important;border-color:#00dbff!important;
+ transform:translateY(-1px)!important;
+ background:#263d53!important;border-color:#6a8aa6!important;filter:none!important;
 }
 html[data-nfc-template="logistics"] .links a strong,
-html[data-nfc-template="logistics"] .nfc-feature b{color:#fff!important}
-html[data-nfc-template="logistics"] .nfc-link-subtitle{color:#c6d5ff!important}
+html[data-nfc-template="logistics"] .nfc-feature b{color:#f3f7fb!important}
+html[data-nfc-template="logistics"] .links .glyph{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html[data-nfc-template="logistics"] .nfc-link-subtitle{color:#b7c8da!important}
 html[data-nfc-template="logistics"] .foot,
-html[data-nfc-template="logistics"] .foot b{color:#b2c9fa!important}
+html[data-nfc-template="logistics"] .foot b{color:#91a5b8!important}
 html[data-nfc-template="logistics"] .nfc-business-meta,
 html[data-nfc-template="logistics"] .nfc-corporate-actions{display:none!important}
 @media(max-width:750px){
- html[data-nfc-template="logistics"] body{
-  background:linear-gradient(180deg,#06164450,#20116b70 52%,#0d145a95),
-  url("./logistics-scene.svg") center top / auto 100% fixed no-repeat,
-  linear-gradient(135deg,#102b75,#22115e)!important;
- }
+ html[data-nfc-template="logistics"] body::after{background-size:auto 100%;opacity:.045}
  html[data-nfc-template="logistics"] main.nfc-page{
   width:100%!important;max-width:600px!important;
-  padding:clamp(18px,5vw,36px) clamp(14px,4vw,25px) 25px!important;
+  padding:clamp(20px,5vw,34px) clamp(14px,4vw,24px) 26px!important;
  }
- html[data-nfc-template="logistics"] #profile{gap:20px!important}
+ html[data-nfc-template="logistics"] #profile{gap:18px!important}
  html[data-nfc-template="logistics"] .nfc-hero{
-  min-height:0!important;gap:17px!important;
-  padding:clamp(26px,7vw,39px) 18px!important;
-  border-radius:29px!important;
+  min-height:0!important;gap:16px!important;
+  padding:clamp(26px,6vw,38px) 20px!important;border-radius:20px!important;
  }
  html[data-nfc-template="logistics"] .nfc-hero .avatar,
  html[data-nfc-template="logistics"] .nfc-hero .avatar:not([hidden]){
-  width:112px!important;height:112px!important;min-width:112px!important;
+  width:104px!important;height:104px!important;min-width:104px!important;
  }
  html[data-nfc-template="logistics"] .nfc-hero h1{
-  font-size:clamp(29px,8vw,43px)!important;line-height:1.08!important;
-  max-width:320px!important;
+  font-size:clamp(27px,7vw,39px)!important;max-width:320px!important;
  }
- html[data-nfc-template="logistics"] .nfc-hero h1::after{margin-top:15px}
+ html[data-nfc-template="logistics"] .nfc-hero h1::after{margin-top:14px}
  html[data-nfc-template="logistics"] .nfc-hero .tagline{
-  font-size:clamp(12px,3.5vw,15px)!important;
-  margin:12px auto 17px!important;
+  font-size:clamp(12px,3.5vw,14px)!important;
+  margin:11px auto 15px!important;
  }
  html[data-nfc-template="logistics"] .nfc-premium-cta:not([hidden]){
-  min-height:53px;font-size:clamp(10px,3vw,13px)!important;
-  padding:11px 17px;gap:10px;width:min(100%,335px);
+  min-height:48px;font-size:clamp(10px,2.8vw,12px)!important;
+  padding:11px 16px;gap:10px;width:min(100%,325px);
  }
- html[data-nfc-template="logistics"] .nfc-premium-cta .cta-symbol{font-size:17px;padding-right:9px}
- html[data-nfc-template="logistics"] .nfc-socials{gap:11px!important}
- html[data-nfc-template="logistics"] .nfc-socials a{width:53px!important;height:53px!important;border-radius:15px!important}
  html[data-nfc-template="logistics"] .nfc-content{display:block!important;margin:0!important}
- html[data-nfc-template="logistics"] .nfc-card{padding:20px!important;border-radius:20px!important}
+ html[data-nfc-template="logistics"] .nfc-card{padding:19px!important;border-radius:18px!important}
  html[data-nfc-template="logistics"] .nfc-featured{display:none!important}
  html[data-nfc-template="logistics"] .nfc-section-header h2{font-size:17px!important}
 }
 @media(max-width:350px){
- html[data-nfc-template="logistics"] .nfc-hero{padding:24px 12px!important}
- html[data-nfc-template="logistics"] .nfc-socials a{width:45px!important;height:45px!important}
- html[data-nfc-template="logistics"] .nfc-socials img{width:24px!important;height:24px!important}
+ html[data-nfc-template="logistics"] .nfc-hero{padding:24px 13px!important}
+ html[data-nfc-template="logistics"] .nfc-socials a{width:44px!important;height:44px!important}
+ html[data-nfc-template="logistics"] .nfc-socials img{width:23px!important;height:23px!important}
 }
 @media(prefers-reduced-motion:reduce){
  html[data-nfc-template="logistics"] .nfc-premium-cta,
- html[data-nfc-template="logistics"] .nfc-socials a{transition:none}
+ html[data-nfc-template="logistics"] .nfc-socials a,
+ html[data-nfc-template="logistics"] .links a{transition:none!important}
 }
