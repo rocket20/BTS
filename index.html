@@ -146,6 +146,7 @@ body.bts-admin-open{overflow:hidden}
 <link rel="stylesheet" href="assets/bts-mobile-dock.css">
 <link rel="stylesheet" href="assets/bts-light-theme.css">
 <link rel="stylesheet" href="assets/bts-light-contrast.css">
+<link rel="stylesheet" href="assets/bts-products.css">
 </head>
 <body>
 
@@ -176,11 +177,12 @@ body.bts-admin-open{overflow:hidden}
 <script src="assets/bts-movie-posters.js" defer></script>
 <script src="assets/bts-mobile-dock.js" defer></script>
 <script src="assets/bts-site-theme.js" defer></script>
+<script src="assets/bts-products.js" defer></script>
 <div class="progress" id="scrollProgress" aria-hidden="true"></div>
 <header class="site-header" id="siteHeader">
   <div class="wrap nav-wrap">
     <a href="#inicio" class="logo" aria-label="BTS Studio, ir al inicio"><svg class="mark" viewBox="0 0 448 390" aria-hidden="true"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span class="logo-type"><b>BTS</b><span>STUDIO</span></span></a>
-    <nav class="nav-links" id="mainMenu" aria-label="Navegación principal"><a href="#servicios">Servicios</a><a href="#experiencias">Experiencias</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a><a href="#proceso">Proceso</a><a href="#preguntas">FAQ</a><a href="#cotizar" class="btn btn-primary btn-sm">Cotizar proyecto <span aria-hidden="true">↗</span></a></nav>
+    <nav class="nav-links" id="mainMenu" aria-label="Navegación principal"><a href="#servicios">Servicios</a><a href="portafolio/">Portafolio</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a><a href="#proceso">Proceso</a><a href="#preguntas">FAQ</a><a href="#cotizar" class="btn btn-primary btn-sm">Cotizar proyecto <span aria-hidden="true">↗</span></a></nav>
     <div class="header-cta"><button type="button" id="btsSiteThemeToggle" class="bts-site-theme-toggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar a modo claro">
   <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
   <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.65 8.65 0 1 0 11.1 11.1Z"/></svg>
@@ -197,7 +199,7 @@ body.bts-admin-open{overflow:hidden}
    <p class="hero-tag"><span class="pulse"></span> BTS STUDIO / NICARAGUA</p>
    <h1 aria-label="Hacemos visible lo que importa"><span class="bts-title-line">HACEMOS</span><span class="bts-title-line bts-title-highlight">visible</span><span class="bts-title-line bts-title-tail">LO QUE IMPORTA<span class="bts-title-dot">.</span></span></h1>
    <p class="hero-lead">Una productora para tus eventos. Fotografía, video y contenido audiovisual que transforman cada momento en una historia que vale la pena contar.</p>
-   <div class="hero-actions"><a class="btn btn-primary" href="#cotizar">Cotizá tu próximo evento <span aria-hidden="true">↗</span></a><a class="btn btn-ghost" href="#experiencias">Explorar experiencias <span aria-hidden="true">↘</span></a></div>
+   <div class="hero-actions"><a class="btn btn-primary" href="#cotizar">Cotizá tu próximo evento <span aria-hidden="true">↗</span></a><a class="btn btn-ghost" href="portafolio/">Explorar portafolio <span aria-hidden="true">↘</span></a></div>
    <div class="hero-mini"><div class="mini-item"><span class="i">✦</span><span><b>Producción audiovisual</b>De la idea al resultado</span></div><div class="mini-item"><span class="i">◉</span><span><b>Fotografía profesional</b>Imagen que comunica</span></div></div>
   </div>
   <div class="bts-cinema-card bts-cinema-card--left" aria-hidden="true"><span class="bts-cinema-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="15" height="13" rx="2"/><path d="m18 10 4-3v11l-4-3M7 11h7"/></svg></span><span><b>Producción visual</b><small>Historias que conectan</small></span></div>
@@ -208,20 +210,8 @@ body.bts-admin-open{overflow:hidden}
    <div class="art-floating"><span class="floating-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></span><span><b>Una visión. Muchas historias.</b><small>Producción • Fotografía • Creatividad</small></span></div>
   </div>
  </div>
- <div id="experiencias" class="bts-hero-catalog" aria-label="Experiencias BTS Studio">
-   <div class="bts-catalog-head">
-     <h2>Experiencias</h2>
-     <div class="bts-catalog-actions">
-       <button type="button" id="btsCatalogPrev" class="bts-catalog-arrow" aria-label="Ver experiencias anteriores" disabled><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-       <span id="btsCatalogCount" class="bts-catalog-count" aria-live="polite">01 / 01</span>
-       <button type="button" id="btsCatalogNext" class="bts-catalog-arrow" aria-label="Ver más experiencias"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
-     </div>
-   </div>
-   <div class="bts-catalog-viewport" id="btsHeroCatalog">
-     <div id="btsCatalogTrack" class="bts-catalog-track"></div>
-   </div>
- </div>
-</section>
+ </section>
+<section id="productos-corporativos" class="bts-product-showcase" aria-labelledby="bps-title"><div class="bps-shell"><header class="bps-topline"><div><span class="bps-eyebrow">BTS STUDIO / SOLUCIONES CORPORATIVAS</span><h2 id="bps-title">Diseños que <span>conectan.</span></h2></div><div class="bps-nav"><button id="bpsPrev" type="button" class="bps-arrow" aria-label="Producto anterior">‹</button><span id="bpsCounter" aria-live="polite">01 / 03</span><button id="bpsNext" type="button" class="bps-arrow" aria-label="Producto siguiente">›</button></div></header><div class="bps-window"><div id="bpsTrack" class="bps-track"></div></div><div id="bpsDots" class="bps-dots" aria-label="Seleccionar producto"></div></div></section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"><span>PRODUCCIÓN DE EVENTOS</span><span class="star">✳</span><span>FOTOGRAFÍA PROFESIONAL</span><span class="star">✳</span><span>PRODUCCIÓN AUDIOVISUAL</span><span class="star">✳</span><span>CONTENIDO PARA REDES</span><span class="star">✳</span><span>PRODUCCIÓN DE EVENTOS</span><span class="star">✳</span><span>FOTOGRAFÍA PROFESIONAL</span><span class="star">✳</span><span>PRODUCCIÓN AUDIOVISUAL</span><span class="star">✳</span><span>CONTENIDO PARA REDES</span><span class="star">✳</span></div></div>
 <section id="servicios" class="section services"><div class="wrap">
  <div class="headrow reveal"><div><span class="kicker">Lo que hacemos</span><h2 style="margin-top:18px">Producción para cada<br><span class="gradient-text">tipo de evento.</span></h2></div><p>Soluciones visuales pensadas para marcas, empresas, organizaciones y equipos que quieren comunicar con intención.</p></div>
@@ -288,7 +278,7 @@ body.bts-admin-open{overflow:hidden}
  <form class="contact-panel reveal" id="contactForm"><input id="btsHoneyContact" name="site_url" tabindex="-1" autocomplete="off" class="bts-honeypot" aria-hidden="true"><h3>Escribinos.</h3><p class="intro">Te ayudamos a convertir tu idea en una propuesta visual.</p><div class="field-grid"><div class="field"><label for="cName">Nombre *</label><input id="cName" required autocomplete="name" maxlength="100" placeholder="¿Cómo te llamás?"></div><div class="field"><label for="cMail">Email *</label><input id="cMail" type="email" required autocomplete="email" maxlength="150" placeholder="tu@empresa.com"></div><div class="field full"><label for="cSubject">¿Qué necesitás?</label><select id="cSubject"><option>Producción de evento</option><option>Fotografía profesional</option><option>Producción de video</option><option>Contenido para redes</option><option>Otra consulta</option></select></div><div class="field full"><label for="cText">Tu mensaje *</label><textarea id="cText" required maxlength="1600" placeholder="Contanos un poco de tu proyecto..."></textarea></div></div><label class="consent-line"><input id="cConsent" type="checkbox" required> Autorizo a BTS Studio a contactarme para responder esta consulta.</label><button id="contactSubmit" class="btn btn-primary" type="submit">Enviar consulta a BTS Studio ↗</button><p class="hint">Tu consulta se envía a nuestro sistema de solicitudes.</p><p id="contactStatus" role="status" aria-live="polite"></p></form>
  </div></section>
 </main>
-<footer><div class="wrap"><div class="footer-top"><div class="footer-brand"><a href="#inicio" class="logo" aria-label="BTS Studio"><svg class="mark" viewBox="0 0 448 390" aria-hidden="true"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span class="logo-type"><b>BTS</b><span>STUDIO</span></span></a><p>Producción de eventos, fotografía y contenido audiovisual para ideas que merecen trascender.</p></div><div class="footer-col"><h4>Explorá</h4><a href="#servicios">Servicios</a><a href="#experiencias">Experiencias</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a></div><div class="footer-col"><h4>Ayuda</h4><a href="#proceso">Nuestro proceso</a><a href="#preguntas">Preguntas frecuentes</a><a href="#cotizar">Solicitar cotización</a><a href="#contacto">Contacto</a></div><div><h4 class="overline" style="margin-bottom:20px">NOS GUSTAN LAS GRANDES IDEAS.</h4><p class="footer-slogan">Hagamos algo<br><span class="gradient-text">que se recuerde.</span></p><a href="#cotizar" class="btn btn-primary btn-sm" style="margin-top:23px">Contanos tu idea ↗</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> BTS Studio. Identidad y concepto creativo.</span><span>Diseñado para comunicar. <a href="#inicio">Volver arriba ↑</a></span></div></div></footer>
+<footer><div class="wrap"><div class="footer-top"><div class="footer-brand"><a href="#inicio" class="logo" aria-label="BTS Studio"><svg class="mark" viewBox="0 0 448 390" aria-hidden="true"><polygon points="63,0 163,0 251,101 142,101"/><polygon points="147,115 277,115 168,316 0,390"/><polygon points="268,0 448,0 315,242 194,309 287,111 223,50"/></svg><span class="logo-type"><b>BTS</b><span>STUDIO</span></span></a><p>Producción de eventos, fotografía y contenido audiovisual para ideas que merecen trascender.</p></div><div class="footer-col"><h4>Explorá</h4><a href="#servicios">Servicios</a><a href="portafolio/">Portafolio</a><a href="#paquetes">Paquetes</a><a href="#estudio">Estudio</a></div><div class="footer-col"><h4>Ayuda</h4><a href="#proceso">Nuestro proceso</a><a href="#preguntas">Preguntas frecuentes</a><a href="#cotizar">Solicitar cotización</a><a href="#contacto">Contacto</a></div><div><h4 class="overline" style="margin-bottom:20px">NOS GUSTAN LAS GRANDES IDEAS.</h4><p class="footer-slogan">Hagamos algo<br><span class="gradient-text">que se recuerde.</span></p><a href="#cotizar" class="btn btn-primary btn-sm" style="margin-top:23px">Contanos tu idea ↗</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> BTS Studio. Identidad y concepto creativo.</span><span>Diseñado para comunicar. <a href="#inicio">Volver arriba ↑</a></span></div></div></footer>
 <div id="projectModal" class="dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="dialog-card"><button id="modalClose" class="dialog-close" type="button" aria-label="Cerrar detalle">×</button><img id="modalImage" alt=""><div class="dialog-text"><span class="cat">BTS STUDIO / VISUAL</span><h3 id="modalTitle"></h3><p id="modalDescription"></p></div></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
