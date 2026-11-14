@@ -121,6 +121,7 @@ html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-prev
  </div>
  <button type="button" class="mini" id="resetButtonColors">Restablecer colores</button>
 </fieldset>
+<fieldset class="nfc-design-controls"><legend>Formulario de contacto</legend><p class="design-hint">Agregá automáticamente el botón «Formulario de contacto» a esta tarjeta. Las respuestas se administran por empresa en el dashboard BTS.</p><label style="display:flex;gap:10px;align-items:center;font-size:13px;cursor:pointer"><input type="checkbox" id="contactFormEnabled" style="width:18px;height:18px;accent-color:#b13659"> Activar formulario de contacto público</label><small style="display:block;margin-top:9px;color:#b9b3c4">Enlace generado: <span id="contactFormPreviewUrl">Guardá el negocio para obtener el enlace.</span></small></fieldset>
 <div class="sectionTitle"><b>Botones de redes sociales</b><button type="button" class="mini" id="add">+ Botón</button></div>
 <div id="links"></div>
 <div id="slugConflict" class="slug-conflict" hidden aria-live="polite">
@@ -217,7 +218,7 @@ const TEMPLATES=[
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
 const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#0b205c','#00bff9','#193b8f','#ffffff','#80c8ff','#f8fcff','#14235a'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
-function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim()};}
+function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked};}
 function chooseTemplate(id,apply=true){
  if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
@@ -279,6 +280,7 @@ function currentPreviewCard(){
  button_bg_color:$('buttonBg').value,button_text_color:$('buttonText').value,button_border_color:$('buttonBorder').value,template_id:chosenTemplate(),theme_options:selectedOptions(),links};
 }
 function syncLivePreview(){
+ const draftSlug=normalized($('slug').value);$('contactFormPreviewUrl').textContent=draftSlug?'https://www.btsstudio.net/contacto/?empresa='+draftSlug:'Guardá el negocio para obtener el enlace.';
  $('avatarXValue').textContent=$('avatarX').value+'%';$('avatarYValue').textContent=$('avatarY').value+'%';$('avatarZoomValue').textContent=$('avatarZoom').value+'%';$('nfcBlurValue').textContent=$('nfcBlur').value+'px';
  const card=currentPreviewCard();for(const id of ['nfcDesktopFrame','nfcMobileFrame']){const f=$(id);if(f?.contentWindow)f.contentWindow.postMessage({source:'bts-nfc-editor-preview',card},location.origin);}
 }
@@ -366,7 +368,7 @@ function reset(){
  clearPreviewBlobs();
  editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';
  $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;
- $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';
+ $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';$('contactFormEnabled').checked=false;
  for(const id of ['nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).value='';chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
@@ -380,7 +382,7 @@ function showCard(c){
  $('avatarZoom').value=c.avatar_zoom??100;
  $('buttonBg').value=c.button_bg_color||'#181820';
  $('buttonText').value=c.button_text_color||'#ffffff';
- $('buttonBorder').value=c.button_border_color||'#42404b';chooseTemplate(c.template_id||'classic',false);const o=c.theme_options||{};
+ $('buttonBorder').value=c.button_border_color||'#42404b';$('contactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;chooseTemplate(c.template_id||'classic',false);const o=c.theme_options||{};
  $('nfcShape').value=['soft','pill','square'].includes(o.shape)?o.shape:'soft';
  $('nfcFont').value=['modern','serif','editorial'].includes(o.font)?o.font:'modern';
  $('nfcAlign').value=['left','center'].includes(o.align)?o.align:'left';
@@ -512,7 +514,7 @@ async function save(e){
   if(type==='other'&&!customName){fail('Escribí el nombre del enlace personalizado, por ejemplo «Reseñas de Google».');box.querySelector('.custom-link-input').focus();return;}
   links.push({type,label:customName||(typeNames[type]||'Enlace'),url:clean});
  }
- if(!links.length){fail('Agregá por lo menos un enlace social.');return;}
+ if(!links.length&&!$('contactFormEnabled').checked){fail('Agregá un enlace o activá el formulario de contacto.');return;}
  const data={business_name:$('name').value.trim(),tagline:$('tagline').value.trim(),avatar_url:$('avatar').value.trim(),background_url:$('background').value.trim(),background_color:$('bgColor').value,accent_color:$('color').value,
  avatar_position_x:Number($('avatarX').value),
  avatar_position_y:Number($('avatarY').value),
@@ -571,6 +573,7 @@ for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','b
  $('resetButtonColors').addEventListener('click',()=>{
   $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';syncLivePreview();
  });
+$('contactFormEnabled').addEventListener('change',syncLivePreview);
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));$('new').addEventListener('click',reset);$('resetEditor').addEventListener('click',reset);
 $('refresh').addEventListener('click',load);$('editor').addEventListener('submit',save);
