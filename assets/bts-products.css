@@ -126,3 +126,104 @@
   .bps-slide--badge .bps-art:has(.bps-banner-image){padding-top:18px}
   .bps-slide--badge .bps-banner-image{width:100%;height:auto}
 }
+
+
+/* BTS Studio · Carrusel corporativo en modo CLARO.
+   Respeta el sistema cromático ya existente (vino #7e2944, blanco #f8f6f8).
+   Todas las reglas de color están limitadas al tema claro.
+   La acción demo retirada del HTML se oculta también como defensa ante JS antiguo en caché. */
+.bts-product-showcase .bps-actions .bps-btn.ghost{display:none!important}
+html[data-bts-site-theme="light"] .bts-product-showcase{
+ background:#f8f6f8!important;
+ color:#30232c!important;
+ border-top:1px solid rgba(123,55,80,.14)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-topline h2{
+ color:#30232c!important;
+ text-shadow:none!important;
+ -webkit-text-fill-color:#30232c!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-topline h2 span{
+ color:#7e2944!important;
+ -webkit-text-fill-color:#7e2944!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-nav{
+ color:#725f6c!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-arrow{
+ color:#713047!important;
+ background:#fff!important;
+ border:1px solid rgba(126,41,68,.23)!important;
+ box-shadow:0 3px 12px rgba(61,24,43,.06)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-arrow:hover:not(:disabled),
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-arrow:focus-visible{
+ color:#fff!important;
+ background:#7e2944!important;
+ border-color:#7e2944!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-arrow:disabled{
+ opacity:.38!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-window{
+ background:#fff!important;
+ border:1px solid #e4d6dd!important;
+ box-shadow:0 22px 58px rgba(72,32,51,.105)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide,
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide--loyalty,
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide--badge{
+ color:#30232c!important;
+ background:
+  radial-gradient(ellipse 50% 75% at 91% 55%,rgba(126,41,68,.09),transparent 87%),
+  linear-gradient(125deg,#fff 0%,#fdf9fb 54%,#f6edf1 100%)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide h3{
+ color:#30232c!important;
+ text-shadow:none!important;
+ -webkit-text-fill-color:#30232c!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide p{
+ color:#675360!important;
+ text-shadow:none!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-btn:not(.ghost){
+ color:#fff!important;
+ background:linear-gradient(110deg,#7e2944,#933554)!important;
+ border:1px solid #7e2944!important;
+ box-shadow:0 10px 22px rgba(96,32,58,.18)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-btn:not(.ghost):hover{
+ background:linear-gradient(110deg,#69253e,#7e2944)!important;
+ box-shadow:0 14px 25px rgba(96,32,58,.2)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-btn:focus-visible{
+ outline:2px solid #7e2944!important;
+ outline-offset:4px!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-art::before{
+ background:radial-gradient(ellipse,rgba(125,48,76,.09),transparent 68%)!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot{
+ background:#cab2be!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-dot[aria-current="true"]{
+ background:#7e2944!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-banner-image{
+ filter:drop-shadow(0 22px 23px rgba(47,18,32,.18))!important;
+}
+/* Detalles internos solamente; el arte original PNG permanece intacto. */
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-slide-index{
+ color:#7e2944!important;
+}
+html[data-bts-site-theme="light"] .bts-product-showcase .bps-pill-list span{
+ color:#64374b!important;
+ border-color:rgba(126,41,68,.22)!important;
+}
+@media(max-width:550px){
+ html[data-bts-site-theme="light"] .bts-product-showcase .bps-window{
+  border-color:#e4d6dd!important;
+  box-shadow:0 13px 30px rgba(72,32,51,.095)!important;
+ }
+}
