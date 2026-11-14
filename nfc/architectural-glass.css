@@ -1,0 +1,211 @@
+/* BTS NFC · Architectural Glass, inspired by ARCASUPPLY visual language.
+   Distinct optional NFC template. No duplicated social icon bar.
+   Banner image and logo supplied by each business override defaults. */
+html[data-nfc-template="archglass"]{
+ --nfc-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ --archglass-blue:#4bc4ff;
+ --archglass-navy:#041529;
+ color-scheme:dark;
+}
+html[data-nfc-template="archglass"] body{
+ color:#f0f7ff!important;
+ background:linear-gradient(150deg,#031124,#071e36 58%,#030e1d 100%)!important;
+}
+html[data-nfc-template="archglass"] body::before{display:none!important}
+html[data-nfc-template="archglass"] body::after{
+ content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(ellipse at 85% 0%,#14578b2c,transparent 58%);
+}
+html[data-nfc-template="archglass"] main.nfc-page{
+ position:relative;z-index:1;width:min(1020px,calc(100% - 32px))!important;
+ padding:25px 7px 30px!important;
+}
+html[data-nfc-template="archglass"] #profile{
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;width:100%!important;gap:20px!important;
+}
+html[data-nfc-template="archglass"] .nfc-hero{
+ position:relative;isolation:isolate;overflow:hidden;display:grid!important;
+ grid-template-columns:75px minmax(0,1fr)!important;
+ grid-template-rows:min-content 1fr!important;
+ gap:0 16px!important;align-items:start!important;justify-content:stretch!important;
+ text-align:left!important;width:100%!important;min-height:440px!important;
+ padding:27px!important;
+ border:1px solid #4399c199!important;border-radius:23px!important;
+ background:
+ linear-gradient(90deg,#04152acb 0%,#06152b8a 44%,#06172d17 100%),
+ url("./architectural-glass-scene.svg") center / cover no-repeat!important;
+ box-shadow:0 18px 54px #000b,inset 0 1px #79b4d12e!important;
+}
+html[data-nfc-template="archglass"] body[data-cover="yes"] .nfc-hero{
+ background:
+ linear-gradient(90deg,#03152bd1 0%,#06152b85 44%,#06172d14 100%),
+ var(--nfc-cover) var(--nfc-banner-x,50%) var(--nfc-banner-y,50%) / cover no-repeat!important;
+}
+html[data-nfc-template="archglass"] .nfc-hero::before{
+ content:"";position:absolute;inset:11px;pointer-events:none;z-index:-1;
+ border:1px solid #b2d7f02b;border-radius:17px;background:none;
+}
+html[data-nfc-template="archglass"] .nfc-hero::after{
+ content:"";position:absolute;left:0;bottom:0;right:0;height:1px;
+ background:linear-gradient(90deg,transparent,#6fd3ff 50%,transparent);
+ opacity:.6;box-shadow:none;pointer-events:none;z-index:-1;
+}
+html[data-nfc-template="archglass"] .nfc-hero .avatar,
+html[data-nfc-template="archglass"] .nfc-hero .avatar:not([hidden]){
+ grid-column:1!important;grid-row:1!important;
+ display:grid!important;place-items:center!important;
+ width:72px!important;height:72px!important;min-width:72px!important;
+ border:1px solid #71caffb8!important;
+ border-radius:13px!important;
+ background:#061c33cf!important;
+ box-shadow:0 0 0 3px #2a8cbb20!important;
+}
+html[data-nfc-template="archglass"] .nfc-hero .avatar[hidden]{display:none!important}
+html[data-nfc-template="archglass"] .nfc-hero .avatar img{object-fit:contain!important;padding:5px!important}
+html[data-nfc-template="archglass"] .nfc-hero .avatar .avatar-fallback{
+ font-size:26px!important;color:#d3ecfa!important;font-weight:800;
+}
+html[data-nfc-template="archglass"] .nfc-intro{
+ grid-column:2!important;grid-row:1!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:flex-start!important;
+ min-width:0!important;width:100%!important;max-width:570px!important;
+ padding-top:5px!important;flex:none!important;
+}
+html[data-nfc-template="archglass"] .nfc-hero h1{
+ font-size:clamp(26px,4.5vw,49px)!important;
+ line-height:1.05!important;letter-spacing:-.05em!important;font-weight:830!important;
+ margin:0!important;max-width:100%!important;text-align:left!important;
+ color:#fff!important;text-shadow:0 2px 18px #041325!important;
+ overflow-wrap:anywhere;
+}
+html[data-nfc-template="archglass"] .nfc-hero h1::after{
+ content:"";display:block;width:55px;height:2px;margin:18px 0 0;
+ background:#54c8ff;border-radius:2px;box-shadow:0 0 9px #2aa9e855;
+}
+html[data-nfc-template="archglass"] .nfc-hero .tagline{
+ font-size:clamp(13px,2vw,17px)!important;line-height:1.55!important;
+ color:#e6f4ff!important;max-width:440px!important;
+ margin:14px 0 0!important;text-align:left!important;
+ text-shadow:0 1px 11px #001526!important;
+}
+html[data-nfc-template="archglass"] .nfc-hero .pill,
+html[data-nfc-template="archglass"] .nfc-premium-cta,
+html[data-nfc-template="archglass"] .nfc-socials,
+html[data-nfc-template="archglass"] .nfc-featured,
+html[data-nfc-template="archglass"] .nfc-business-meta,
+html[data-nfc-template="archglass"] .nfc-corporate-actions{
+ display:none!important;
+}
+html[data-nfc-template="archglass"] .nfc-content{
+ display:block!important;margin:0!important;width:100%!important;
+}
+html[data-nfc-template="archglass"] .nfc-card.nfc-primary{
+ padding:clamp(22px,3vw,32px)!important;
+ background:linear-gradient(150deg,#0a2943f4,#071b32f5 72%,#07182b)!important;
+ border:1px solid #4d90b47d!important;border-radius:22px!important;
+ box-shadow:0 14px 42px #0008,inset 0 1px #b4e4ff17!important;
+ backdrop-filter:blur(12px)!important;
+}
+html[data-nfc-template="archglass"] .nfc-section-header{
+ margin:0 0 22px!important;padding:0!important;
+}
+html[data-nfc-template="archglass"] .nfc-section-header h2{
+ color:#f3f9ff!important;font-weight:670!important;
+ font-size:clamp(19px,2.7vw,26px)!important;letter-spacing:-.035em!important;
+}
+html[data-nfc-template="archglass"] .nfc-section-header h2::after{
+ content:"";display:block;width:52px;height:2px;border-radius:2px;
+ margin:12px 0 0;background:#51c5ff;
+}
+html[data-nfc-template="archglass"] .nfc-section-header>span{display:none!important}
+html[data-nfc-template="archglass"] .links{
+ display:grid!important;gap:10px!important;width:100%!important;
+}
+html[data-nfc-template="archglass"] .links a{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 20px!important;
+ column-gap:12px!important;align-items:center!important;
+ padding:14px 16px!important;min-height:60px!important;
+ background:linear-gradient(105deg,#123955cf,#102a43ce)!important;
+ border:1px solid #4783a36b!important;border-radius:12px!important;
+ box-shadow:inset 0 1px #c2e5f30c!important;
+ transition:border-color .18s,background .18s!important;
+ color:#f1f8ff!important;
+}
+html[data-nfc-template="archglass"] .links a:hover,
+html[data-nfc-template="archglass"] .links a:focus-visible{
+ transform:translateY(-1px)!important;
+ background:#154466!important;border-color:#60bfe7!important;filter:none!important;
+}
+html[data-nfc-template="archglass"] .links .glyph{display:none!important}
+html[data-nfc-template="archglass"] .links .nfc-link-copy{
+ min-width:0!important;padding:0!important;
+}
+html[data-nfc-template="archglass"] .links a strong{
+ font-size:14px!important;font-weight:660!important;
+ color:#f4faff!important;text-align:left!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+}
+html[data-nfc-template="archglass"] .links a .arrow{
+ justify-self:end!important;color:#71cefa!important;opacity:.95!important;
+}
+html[data-nfc-template="archglass"] .foot,
+html[data-nfc-template="archglass"] .foot b{color:#8cb2cc!important}
+@media(min-width:751px){
+ html[data-nfc-template="archglass"] #profile{display:flex!important;flex-direction:column!important}
+ html[data-nfc-template="archglass"] main.nfc-page{
+  width:min(950px,calc(100% - 45px))!important;padding:45px 10px 32px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero{
+  min-height:470px!important;padding:40px!important;
+  grid-template-columns:82px minmax(0,1fr)!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero .avatar,
+ html[data-nfc-template="archglass"] .nfc-hero .avatar:not([hidden]){
+  width:80px!important;height:80px!important;min-width:80px!important;
+ }
+}
+@media(max-width:750px){
+ html[data-nfc-template="archglass"] main.nfc-page{
+  width:100%!important;padding:15px 12px 25px!important;
+ }
+ html[data-nfc-template="archglass"] #profile{gap:16px!important}
+ html[data-nfc-template="archglass"] .nfc-hero{
+  min-height:400px!important;padding:21px 16px!important;
+  grid-template-columns:62px minmax(0,1fr)!important;
+  column-gap:12px!important;border-radius:19px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero .avatar,
+ html[data-nfc-template="archglass"] .nfc-hero .avatar:not([hidden]){
+  width:60px!important;height:60px!important;min-width:60px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero h1{
+  font-size:clamp(21px,6.7vw,32px)!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero .tagline{
+  font-size:12px!important;max-width:270px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-card.nfc-primary{
+  padding:20px!important;border-radius:19px!important;
+ }
+ html[data-nfc-template="archglass"] .links a{
+  grid-template-columns:minmax(0,1fr) 20px!important;
+  padding:12px 14px!important;
+ }
+}
+@media(max-width:355px){
+ html[data-nfc-template="archglass"] .nfc-hero{
+  padding:19px 12px!important;
+  grid-template-columns:53px minmax(0,1fr)!important;
+  column-gap:10px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero .avatar,
+ html[data-nfc-template="archglass"] .nfc-hero .avatar:not([hidden]){
+  width:52px!important;height:52px!important;min-width:52px!important;
+ }
+ html[data-nfc-template="archglass"] .nfc-hero h1{font-size:20px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-nfc-template="archglass"] .links a{transition:none!important}
+}
