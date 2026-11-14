@@ -24,13 +24,11 @@ h1{margin:25px 0 6px;text-align:center;font-size:clamp(30px,7vw,38px);line-heigh
 <link rel="stylesheet" href="./skins.css?v=20261109-miniweb3">
 <link rel="stylesheet" href="./corporate.css?v=20261109-compact2">
 <link rel="stylesheet" href="./logistics.css?v=20261114-corporate1">
-<link rel="stylesheet" href="./architecture.css?v=20261114-atelier1">
+<link rel="stylesheet" href="./architecture.css?v=20261114-atelier2">
 
 <style id="bts-nfc-links-clean">
 /* BTS NFC: botones con iconos integrados, titulo y destino oculto */
 .nfc-socials{display:none!important}
-/* En la plantilla Arquitectura, los accesos rápidos sociales son parte del diseño. */
-html[data-nfc-template="architecture"] .nfc-socials{display:flex!important}
 .nfc-section-header>span{display:none!important}
 .links{gap:10px!important}
 html .links a,html[data-nfc-template="business"] .links a{
@@ -114,6 +112,15 @@ const cardCode=String(qs.get('card')||'').toLowerCase().trim();
 const status=$('message');
 const ALLOWED=['classic','glass','logistics','architecture','creator','business','food','beauty','portfolio','realestate','wellness'];
 function safeUrl(value){try{const url=new URL(String(value||''));return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
+/* Blob solo en la vista previa, nunca en una tarjeta publicada ni en sus enlaces. */
+function previewImageUrl(value){
+ const url=safeUrl(value);if(url)return url;
+ const raw=String(value||'');
+ if(previewMode&&raw.startsWith('blob:'+location.origin+'/')){
+  try{const parsed=new URL(raw);if(parsed.protocol==='blob:'&&parsed.origin===location.origin)return parsed.href;}catch{}
+ }
+ return '';
+}
 function unavailable(message){status.hidden=false;status.textContent=message;$('profile').hidden=true;}
 function validHex(v,fallback){return /^#[a-f\d]{6}$/i.test(String(v||''))?v:fallback;}
 function numberClamp(v,min,max,fall){const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fall;}
@@ -249,7 +256,9 @@ function applyCard(c){
  root.setProperty('--nfc-avatar-x',numberClamp(c.avatar_position_x,0,100,50)+'%');
  root.setProperty('--nfc-avatar-y',numberClamp(c.avatar_position_y,0,100,50)+'%');
  root.setProperty('--nfc-avatar-zoom',String(numberClamp(c.avatar_zoom,100,200,100)/100));
- const cover=safeUrl(c.background_url);
+ root.setProperty('--nfc-banner-x',numberClamp(opt.bannerX,0,100,50)+'%');
+ root.setProperty('--nfc-banner-y',numberClamp(opt.bannerY,0,100,50)+'%');
+ const cover=previewImageUrl(c.background_url);
  root.setProperty('--nfc-cover',cover?'url("'+cover.replace(/["\\]/g,'')+'")':'none');
  document.body.dataset.cover=cover?'yes':'no';
  $('name').textContent=String(c.business_name||'Negocio').slice(0,90);
@@ -257,20 +266,20 @@ function applyCard(c){
  $('about').textContent=String(c.tagline||'Comunicate con nosotros y conocé más de nuestros servicios.').slice(0,180);
  const rawAvatar=String(c.avatar_url||'');
  const draftImage=previewMode&&rawAvatar.length<400000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(rawAvatar);
- const avatar=draftImage?rawAvatar:safeUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true;
- cont.replaceChildren();cont.hidden=!avatar&&!isExecutive;
+ const avatar=draftImage?rawAvatar:previewImageUrl(rawAvatar),cont=$('avatar'),isExecutive=template==='business'&&c.is_executive===true,isArchitecture=template==='architecture';
+ cont.replaceChildren();cont.hidden=!avatar&&!isExecutive&&!isArchitecture;
  function showInitials(){
-  cont.replaceChildren();cont.hidden=!isExecutive;
-  if(isExecutive){
-   const parts=String(c.business_name||'Ejecutivo').trim().split(/\s+/).filter(Boolean);
-   const initials=parts.slice(0,2).map(part=>part[0]?.toUpperCase()||'').join('')||'EX';
-   const fallback=document.createElement('span');fallback.textContent=initials;cont.append(fallback);
+  cont.replaceChildren();cont.hidden=!isExecutive&&!isArchitecture;
+  if(isExecutive||isArchitecture){
+   const parts=String(c.business_name||'Empresa').trim().split(/\s+/).filter(Boolean);
+   const initials=parts.slice(0,2).map(part=>part[0]?.toUpperCase()||'').join('')||'E';
+   const fallback=document.createElement('span');fallback.textContent=initials;fallback.className='avatar-fallback';cont.append(fallback);
   }
  }
  if(avatar){
-  const img=document.createElement('img');img.src=avatar;img.alt=String(c.business_name||'Perfil');
+  const img=document.createElement('img');img.src=avatar;img.alt='Logo o imagen de '+String(c.business_name||'Perfil');
   img.onerror=showInitials;cont.append(img);
- }else if(isExecutive){showInitials();}
+ }else if(isExecutive||isArchitecture){showInitials();}
  const links=Array.isArray(c.links)?c.links:[];
  const cta=$('nfcPremiumCTA');cta.hidden=true;cta.removeAttribute('href');
  if(template==='logistics'){
@@ -287,13 +296,13 @@ function applyCard(c){
   const type=String(l.type||'other').toLowerCase();
   const label=String(l.label||window.BTSIcons?.names?.[type]||'Enlace').slice(0,55);
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer nofollow';a.setAttribute('aria-label','Abrir '+label);
-  const badge=document.createElement('span');badge.className='glyph';setIcon(badge,type);
+  const badge=template==='architecture'?null:document.createElement('span');if(badge){badge.className='glyph';setIcon(badge,type);}
   const title=document.createElement('strong');title.textContent=label;
   
   const copy=document.createElement('span');copy.className='nfc-link-copy';copy.append(title);
   const arrow=makeLinkArrow();
-  a.append(badge,copy,arrow);nav.append(a);if(currentExecutiveId){a.addEventListener('click',()=>recordEvent(type==='whatsapp'?'whatsapp_click':'link_click',type));}
-  if(socialTypes.has(type)){
+  if(badge)a.append(badge);a.append(copy,arrow);nav.append(a);if(currentExecutiveId){a.addEventListener('click',()=>recordEvent(type==='whatsapp'?'whatsapp_click':'link_click',type));}
+  if(template!=='architecture'&&socialTypes.has(type)){
    const s=document.createElement('a');s.href=url;s.target='_blank';s.rel='noopener noreferrer nofollow';s.title=label;s.setAttribute('aria-label',label);setIcon(s,type);social.append(s);
   }
   if(featured.children.length<4){
