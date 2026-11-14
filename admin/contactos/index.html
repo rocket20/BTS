@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#101116">
+<title>Contactos empresariales · BTS Studio</title>
+<style>
+:root{color-scheme:dark;font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101116;color:#f3f1f4}
+*{box-sizing:border-box}body{margin:0;padding:17px 12px 44px}.wrap{max-width:1500px;margin:auto}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:23px}
+h1{font-size:clamp(25px,4vw,34px);line-height:1.13;letter-spacing:-.045em;margin:4px 0 8px}h2{font-size:19px;letter-spacing:-.025em;margin:0}
+p{margin:0;color:#a6a0ad}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.15em;color:#c67e99}
+.btn,select,input,textarea{font:inherit;border:1px solid #47414d;background:#191820;border-radius:11px;color:#f6f3f6;min-height:40px;padding:10px 12px}
+.btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;gap:7px;font-weight:650;white-space:nowrap}.btn.primary{background:#84324e;border-color:#b45e7a}.btn:hover{border-color:#c887a1}.btn:disabled{opacity:.5;cursor:not-allowed}
+input:focus,select:focus,textarea:focus{outline:2px solid #a04d71;outline-offset:1px}input::placeholder,textarea::placeholder{color:#857d8e}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}.metric{padding:18px;border:1px solid #403841;background:linear-gradient(145deg,#1d1a21,#16161b);border-radius:15px}
+.metric small{display:block;font-size:11px;color:#ada4b0}.metric strong{display:block;font-size:29px;line-height:1.3;letter-spacing:-.05em;margin-top:4px}
+.panel{border:1px solid #433c46;border-radius:18px;background:#17161c;overflow:hidden}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:16px;border-bottom:1px solid #39323b;align-items:center}
+.toolbar input{flex:2 1 220px;min-width:160px}.toolbar select{flex:1 1 150px;min-width:140px}.toolbar .btn{flex:0 0 auto}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px;text-align:left}
+thead{background:#201c23}th{font-size:10px;letter-spacing:.09em;color:#a7a0ad;font-weight:800;padding:14px 16px}td{padding:15px 16px;border-top:1px solid #ffffff0c;vertical-align:middle}
+tbody tr:hover{background:#ffffff06}td strong{display:block;font-size:13px}td small{color:#a9a0ad;display:block;font-size:11px;margin-top:2px;max-width:330px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:5px 9px;background:#302734;color:#e4d7df;border-radius:40px;white-space:nowrap}.chip[data-status="Nuevo"]{background:#503043;color:#ffcedd}.chip[data-status="En proceso"]{background:#46412f;color:#eee1a4}.chip[data-status="Atendido"]{background:#254a3d;color:#ade5d0}.chip[data-status="Cerrado"]{background:#30333e;color:#bbc0ce}
+.empty{text-align:center;padding:55px 20px;color:#aaa4b0}.footer{padding:15px 17px;color:#8d8793;font-size:11px;border-top:1px solid #38313a}
+#alert{padding:13px 15px;border:1px solid #703b4d;border-radius:12px;color:#fad5e0;background:#5630444a;margin-bottom:15px}
+dialog{border:1px solid #61505b;border-radius:20px;padding:0;background:#1a191f;color:#f7f4f7;width:min(100% - 24px,640px);max-height:90vh;overflow:auto;box-shadow:0 30px 130px #000b}dialog::backdrop{background:#08060bbc}
+.dialog-head{padding:24px 25px 15px;border-bottom:1px solid #3b333c;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dialog-content{padding:22px 25px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.detail small{display:block;color:#aaa0af;font-size:11px;margin-bottom:4px}.detail span,.detail a{overflow-wrap:anywhere;color:#f0eaf0;text-decoration:none}
+.message{white-space:pre-wrap;overflow-wrap:anywhere;padding:17px;border:1px solid #403844;background:#111116;border-radius:12px;margin:18px 0 23px}
+.field{display:grid;gap:7px;margin-bottom:13px}.field label{font-size:12px;font-weight:700;color:#d7cdd4}.field select,.field textarea{width:100%}.field textarea{min-height:120px;resize:vertical}
+.dialog-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:20px}
+@media(max-width:680px){.metrics{grid-template-columns:1fr 1fr}.toolbar{align-items:stretch}.toolbar .btn{flex:1 1 120px}dialog{width:calc(100% - 18px)}.dialog-head,.dialog-content{padding:18px}.detail-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="head"><div><span class="eyebrow">BTS STUDIO / CONTACTO EMPRESARIAL</span><h1>Formularios de contacto.</h1><p>Cada solicitud vinculada a su empresa. Historial y seguimiento centralizados.</p></div><button class="btn" id="refresh" type="button">↻ Actualizar</button></header>
+ <div id="alert" role="alert" hidden></div>
+ <section class="metrics" aria-label="Indicadores de formularios"><article class="metric"><small>Total de solicitudes</small><strong id="mTotal">—</strong></article><article class="metric"><small>Mensajes nuevos</small><strong id="mNew">—</strong></article><article class="metric"><small>En proceso</small><strong id="mProgress">—</strong></article><article class="metric"><small>Empresas con mensajes</small><strong id="mCompanies">—</strong></article></section>
+ <section class="panel"><div class="toolbar">
+  <input id="search" type="search" placeholder="Buscar nombre, asunto, empresa…" aria-label="Buscar solicitudes">
+  <select id="company" aria-label="Filtrar por empresa"><option value="">Todas las empresas</option></select>
+  <select id="status" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option>Nuevo</option><option>En proceso</option><option>Atendido</option><option>Cerrado</option></select>
+  <button class="btn" id="export" type="button">Exportar CSV</button>
+ </div>
+ <div class="table-wrap"><table><thead><tr><th>EMPRESA</th><th>CONTACTO</th><th>ASUNTO</th><th>FECHA</th><th>ESTADO</th><th>ACCIÓN</th></tr></thead><tbody id="rows"></tbody></table></div>
+ <div class="empty" id="empty">Iniciá sesión en el dashboard BTS para consultar los formularios.</div>
+ <div class="footer" id="count">Los mensajes son privados y solo los ve el personal autorizado.</div>
+ </section>
+</div>
+<dialog id="detail" aria-labelledby="detailTitle">
+ <div class="dialog-head"><div><span class="eyebrow" id="detailCompany"></span><h2 id="detailTitle">Detalle de solicitud</h2></div><button type="button" id="close" class="btn">Cerrar ×</button></div>
+ <div class="dialog-content"><div class="detail-grid">
+  <div class="detail"><small>Nombre</small><span id="dName"></span></div><div class="detail"><small>Fecha</small><span id="dDate"></span></div>
+  <div class="detail"><small>Correo</small><a id="dEmail" href="#"></a></div><div class="detail"><small>WhatsApp / Teléfono</small><a id="dPhone" href="#"></a></div>
+ </div>
+ <div class="message" id="dMessage"></div>
+ <form id="edit"><div class="field"><label for="editStatus">Estado de seguimiento</label><select id="editStatus"><option>Nuevo</option><option>En proceso</option><option>Atendido</option><option>Cerrado</option></select></div>
+ <div class="field"><label for="editNotes">Notas internas de BTS</label><textarea id="editNotes" maxlength="4000" placeholder="Comentarios privados para dar seguimiento…"></textarea></div>
+ <div class="dialog-actions"><button type="button" class="btn" id="cancel">Cancelar</button><button type="submit" class="btn primary" id="save">Guardar seguimiento</button></div></form>
+ </div>
+</dialog>
+<script>
+(()=>{
+'use strict';
+const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',SESSION='bts-admin-sb-session-v1';
+const $=id=>document.getElementById(id);
+let data=[],currentId=null,verified=false;
+function getSession(){try{return JSON.parse(sessionStorage.getItem(SESSION)||'null')}catch{return null}}
+async function fetchAPI(path,options={},retry=true){
+ let session=getSession();if(!session?.access_token||!session?.refresh_token)throw Error('Iniciá sesión en el dashboard de BTS Studio para ver los contactos.');
+ if((session.expires_at||0)*1000<Date.now()+60000){
+  const response=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
+  const refreshed=await response.json();if(!response.ok||!refreshed.access_token)throw Error('Tu sesión expiró. Volvé a iniciar sesión.');
+  session={...session,...refreshed,expires_at:refreshed.expires_at||Math.floor(Date.now()/1000)+(refreshed.expires_in||3600)};
+  sessionStorage.setItem(SESSION,JSON.stringify(session));
+ }
+ const response=await fetch(BASE+path,{...options,headers:{apikey:KEY,Authorization:'Bearer '+session.access_token,Accept:'application/json',...(options.headers||{})},cache:'no-store'});
+ if(response.status===401 && retry){session.expires_at=0;sessionStorage.setItem(SESSION,JSON.stringify(session));return fetchAPI(path,options,false);}
+ if(!response.ok){const d=await response.json().catch(()=>({}));throw Error(d.message||'No se pudo completar la solicitud ('+response.status+').');}
+ if(response.status===204)return null;
+ const txt=await response.text();return txt?JSON.parse(txt):null;
+}
+function showAlert(text){$('alert').textContent=text||'';$('alert').hidden=!text;}
+function date(v){try{return new Intl.DateTimeFormat('es-NI',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v));}catch{return '—';}}
+function cell(tr,main,sub){const td=document.createElement('td');const strong=document.createElement('strong');strong.textContent=main||'—';td.append(strong);if(sub){const small=document.createElement('small');small.textContent=sub;td.append(small)}tr.append(td);return td}
+function allCompanies(){return [...new Map(data.map(x=>[x.company_slug,x.company_name])).entries()].sort((a,b)=>a[1].localeCompare(b[1],'es'))}
+function populateCompanies(){
+ const prior=$('company').value;$('company').replaceChildren(new Option('Todas las empresas',''));
+ for(const [slug,name] of allCompanies())$('company').add(new Option(name+' · '+slug,slug));
+ if([...$('company').options].some(o=>o.value===prior))$('company').value=prior;
+}
+function filtered(){
+ const q=$('search').value.trim().toLocaleLowerCase('es'),slug=$('company').value,status=$('status').value;
+ return data.filter(x=>(!slug||x.company_slug===slug)&&(!status||x.status===status)&&(!q||[x.company_name,x.company_slug,x.full_name,x.email,x.phone,x.subject,x.message].some(v=>String(v||'').toLocaleLowerCase('es').includes(q))));
+}
+function render(){
+ $('mTotal').textContent=data.length.toLocaleString('es-NI');$('mNew').textContent=data.filter(x=>x.status==='Nuevo').length.toLocaleString('es-NI');$('mProgress').textContent=data.filter(x=>x.status==='En proceso').length.toLocaleString('es-NI');$('mCompanies').textContent=allCompanies().length;
+ const arr=filtered(),rows=$('rows');rows.replaceChildren();
+ for(const x of arr){
+  const tr=document.createElement('tr');
+  cell(tr,x.company_name,x.company_slug);
+  cell(tr,x.full_name,x.email||x.phone);
+  cell(tr,x.subject,x.message);
+  cell(tr,date(x.created_at));
+  const status=document.createElement('td');const chip=document.createElement('span');chip.className='chip';chip.dataset.status=x.status;chip.textContent=x.status;status.append(chip);tr.append(status);
+  const action=document.createElement('td');const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Ver solicitud';button.addEventListener('click',()=>openDetail(x.id));action.append(button);tr.append(action);
+  rows.append(tr);
+ }
+ $('empty').hidden=arr.length>0;$('empty').textContent=data.length?'No hay mensajes con estos filtros.':'Todavía no se han recibido formularios.';
+ $('count').textContent='Mostrando '+arr.length+' de '+data.length+' solicitudes. Historial privado por empresa.';
+}
+async function load(){
+ $('refresh').disabled=true;showAlert('');
+ try{
+  if(!verified){
+   const s=getSession();if(!s?.user?.id)throw Error('Iniciá sesión primero en el dashboard BTS.');
+   const admin=await fetchAPI('/rest/v1/bts_admins?user_id=eq.'+encodeURIComponent(s.user.id)+'&select=user_id&limit=1');
+   if(!Array.isArray(admin)||!admin.length)throw Error('Esta cuenta no está autorizada para gestionar contactos empresariales.');
+   verified=true;
+  }
+  const rows=await fetchAPI('/rest/v1/bts_business_contacts?select=*&order=created_at.desc&limit=1000');
+  if(!Array.isArray(rows))throw Error('No se obtuvo una lista válida de formularios.');
+  data=rows;populateCompanies();render();
+ }catch(e){showAlert(e.message);$('empty').hidden=false;$('empty').textContent='No se pudieron cargar los mensajes.';}
+ finally{$('refresh').disabled=false;}
+}
+function openDetail(id){
+ const x=data.find(a=>a.id===id);if(!x)return;currentId=id;
+ $('detailCompany').textContent=x.company_name+' · '+x.company_slug;
+ $('detailTitle').textContent=x.subject;$('dName').textContent=x.full_name;$('dDate').textContent=date(x.created_at);
+ $('dMessage').textContent=x.message;
+ const email=$('dEmail');email.textContent=x.email||'No indicado';email.removeAttribute('href');if(x.email){email.href='mailto:'+encodeURIComponent(x.email);}
+ const phone=$('dPhone');phone.textContent=x.phone||'No indicado';phone.removeAttribute('href');const n=(x.phone||'').replace(/\D/g,'');if(n.length>=7&&n.length<=15)phone.href='https://wa.me/'+n;
+ $('editStatus').value=x.status;$('editNotes').value=x.internal_notes||'';
+ $('detail').showModal();
+}
+async function save(event){
+ event.preventDefault();const x=data.find(a=>a.id===currentId);if(!x)return;
+ const button=$('save');button.disabled=true;
+ try{
+  const patch={status:$('editStatus').value,internal_notes:$('editNotes').value.trim()};
+  await fetchAPI('/rest/v1/bts_business_contacts?id=eq.'+encodeURIComponent(x.id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(patch)});
+  Object.assign(x,patch);$('detail').close();render();showAlert('');
+ }catch(e){showAlert('No se pudo guardar: '+e.message);}
+ finally{button.disabled=false;}
+}
+function csvCell(v){
+ let s=String(v??'');if(/^[\s]*[=+\-@]/.test(s))s="'"+s;
+ return '"'+s.replace(/"/g,'""')+'"';
+}
+function exportCSV(){
+ const keys=['created_at','company_name','company_slug','full_name','email','phone','subject','message','status','internal_notes'];
+ const labels=['Fecha','Empresa','Slug','Nombre','Correo','Teléfono','Asunto','Mensaje','Estado','Notas internas'];
+ const lines=[labels,...filtered().map(row=>keys.map(k=>row[k]))];
+ const csv='\uFEFF'+lines.map(r=>r.map(csvCell).join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='BTS_Contactos_Empresariales.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('company').addEventListener('change',render);$('status').addEventListener('change',render);$('export').addEventListener('click',exportCSV);
+$('close').addEventListener('click',()=>$('detail').close());$('cancel').addEventListener('click',()=>$('detail').close());$('edit').addEventListener('submit',save);
+load();
+})();
+</script>
+</body></html>
