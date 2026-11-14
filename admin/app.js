@@ -88,6 +88,13 @@ for(const [i,folder] of NFC_FOLDERS.entries()){
   selectNfcFolder(NFC_FOLDERS[pos].name);$('#'+NFC_FOLDERS[pos].tab).focus();
  });
 }
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.data?.source!=='bts-nfc-editor-navigation')return;
+ const frame=$('#btsNfcModuleFrame');
+ if(!frame||event.source!==frame.contentWindow)return;
+ const top=Math.max(0,frame.getBoundingClientRect().top+window.scrollY-18);
+ window.scrollTo({top,behavior:'smooth'});
+});
 function navigate(name){if(!labels[name])return;page=name;$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+name));$$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===name));$('#breadcrumb').textContent=labels[name];$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'instant'});if(name==='contenido')fillContent();if(name==='configuracion')fillRepo();if(name==='nfc')selectNfcFolder(currentNfcFolder);if(name==='formularios'){const f=$('#btsBusinessFormsFrame');if(f&&!f.getAttribute('src'))f.src=f.dataset.src;}if(name==='erp'){const f=$('#btsErpFrame');if(f&&!f.getAttribute('src'))f.src=f.dataset.src;}if(name==='accesos'){const f=$('#btsAccessFrame');if(f&&!f.getAttribute('src'))f.src=f.dataset.src;}window.BTSAdminAudit?.open(name);}
 function status(){const configured=true,connected=!!window.BTSLeads?.invokePublisher;$('#modePill').textContent=connected?'● PANEL CONECTADO':'● EDICIÓN LOCAL';$('#modePill').style.color=connected?'#72daa5':'';$('#connectionLabel').textContent=connected?'Publicación con acceso protegido':'Edición sin conexión';$('#repoStatus').textContent=connected?'Verificar función':'No conectado';$('#cmsStatus').textContent=connected?'Sin verificar':'Pendiente';$('#gaStatus').textContent=googleReportStatus==='ready'?'GA4 conectado':content.brand.analyticsId?'ID configurado · informes pendientes':'Sin ID';$('#navLeadCount').textContent=leads.filter(l=>l.status==='Pendiente').length;}
 function renderKpis(){
