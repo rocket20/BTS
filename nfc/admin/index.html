@@ -76,7 +76,18 @@ html[data-nfc-preview-template="archglass"] .nfc-preview-device.mobile .nfc-prev
 html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:650px}
 html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-preview-screen{height:690px}
 @media(max-width:700px){html[data-nfc-preview-template="logistics"] .nfc-preview-device.desktop .nfc-preview-screen{height:590px}}
-</style><link rel="stylesheet" href="../../admin/shared-panel-theme.css"></head>
+</style><link rel="stylesheet" href="../../admin/shared-panel-theme.css"><style id="nfc-contact-form-customization">
+ .nfc-contact-customize{display:grid;gap:10px;margin-top:14px;padding:15px;border:1px solid #343540;border-radius:12px;background:#121319}
+ .nfc-contact-customize .custom-link-label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#c5bfce;min-width:0}
+ .nfc-contact-customize .custom-link-label span{font-size:11px;font-weight:650}
+ .nfc-contact-customize input[type="text"],.nfc-contact-customize select{width:100%;min-width:0;min-height:39px;background:#171820;color:#f8f7fa;border:1px solid #494655;border-radius:9px;padding:8px 10px}
+ .nfc-contact-customize input[type="color"]{width:100%;height:39px;padding:4px;cursor:pointer;border:1px solid #494655;background:#171820;border-radius:9px}
+ .nfc-contact-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #contactFormColorSettings{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #contactFormColorSettings[hidden]{display:none}
+ @media(max-width:550px){.nfc-contact-row{grid-template-columns:1fr}#contactFormColorSettings{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
 <body><main class="shell">
 <header class="top"><div class="brand"><b>BTS STUDIO</b><small>GESTIÓN DE TARJETAS NFC</small></div><div class="actions"><a class="btn soft" href="/admin/" target="_top">← Dashboard</a><button id="refresh" class="btn">Actualizar</button></div></header>
 <h1>NFC normal.</h1><p class="hint">Diseñá una tarjeta individual para restaurantes, fotógrafos, tiendas, profesionales y otros negocios. Los perfiles corporativos con ejecutivos se gestionan en la otra pestaña. Las tarjetas físicas se configuran fuera de este dashboard.</p>
@@ -144,7 +155,20 @@ html[data-nfc-preview-template="logistics"] .nfc-preview-device.mobile .nfc-prev
  </div>
  <button type="button" class="mini" id="resetButtonColors">Restablecer colores</button>
 </fieldset>
-<fieldset class="nfc-design-controls"><legend>Formulario de contacto</legend><p class="design-hint">Agregá automáticamente el botón «Formulario de contacto» a esta tarjeta. Las respuestas se administran por empresa en el dashboard BTS.</p><label style="display:flex;gap:10px;align-items:center;font-size:13px;cursor:pointer"><input type="checkbox" id="contactFormEnabled" style="width:18px;height:18px;accent-color:#b13659"> Activar formulario de contacto público</label><small style="display:block;margin-top:9px;color:#b9b3c4">Enlace generado: <span id="contactFormPreviewUrl">Guardá el negocio para obtener el enlace.</span></small></fieldset>
+<fieldset class="nfc-design-controls"><legend>Formulario de contacto</legend><p class="design-hint">Agregá automáticamente el botón «Formulario de contacto» a esta tarjeta. Las respuestas se administran por empresa en el dashboard BTS.</p><label style="display:flex;gap:10px;align-items:center;font-size:13px;cursor:pointer"><input type="checkbox" id="contactFormEnabled" style="width:18px;height:18px;accent-color:#b13659"> Activar formulario de contacto público</label><div class="nfc-contact-customize">
+  <label class="custom-link-label" for="contactFormLabel"><span>Nombre visible del botón</span><input id="contactFormLabel" type="text" maxlength="55" value="Formulario de contacto" placeholder="Ej. Déjanos tu reseña"></label>
+  <div class="nfc-contact-row">
+   <label class="custom-link-label" for="contactFormIcon"><span>Ícono</span><select id="contactFormIcon"><option value="email">Correo / formulario</option><option value="message">Mensaje</option><option value="star">Estrella / reseñas</option><option value="phone">Teléfono</option></select></label>
+   <label class="custom-link-label" for="contactFormPosition"><span>Posición en tu página</span><select id="contactFormPosition"><option value="last">Después de los enlaces</option><option value="first">De primero</option></select></label>
+  </div>
+  <label style="display:flex;gap:10px;align-items:center;font-size:12px;cursor:pointer;margin:12px 0"><input id="contactFormCustomColors" type="checkbox" style="width:18px;height:18px;accent-color:#b13659"> Usar colores propios para este botón</label>
+  <div id="contactFormColorSettings" class="nfc-contact-row" hidden>
+   <label class="custom-link-label" for="contactFormBg"><span>Fondo</span><input type="color" id="contactFormBg" value="#181820"></label>
+   <label class="custom-link-label" for="contactFormText"><span>Texto</span><input type="color" id="contactFormText" value="#ffffff"></label>
+   <label class="custom-link-label" for="contactFormBorder"><span>Borde</span><input type="color" id="contactFormBorder" value="#42404b"></label>
+  </div>
+ </div>
+ <small style="display:block;margin-top:9px;color:#b9b3c4">Enlace generado: <span id="contactFormPreviewUrl">Guardá el negocio para obtener el enlace.</span></small></fieldset>
 <div class="sectionTitle"><b>Botones de redes sociales</b><button type="button" class="mini" id="add">+ Botón</button></div>
 <div id="links"></div>
 <div id="slugConflict" class="slug-conflict" hidden aria-live="polite">
@@ -243,7 +267,14 @@ const TEMPLATES=[
 ['wellness','Wellness Nature','Bienestar','#eef7e7','#b5d1b3','#2f4032']];
 const COLORS={classic:['#0a0a10','#ff0037','#181820','#ffffff','#42404b','#f8f7fb','#17171f'],glass:['#102342','#aabaff','#44518c','#ffffff','#abb8e9','#f8f7fb','#253771'],logistics:['#101c2c','#456f94','#1b3148','#f3f7fb','#354a60','#f3f7fb','#192b40'],architecture:['#111f2b','#d8bc9d','#263541','#f7f4ee','#8b857c','#f7f4ee','#20303c'],archglass:['#03162c','#3db8f2','#123955','#f4faff','#377b9d','#f4faff','#0a2943'],creator:['#150723','#ef3fcb','#321344','#ffffff','#8b2ca4','#fff8ff','#240b36'],business:['#111315','#7a858f','#1d2226','#f5f7f9','#343c41','#f5f6f8','#1b1f22'],food:['#fff8ed','#aa5c38','#fffaf0','#472e24','#d3a889','#382218','#fff9ef'],beauty:['#fff5f5','#ac607e','#fff7f7','#583b49','#e6b8c9','#49313f','#fff9f7'],portfolio:['#101016','#a5a0b6','#252530','#ffffff','#625e70','#f8f7fb','#171720'],realestate:['#071624','#c3a875','#24394c','#ffffff','#927b58','#f8f7fb','#132939'],wellness:['#f3f9ed','#6d9779','#f4faef','#2f4837','#a7c5ae','#2f4032','#f8faf4']};
 function chosenTemplate(){return $('nfcTemplate').value||'classic';}
-function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked,bannerX:Number($('nfcBannerX').value),bannerY:Number($('nfcBannerY').value)};}
+function selectedOptions(){return {shape:$('nfcShape').value,font:$('nfcFont').value,align:$('nfcAlign').value,icons:$('nfcIconStyle').value,blur:Number($('nfcBlur').value),textColor:$('nfcTextColor').value,surfaceColor:$('nfcSurfaceColor').value,role:$('nfcRole').value.trim(),location:$('nfcLocation').value.trim(),phone:$('nfcPhone').value.trim(),email:$('nfcEmail').value.trim(),tags:$('nfcTags').value.trim(),contactFormEnabled:$('contactFormEnabled').checked,
+ contactFormLabel:$('contactFormLabel').value.trim().slice(0,55)||'Formulario de contacto',
+ contactFormIcon:$('contactFormIcon').value,
+ contactFormPosition:$('contactFormPosition').value,
+ contactFormCustomColors:$('contactFormCustomColors').checked,
+ contactFormBg:$('contactFormBg').value,
+ contactFormText:$('contactFormText').value,
+ contactFormBorder:$('contactFormBorder').value,bannerX:Number($('nfcBannerX').value),bannerY:Number($('nfcBannerY').value)};}
 function chooseTemplate(id,apply=true){
  if(!COLORS[id])id='classic';document.documentElement.dataset.nfcPreviewTemplate=id;$('nfcTemplate').value=id;$('nfcCorporateFields').hidden=id!=='business';$('architectureBannerControls').hidden=!['architecture','archglass'].includes(id);
  if(apply){const c=COLORS[id];for(const [i,key] of ['bgColor','color','buttonBg','buttonText','buttonBorder','nfcTextColor','nfcSurfaceColor'].entries())$(key).value=c[i];
@@ -394,6 +425,8 @@ function reset(){
  editing=null;HTMLFormElement.prototype.reset.call($('editor'));$('slug').disabled=false;$('color').value='#ff0037';$('bgColor').value='#0a0a10';
  $('avatarX').value=50;$('avatarY').value=50;$('avatarZoom').value=100;$('nfcBannerX').value=50;$('nfcBannerY').value=50;
  $('buttonBg').value='#181820';$('buttonText').value='#ffffff';$('buttonBorder').value='#42404b';$('contactFormEnabled').checked=false;
+ $('contactFormLabel').value='Formulario de contacto';$('contactFormIcon').value='email';$('contactFormPosition').value='last';
+ $('contactFormCustomColors').checked=false;$('contactFormBg').value='#181820';$('contactFormText').value='#ffffff';$('contactFormBorder').value='#42404b';syncContactColorFields();
  for(const id of ['nfcRole','nfcLocation','nfcPhone','nfcEmail','nfcTags'])$(id).value='';chooseTemplate('classic',true);$('nfcIconStyle').value='brand';$('nfcBlur').value=18;$('active').checked=true;$('formTitle').textContent='Crear negocio';$('save').textContent='Guardar y generar enlace';$('links').replaceChildren();
  for(const id of ['avatar','background']){$(id).value='';$(id+'File').value='';imageThumb(id,'');}
  row('instagram');row('facebook');row('whatsapp');preview();
@@ -429,7 +462,17 @@ function showCard(c){
  $('avatarZoom').value=c.avatar_zoom??100;$('nfcBannerX').value=c.theme_options?.bannerX??50;$('nfcBannerY').value=c.theme_options?.bannerY??50;
  $('buttonBg').value=c.button_bg_color||'#181820';
  $('buttonText').value=c.button_text_color||'#ffffff';
- $('buttonBorder').value=c.button_border_color||'#42404b';$('contactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;chooseTemplate(c.template_id||'classic',false);const o=c.theme_options||{};
+ $('buttonBorder').value=c.button_border_color||'#42404b';$('contactFormEnabled').checked=c.theme_options?.contactFormEnabled===true;
+ const cf=c.theme_options||{};
+ $('contactFormLabel').value=String(cf.contactFormLabel||'Formulario de contacto').slice(0,55);
+ $('contactFormIcon').value=['email','message','star','phone'].includes(cf.contactFormIcon)?cf.contactFormIcon:'email';
+ $('contactFormPosition').value=cf.contactFormPosition==='first'?'first':'last';
+ $('contactFormCustomColors').checked=cf.contactFormCustomColors===true;
+ const isHex=v=>/^#[0-9a-f]{6}$/i.test(String(v||''));
+ $('contactFormBg').value=isHex(cf.contactFormBg)?cf.contactFormBg:'#181820';
+ $('contactFormText').value=isHex(cf.contactFormText)?cf.contactFormText:'#ffffff';
+ $('contactFormBorder').value=isHex(cf.contactFormBorder)?cf.contactFormBorder:'#42404b';
+ syncContactColorFields();chooseTemplate(c.template_id||'classic',false);const o=c.theme_options||{};
  $('nfcShape').value=['soft','pill','square'].includes(o.shape)?o.shape:'soft';
  $('nfcFont').value=['modern','serif','editorial'].includes(o.font)?o.font:'modern';
  $('nfcAlign').value=['left','center'].includes(o.align)?o.align:'left';
@@ -622,6 +665,10 @@ for(const id of ['tagline','color','bgColor','avatarX','avatarY','avatarZoom','b
  });
 $('centerBanner').addEventListener('click',()=>{$('nfcBannerX').value=50;$('nfcBannerY').value=50;syncLivePreview();});
 $('contactFormEnabled').addEventListener('change',syncLivePreview);
+function syncContactColorFields(){$('contactFormColorSettings').hidden=!$('contactFormCustomColors').checked;}
+for(const id of ['contactFormLabel','contactFormIcon','contactFormPosition','contactFormBg','contactFormText','contactFormBorder'])$(id).addEventListener('input',syncLivePreview);
+$('contactFormCustomColors').addEventListener('change',()=>{syncContactColorFields();syncLivePreview();});
+syncContactColorFields();
 $('active').addEventListener('change',preview);
 $('add').addEventListener('click',()=>row('instagram'));
 $('new').addEventListener('click',()=>{reset();revealEditor();});
