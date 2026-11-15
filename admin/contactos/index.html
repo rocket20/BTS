@@ -124,7 +124,7 @@ function activeCampaign(slug){return campaigns.find(c=>c.company_slug===slug&&!c
 function contactBucket(x){
  const c=activeCampaign(x.company_slug);
  if(c&&x.raffle_campaign_id===c.id&&x.raffle_opt_in===true)return 'current';
- if(!x.raffle_campaign_id||campaigns.some(z=>z.id===x.raffle_campaign_id&&!!z.ended_at))return 'archived';
+ if((c&&!x.raffle_campaign_id)||campaigns.some(z=>z.id===x.raffle_campaign_id&&!!z.ended_at))return 'archived';
  return 'other';
 }
 function peopleFor(slug){
@@ -152,7 +152,8 @@ function renderCompanyCards(){
   const title=document.createElement('b');title.textContent=name;
   const num=document.createElement('strong');num.textContent=String(campaign?newCount:count);
   const description=document.createElement('small');
-  description.textContent=campaign?'Nueva rifa: '+newCount+' participantes · '+(count-newCount)+' registros históricos/otros':count+' contactos registrados';
+  const archivedCount=data.filter(x=>x.company_slug===slug&&contactBucket(x)==='archived').length;
+  description.textContent=campaign?'Nueva rifa: '+newCount+' participantes · '+archivedCount+' registros anteriores':count+' contactos registrados';
   pick.append(title,num,description);
   pick.addEventListener('click',()=>{$('company').value=active===slug?'':slug;$('bucket').value=campaign?'current':'all';render();});
   card.append(pick);
