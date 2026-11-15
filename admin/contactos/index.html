@@ -15,7 +15,20 @@ p{margin:0;color:#a6a0ad}.eyebrow{font-size:10px;font-weight:800;letter-spacing:
 input:focus,select:focus,textarea:focus{outline:2px solid #a04d71;outline-offset:1px}input::placeholder,textarea::placeholder{color:#857d8e}
 .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}.metric{padding:18px;border:1px solid #403841;background:linear-gradient(145deg,#1d1a21,#16161b);border-radius:15px}
 .metric small{display:block;font-size:11px;color:#ada4b0}.metric strong{display:block;font-size:29px;line-height:1.3;letter-spacing:-.05em;margin-top:4px}
-.company-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;margin-bottom:17px}.company-tile{cursor:pointer;text-align:left;border:1px solid #423943;border-radius:14px;background:linear-gradient(145deg,#201b24,#17171e);color:#f7f0f4;padding:15px 17px;display:flex;flex-direction:column;gap:5px;min-height:92px}.company-tile b{font-size:13px;overflow-wrap:anywhere}.company-tile small{color:#aaa1ae;font-size:11px}.company-tile.active{border-color:#b76584;box-shadow:inset 0 0 0 1px #84415b}.company-tile:hover{background:#29202b}.company-tile strong{color:#ddb3c4;font-size:21px;line-height:1.1}.panel{border:1px solid #433c46;border-radius:18px;background:#17161c;overflow:hidden}
+.company-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:17px}.company-tile{cursor:pointer;text-align:left;border:1px solid #423943;border-radius:14px;background:linear-gradient(145deg,#201b24,#17171e);color:#f7f0f4;padding:15px 17px;display:flex;flex-direction:column;gap:5px;min-height:92px}.company-tile b{font-size:13px;overflow-wrap:anywhere}.company-tile small{color:#aaa1ae;font-size:11px}.company-tile.active{border-color:#b76584;box-shadow:inset 0 0 0 1px #84415b}.company-tile:hover{background:#29202b}.company-tile strong{color:#ddb3c4;font-size:21px;line-height:1.1}
+.company-pick{display:grid;gap:5px;width:100%;padding:0;color:inherit;text-align:left;border:0;background:transparent;cursor:pointer}
+.company-pick b{font:inherit;font-weight:700}.company-pick strong{font-size:24px}
+.raffle-launch{margin-top:auto;width:100%;min-height:40px;border:1px solid #af7a90;border-radius:10px;background:#603049;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+.raffle-launch:hover{background:#763852}.raffle-launch:disabled{opacity:.55}
+.raffle-top{padding:17px;border-radius:14px;border:1px solid #604457;background:linear-gradient(120deg,#47253a,#201d29);display:grid;gap:5px;margin-bottom:16px}
+.raffle-top strong{font-size:17px}.raffle-top small{color:#c5b1bf}
+.raffle-screen{text-align:center;background:radial-gradient(circle at top,#57334a,#17151d 72%);border:1px solid #6a4658;padding:28px 14px;border-radius:16px;margin:18px 0;min-height:176px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.raffle-screen .raffle-icon{font-size:27px}.raffle-screen h3{margin:0;font-size:clamp(22px,5vw,34px);overflow-wrap:anywhere}
+.raffle-screen p{font-size:13px}.raffle-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.raffle-history{margin-top:18px;border-top:1px solid #39323b;padding-top:15px}
+.raffle-history h3{margin:0 0 10px;font-size:13px}.raffle-history li{font-size:12px;color:#d6c9d2;padding:6px 0}
+#alert[hidden]{display:none}dialog[hidden]{display:none}
+@media(prefers-reduced-motion:no-preference){.raffle-screen.spinning{animation:raffle-glow .45s ease-in-out infinite alternate}@keyframes raffle-glow{to{box-shadow:0 0 32px #b45e7a65}}}.panel{border:1px solid #433c46;border-radius:18px;background:#17161c;overflow:hidden}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:16px;border-bottom:1px solid #39323b;align-items:center}
 .toolbar input{flex:2 1 220px;min-width:160px}.toolbar select{flex:1 1 150px;min-width:140px}.toolbar .btn{flex:0 0 auto}
 .table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px;text-align:left}
@@ -43,6 +56,7 @@ dialog{border:1px solid #61505b;border-radius:20px;padding:0;background:#1a191f;
  <section class="panel"><div class="toolbar">
   <input id="search" type="search" placeholder="Buscar nombre, asunto, empresa…" aria-label="Buscar solicitudes">
   <select id="company" aria-label="Filtrar por empresa"><option value="">Todas las empresas</option></select>
+  <select id="bucket" aria-label="Tipo de registros"><option value="current">Rifa actual · Nuevos participantes</option><option value="archived">Historial cerrado · Anteriores</option><option value="other">Otros contactos</option><option value="all">Todos los registros</option></select>
   <select id="status" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option>Nuevo</option><option>En proceso</option><option>Atendido</option><option>Cerrado</option></select>
   <button class="btn" id="export" type="button">Exportar CSV</button>
  </div>
@@ -63,12 +77,25 @@ dialog{border:1px solid #61505b;border-radius:20px;padding:0;background:#1a191f;
  <div class="dialog-actions"><button type="button" class="btn" id="cancel">Cancelar</button><button type="submit" class="btn primary" id="save">Guardar seguimiento</button></div></form>
  </div>
 </dialog>
+<dialog id="raffle" aria-labelledby="raffleTitle">
+ <div class="dialog-head"><div><span class="eyebrow">BTS STUDIO / SORTEO POR EMPRESA</span><h2 id="raffleTitle">Tómbola</h2></div><button type="button" id="raffleClose" class="btn">Cerrar ×</button></div>
+ <div class="dialog-content">
+  <div class="raffle-top"><strong id="raffleCompany"></strong><small id="raffleDescription">La tómbola utiliza exclusivamente las inscripciones nuevas de esta empresa.</small></div>
+  <div class="raffle-screen" id="raffleScreen"><span class="raffle-icon">🎟️</span><h3 id="raffleName">¿Quién será el ganador?</h3><p id="raffleContact">Se elegirá al azar entre los participantes de esta ronda.</p></div>
+  <p id="raffleInfo">Cargando participantes…</p>
+  <div class="raffle-actions">
+   <button class="btn primary" id="raffleDraw" type="button">🎲 Iniciar tómbola</button>
+   <button class="btn" id="raffleRound" type="button">Cerrar ronda e iniciar nueva</button>
+  </div>
+  <section class="raffle-history"><h3>Ganadores de esta ronda</h3><ol id="raffleWinners"></ol><p id="raffleNoWinners">Aún no hay ganadores registrados.</p></section>
+ </div>
+</dialog>
 <script>
 (()=>{
 'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',SESSION='bts-admin-sb-session-v1';
 const $=id=>document.getElementById(id);
-let data=[],companies=[],currentId=null,verified=false;
+let data=[],companies=[],campaigns=[],draws=[],currentId=null,verified=false,raffleSlug='';
 function getSession(){try{return JSON.parse(sessionStorage.getItem(SESSION)||'null')}catch{return null}}
 async function fetchAPI(path,options={},retry=true){
  let session=getSession();if(!session?.access_token||!session?.refresh_token)throw Error('Iniciá sesión en el dashboard de BTS Studio para ver los contactos.');
@@ -93,19 +120,47 @@ function populateCompanies(){
  for(const [slug,name] of allCompanies())$('company').add(new Option(name+' · '+slug,slug));
  if([...$('company').options].some(o=>o.value===prior))$('company').value=prior;
 }
+function activeCampaign(slug){return campaigns.find(c=>c.company_slug===slug&&!c.ended_at);}
+function contactBucket(x){
+ const c=activeCampaign(x.company_slug);
+ if(c&&x.raffle_campaign_id===c.id&&x.raffle_opt_in===true)return 'current';
+ if(!x.raffle_campaign_id||campaigns.some(z=>z.id===x.raffle_campaign_id&&!!z.ended_at))return 'archived';
+ return 'other';
+}
+function peopleFor(slug){
+ const c=activeCampaign(slug);
+ if(!c)return [];
+ const seen=new Set(),out=[];
+ for(const x of data.filter(x=>x.company_slug===slug&&x.raffle_campaign_id===c.id&&x.raffle_opt_in===true)){
+  const digits=String(x.phone||'').replace(/\D/g,'');
+  const key=digits.length>=8?'p:'+digits.slice(-8):x.email?'e:'+x.email.trim().toLowerCase():'i:'+x.id;
+  if(!seen.has(key)){seen.add(key);out.push({...x,entryKey:key});}
+ }
+ return out;
+}
 function filtered(){
- const q=$('search').value.trim().toLocaleLowerCase('es'),slug=$('company').value,status=$('status').value;
- return data.filter(x=>(!slug||x.company_slug===slug)&&(!status||x.status===status)&&(!q||[x.company_name,x.company_slug,x.full_name,x.email,x.phone,x.subject,x.message].some(v=>String(v||'').toLocaleLowerCase('es').includes(q))));
+ const q=$('search').value.trim().toLocaleLowerCase('es'),slug=$('company').value,status=$('status').value,bucket=$('bucket').value;
+ return data.filter(x=>(!slug||x.company_slug===slug)&&(bucket==='all'||contactBucket(x)===bucket)&&(!status||x.status===status)&&(!q||[x.company_name,x.company_slug,x.full_name,x.email,x.phone,x.subject,x.message].some(v=>String(v||'').toLocaleLowerCase('es').includes(q))));
 }
 function renderCompanyCards(){
  const wrap=$('companyCards'),active=$('company').value;wrap.replaceChildren();
  for(const [slug,name] of allCompanies()){
   const count=data.filter(x=>x.company_slug===slug).length;
-  const card=document.createElement('button');card.type='button';card.className='company-tile'+(active===slug?' active':'');
+  const campaign=activeCampaign(slug),newCount=peopleFor(slug).length;
+  const card=document.createElement('div');card.className='company-tile'+(active===slug?' active':'');
+  const pick=document.createElement('button');pick.type='button';pick.className='company-pick';
   const title=document.createElement('b');title.textContent=name;
-  const num=document.createElement('strong');num.textContent=String(count);
-  const description=document.createElement('small');description.textContent=count===1?'1 solicitud registrada':count+' solicitudes registradas';
-  card.append(title,num,description);card.addEventListener('click',()=>{$('company').value=active===slug?'':slug;render();});wrap.append(card);
+  const num=document.createElement('strong');num.textContent=String(campaign?newCount:count);
+  const description=document.createElement('small');
+  description.textContent=campaign?'Nueva rifa: '+newCount+' participantes · '+(count-newCount)+' registros históricos/otros':count+' contactos registrados';
+  pick.append(title,num,description);
+  pick.addEventListener('click',()=>{$('company').value=active===slug?'':slug;$('bucket').value=campaign?'current':'all';render();});
+  card.append(pick);
+  if(campaign){
+   const launch=document.createElement('button');launch.type='button';launch.className='raffle-launch';launch.textContent='🎲 Abrir tómbola';
+   launch.addEventListener('click',()=>openRaffle(slug));card.append(launch);
+  }
+  wrap.append(card);
  }
 }
 function render(){
@@ -122,8 +177,8 @@ function render(){
   const action=document.createElement('td');const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Ver solicitud';button.addEventListener('click',()=>openDetail(x.id));action.append(button);tr.append(action);
   rows.append(tr);
  }
- $('empty').hidden=arr.length>0;$('empty').textContent=data.length?'No hay mensajes con estos filtros.':'Todavía no se han recibido formularios.';
- $('count').textContent='Mostrando '+arr.length+' de '+data.length+' solicitudes. Historial privado por empresa.';
+ $('empty').hidden=arr.length>0;$('empty').textContent=$('bucket').value==='current'?'Todavía no hay inscripciones nuevas para esta rifa. Los registros anteriores están en Historial cerrado.':data.length?'No hay registros con estos filtros.':'Todavía no se han recibido formularios.';
+ $('count').textContent='Mostrando '+arr.length+' de '+data.length+' registros. Las rifas nuevas no utilizan el historial anterior.';
 }
 async function load(){
  $('refresh').disabled=true;showAlert('');
@@ -138,6 +193,8 @@ async function load(){
   if(!Array.isArray(rows))throw Error('No se obtuvo una lista válida de formularios.');
   data=rows;
   try{companies=await fetchAPI('/rest/v1/bts_nfc_cards?select=id,slug,business_name,is_active,nfc_category&order=business_name.asc&limit=500')||[];}catch(error){companies=[];}
+  campaigns=await fetchAPI('/rest/v1/bts_business_raffle_campaigns?select=*&order=started_at.desc&limit=500')||[];
+  draws=await fetchAPI('/rest/v1/bts_business_raffle_draws?select=*&order=created_at.desc&limit=500')||[];
   populateCompanies();render();
  }catch(e){showAlert(e.message);$('empty').hidden=false;$('empty').textContent='No se pudieron cargar los mensajes.';}
  finally{$('refresh').disabled=false;}
@@ -162,6 +219,61 @@ async function save(event){
  }catch(e){showAlert('No se pudo guardar: '+e.message);}
  finally{button.disabled=false;}
 }
+function renderRaffle(){
+ const c=activeCampaign(raffleSlug),participants=peopleFor(raffleSlug);
+ const other=draws.filter(d=>d.campaign_id===c?.id),winnerIds=new Set(other.map(d=>d.winner_identity));
+ const available=participants.filter(p=>!winnerIds.has(p.entryKey));
+ $('raffleCompany').textContent=allCompanies().find(x=>x[0]===raffleSlug)?.[1]||raffleSlug;
+ $('raffleInfo').textContent=participants.length+' participantes únicos de la rifa actual · '+available.length+' disponibles para sortear. Los registros anteriores están excluidos.';
+ $('raffleDraw').disabled=!available.length;
+ $('raffleWinners').replaceChildren();
+ for(const w of other){
+  const li=document.createElement('li');li.textContent=w.winner_name+' · '+date(w.created_at);
+  $('raffleWinners').append(li);
+ }
+ $('raffleNoWinners').hidden=other.length>0;
+}
+function openRaffle(slug){
+ raffleSlug=slug;
+ $('raffleName').textContent='¿Quién será el ganador?';
+ $('raffleContact').textContent='Solo participan las inscripciones de la nueva ronda.';
+ renderRaffle();$('raffle').showModal();
+}
+async function runRaffle(){
+ const c=activeCampaign(raffleSlug);if(!c)return showAlert('Esta empresa no tiene una rifa activa.');
+ const available=peopleFor(raffleSlug).filter(p=>!draws.some(d=>d.campaign_id===c.id&&d.winner_identity===p.entryKey));
+ if(!available.length)return;
+ $('raffleDraw').disabled=true;$('raffleRound').disabled=true;
+ $('raffleScreen').classList.add('spinning');$('raffleName').textContent='Seleccionando…';$('raffleContact').textContent='El sorteo se decide en el servidor de BTS.';
+ try{
+  const result=await fetchAPI('/rest/v1/rpc/bts_draw_business_raffle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_company_slug:raffleSlug,p_include_all:false,p_exclude_previous:true})});
+  const winner=Array.isArray(result)?result[0]:null;
+  if(!winner||!winner.draw_id)throw Error('El sorteo no devolvió un ganador válido.');
+  const began=Date.now();
+  while(Date.now()-began<1900){
+   const item=available[Math.floor(Math.random()*available.length)];
+   $('raffleName').textContent=item.full_name;
+   await new Promise(resolve=>setTimeout(resolve,95));
+  }
+  $('raffleName').textContent='🏆 '+winner.full_name;
+  $('raffleContact').textContent=[winner.phone,winner.email].filter(Boolean).join(' · ')||'Sin contacto disponible';
+  draws.unshift({id:winner.draw_id,campaign_id:c.id,company_slug:raffleSlug,winner_name:winner.full_name,winner_identity:available.find(x=>x.id===winner.winner_contact_id)?.entryKey||'',created_at:winner.drawn_at});
+  $('raffleScreen').classList.remove('spinning');renderRaffle();render();
+ }catch(e){$('raffleName').textContent='No se pudo realizar el sorteo';$('raffleContact').textContent=e.message;showAlert(e.message);}
+ finally{$('raffleScreen').classList.remove('spinning');$('raffleRound').disabled=false;renderRaffle();}
+}
+async function newRaffleRound(){
+ if(!raffleSlug)return;
+ const company=allCompanies().find(x=>x[0]===raffleSlug)?.[1]||raffleSlug;
+ if(!window.confirm('¿Cerrar la rifa actual de '+company+'? Se archivarán todas sus inscripciones actuales y comenzará una lista nueva desde cero. Esta acción no borra datos.'))return;
+ $('raffleRound').disabled=true;$('raffleDraw').disabled=true;
+ try{
+  await fetchAPI('/rest/v1/rpc/bts_start_business_raffle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_company_slug:raffleSlug})});
+  $('raffle').close();await load();
+  $('company').value=raffleSlug;$('bucket').value='current';render();showAlert('');
+ }catch(e){showAlert('No se pudo iniciar una nueva ronda: '+e.message);}
+ finally{$('raffleRound').disabled=false;}
+}
 function csvCell(v){
  let s=String(v??'');if(/^[\s]*[=+\-@]/.test(s))s="'"+s;
  return '"'+s.replace(/"/g,'""')+'"';
@@ -174,7 +286,8 @@ function exportCSV(){
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download='BTS_Contactos_Empresariales.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-$('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('company').addEventListener('change',render);$('status').addEventListener('change',render);$('export').addEventListener('click',exportCSV);
+$('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('company').addEventListener('change',render);$('bucket').addEventListener('change',render);$('status').addEventListener('change',render);$('export').addEventListener('click',exportCSV);
+$('raffleClose').addEventListener('click',()=>$('raffle').close());$('raffleDraw').addEventListener('click',runRaffle);$('raffleRound').addEventListener('click',newRaffleRound);
 $('close').addEventListener('click',()=>$('detail').close());$('cancel').addEventListener('click',()=>$('detail').close());$('edit').addEventListener('submit',save);
 load();
 })();
