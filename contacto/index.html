@@ -40,23 +40,23 @@ footer{text-align:center;margin:23px auto;color:#7d7982;font-size:11px}
   <div class="company" id="company" hidden><img id="logo" alt="" hidden><div><small>Estás contactando a</small><b id="companyName"></b></div></div>
   <div id="loading">Cargando el formulario de contacto…</div>
   <div id="formBlock" hidden>
-   <span class="eyebrow">Comunicate con nosotros</span><h1>Hablemos.</h1>
-   <p class="intro">Completá el formulario y tu solicitud quedará registrada para que el equipo pueda darle seguimiento.</p>
+   <span class="eyebrow" id="formEyebrow">Comunicate con nosotros</span><h1 id="formTitle">Hablemos.</h1>
+   <p class="intro" id="formIntro">Completá el formulario y tu solicitud quedará registrada para que el equipo pueda darle seguimiento.</p>
    <form id="contact" autocomplete="on">
     <div class="grid">
      <div class="field"><label for="fullName">Nombre completo *</label><input id="fullName" name="name" maxlength="130" minlength="2" autocomplete="name" required placeholder="Tu nombre completo"></div>
      <div class="field"><label for="phone">WhatsApp o teléfono</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+505 8888 8888"></div>
      <div class="field full"><label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="nombre@correo.com"><small class="hint">Ingresá al menos un medio de contacto: correo o teléfono.</small></div>
-     <div class="field full"><label for="subject">Asunto *</label><input id="subject" name="subject" maxlength="140" minlength="2" required placeholder="¿En qué podemos ayudarte?"></div>
-     <div class="field full"><label for="message">Tu mensaje *</label><textarea id="message" name="message" rows="5" minlength="5" maxlength="3000" required placeholder="Contanos qué necesitás"></textarea></div>
+     <div class="field full" id="subjectField"><label for="subject">Asunto *</label><input id="subject" name="subject" maxlength="140" minlength="2" required placeholder="¿En qué podemos ayudarte?"></div>
+     <div class="field full" id="messageField"><label for="message">Tu mensaje *</label><textarea id="message" name="message" rows="5" minlength="5" maxlength="3000" required placeholder="Contanos qué necesitás"></textarea></div>
     </div>
     <div class="honey" aria-hidden="true"><label for="website">Sitio web</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
     <p id="notice" class="state" role="alert" hidden></p>
     <button type="submit" id="send">Enviar mensaje <span aria-hidden="true">↗</span></button>
-    <p class="small">Tus datos se usarán únicamente para gestionar tu solicitud de contacto.</p>
+    <p class="small" id="privacyText">Tus datos se usarán únicamente para gestionar tu solicitud de contacto.</p>
    </form>
   </div>
-  <div id="success" class="success" hidden><span class="check">✓</span><h1>Mensaje enviado.</h1><p class="intro">Gracias por escribirnos. Tu solicitud quedó registrada correctamente.</p><a id="successBack" href="/nfc/">Volver a la tarjeta</a></div>
+  <div id="success" class="success" hidden><span class="check">✓</span><h1 id="successTitle">Mensaje enviado.</h1><p class="intro" id="successText">Gracias por escribirnos. Tu solicitud quedó registrada correctamente.</p><a id="successBack" href="/nfc/">Volver a la tarjeta</a></div>
   <p id="error" class="state" role="alert" hidden></p>
  </main>
  <footer>Formulario de contacto · BTS Studio</footer>
@@ -68,7 +68,7 @@ const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co';
 const KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz';
 const $=id=>document.getElementById(id);
 const slug=(new URLSearchParams(location.search).get('empresa')||'').trim().toLowerCase();
-let company=null, sending=false;
+let company=null, sending=false, raffleMode=false;
 const showError=message=>{$('loading').hidden=true;$('formBlock').hidden=true;$('error').textContent=message;$('error').hidden=false;};
 async function load(){
  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||slug.length>48||slug.length<3)return showError('No encontramos la empresa de este formulario.');
@@ -83,7 +83,22 @@ async function load(){
   $('companyName').textContent=company.business_name;
   if(/^https:\/\//i.test(company.avatar_url||'')){$('logo').src=company.avatar_url;$('logo').hidden=false;}
   $('company').hidden=false;$('loading').hidden=true;$('formBlock').hidden=false;
-  document.title='Contacto · '+company.business_name;
+  // Cuando el botón público se anuncia como rifa, este formulario abre una inscripción nueva.
+  // No muestra ni reutiliza inscripciones de rondas cerradas.
+  raffleMode=/rifa|sorteo|t[oó]mbola|particip/i.test(String(company.theme_options?.contactFormLabel||''));
+  if(raffleMode){
+   $('formEyebrow').textContent='REGISTRO DE PARTICIPANTES';
+   $('formTitle').textContent='Participá en nuestra rifa.';
+   $('formIntro').textContent='Registrate con tu nombre y un medio de contacto para participar en la nueva rifa de '+company.business_name+'. Los registros de rifas anteriores no participan.';
+   $('subjectField').hidden=true;$('messageField').hidden=true;
+   $('subject').required=false;$('message').required=false;
+   $('subject').value='Inscripción en nueva rifa';$('message').value='Participación en la nueva rifa de '+company.business_name;
+   $('send').textContent='Registrarme en la rifa';
+   $('privacyText').textContent='Al registrarte aceptás participar en esta rifa y que la empresa te contacte si resultás ganador. Cada persona participa una sola vez.';
+   $('successTitle').textContent='¡Registro confirmado!';
+   $('successText').textContent='Ya estás participando en la nueva rifa de '+company.business_name+'. ¡Mucha suerte!';
+  }
+  document.title=(raffleMode?'Rifa':'Contacto')+' · '+company.business_name;
  }catch(e){showError('No pudimos abrir este formulario. Probá nuevamente más tarde.');}
 }
 $('contact').addEventListener('submit',async event=>{
@@ -95,12 +110,12 @@ $('contact').addEventListener('submit',async event=>{
  if($('website').value.trim()){$('formBlock').hidden=true;$('success').hidden=false;return;}
  sending=true;$('send').disabled=true;$('send').textContent='Enviando…';
  try{
-  const payload={company_id:company.id,company_slug:company.slug,company_name:company.business_name,full_name,email,phone,subject,message};
+  const payload={company_id:company.id,company_slug:company.slug,company_name:company.business_name,full_name,email,phone,subject,message,raffle_opt_in:raffleMode};
   const r=await fetch(BASE+'/rest/v1/bts_business_contacts',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
   if(!r.ok)throw Error('No fue posible registrar el mensaje');
   $('formBlock').hidden=true;$('success').hidden=false;
  }catch(e){$('notice').textContent='No pudimos enviar tu mensaje. Revisá tu conexión e intentá de nuevo.';$('notice').hidden=false;}
- finally{sending=false;$('send').disabled=false;$('send').innerHTML='Enviar mensaje <span aria-hidden="true">↗</span>';}
+ finally{sending=false;$('send').disabled=false;$('send').textContent=raffleMode?'Registrarme en la rifa':'Enviar mensaje ↗';}
 });
 load();
 })();
