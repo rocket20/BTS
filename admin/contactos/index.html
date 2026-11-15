@@ -27,6 +27,12 @@ input:focus,select:focus,textarea:focus{outline:2px solid #a04d71;outline-offset
 .raffle-screen p{font-size:13px}.raffle-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
 .raffle-history{margin-top:18px;border-top:1px solid #39323b;padding-top:15px}
 .raffle-history h3{margin:0 0 10px;font-size:13px}.raffle-history li{font-size:12px;color:#d6c9d2;padding:6px 0}
+.raffle-history .result-state{display:inline-block;margin-left:7px;font-size:11px;color:#ddabbc}
+.raffle-history .result-state.confirmed{color:#9cddbb}.raffle-history .result-state.no-show{color:#efc89a}
+.raffle-actions #raffleRetry{background:#3d2a30;border-color:#ba8b7a}
+.raffle-actions #raffleConfirm{background:#234436;border-color:#579c72}
+#raffleRetry[hidden],#raffleConfirm[hidden],#raffleAlert[hidden]{display:none!important}
+#raffleAlert{padding:10px 12px;margin-top:12px;border:1px solid #9b5267;border-radius:10px;background:#482632;color:#ffe1eb;font-size:12px}
 #alert[hidden]{display:none}dialog[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){.raffle-screen.spinning{animation:raffle-glow .45s ease-in-out infinite alternate}@keyframes raffle-glow{to{box-shadow:0 0 32px #b45e7a65}}}.panel{border:1px solid #433c46;border-radius:18px;background:#17161c;overflow:hidden}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:16px;border-bottom:1px solid #39323b;align-items:center}
@@ -85,9 +91,12 @@ dialog{border:1px solid #61505b;border-radius:20px;padding:0;background:#1a191f;
   <p id="raffleInfo">Cargando participantes…</p>
   <div class="raffle-actions">
    <button class="btn primary" id="raffleDraw" type="button">🎲 Iniciar tómbola</button>
+   <button class="btn" id="raffleRetry" type="button" hidden>↻ Volver a tirar · No se presentó</button>
+   <button class="btn" id="raffleConfirm" type="button" hidden>✓ Confirmar ganador</button>
    <button class="btn" id="raffleRound" type="button">Cerrar ronda e iniciar nueva</button>
   </div>
-  <section class="raffle-history"><h3>Ganadores de esta ronda</h3><ol id="raffleWinners"></ol><p id="raffleNoWinners">Aún no hay ganadores registrados.</p></section>
+  <p id="raffleAlert" role="alert" hidden></p>
+  <section class="raffle-history"><h3>Historial de sorteos de esta ronda</h3><ol id="raffleWinners"></ol><p id="raffleNoWinners">Aún no hay ganadores registrados.</p></section>
  </div>
 </dialog>
 <script>
@@ -95,7 +104,7 @@ dialog{border:1px solid #61505b;border-radius:20px;padding:0;background:#1a191f;
 'use strict';
 const BASE='https://xwehejgwufwhpkpzjzyt.supabase.co',KEY='sb_publishable_0LR-LUDY7NjJaK5K3qtxPg_1aLupDVz',SESSION='bts-admin-sb-session-v1';
 const $=id=>document.getElementById(id);
-let data=[],companies=[],campaigns=[],draws=[],currentId=null,verified=false,raffleSlug='';
+let data=[],companies=[],campaigns=[],draws=[],currentId=null,verified=false,raffleSlug='',raffleBusy=false;
 function getSession(){try{return JSON.parse(sessionStorage.getItem(SESSION)||'null')}catch{return null}}
 async function fetchAPI(path,options={},retry=true){
  let session=getSession();if(!session?.access_token||!session?.refresh_token)throw Error('Iniciá sesión en el dashboard de BTS Studio para ver los contactos.');
@@ -220,48 +229,121 @@ async function save(event){
  }catch(e){showAlert('No se pudo guardar: '+e.message);}
  finally{button.disabled=false;}
 }
+function raffleMessage(message){
+ const el=$('raffleAlert');el.textContent=message||'';el.hidden=!message;
+}
+function raffleEntries(){
+ const campaign=activeCampaign(raffleSlug);
+ const previous=draws.filter(d=>d.campaign_id===campaign?.id);
+ const used=new Set(previous.map(d=>d.winner_identity));
+ return {campaign,previous,available:peopleFor(raffleSlug).filter(p=>!used.has(p.entryKey))};
+}
 function renderRaffle(){
- const c=activeCampaign(raffleSlug),participants=peopleFor(raffleSlug);
- const other=draws.filter(d=>d.campaign_id===c?.id),winnerIds=new Set(other.map(d=>d.winner_identity));
- const available=participants.filter(p=>!winnerIds.has(p.entryKey));
+ const {campaign,previous,available}=raffleEntries();
+ const participants=peopleFor(raffleSlug);
+ const pending=previous.find(d=>(d.status||'pending')==='pending');
+ const confirmed=previous.find(d=>d.status==='confirmed');
  $('raffleCompany').textContent=allCompanies().find(x=>x[0]===raffleSlug)?.[1]||raffleSlug;
- $('raffleInfo').textContent=participants.length+' participantes únicos de la rifa actual · '+available.length+' disponibles para sortear. Los registros anteriores están excluidos.';
- $('raffleDraw').disabled=!available.length;
- $('raffleWinners').replaceChildren();
- for(const w of other){
-  const li=document.createElement('li');li.textContent=w.winner_name+' · '+date(w.created_at);
-  $('raffleWinners').append(li);
+ $('raffleInfo').textContent=participants.length+' participantes únicos · '+available.length+' disponibles para sortear. La lista original se conserva intacta.';
+ $('raffleDraw').disabled=raffleBusy||!available.length||!!pending||!!confirmed;
+ $('raffleRetry').hidden=!pending;
+ $('raffleRetry').disabled=raffleBusy||!available.length;
+ $('raffleConfirm').hidden=!pending;
+ $('raffleConfirm').disabled=raffleBusy;
+ $('raffleRound').disabled=raffleBusy;
+ if(!raffleBusy){
+  const chosen=pending||confirmed;
+  if(chosen){
+   $('raffleName').textContent=(confirmed?'✅ ':'🏆 ')+chosen.winner_name;
+   $('raffleContact').textContent=[chosen.winner_phone,chosen.winner_email].filter(Boolean).join(' · ')||(confirmed?'Ganador confirmado':'Pendiente de confirmar');
+  }else if(!previous.length){
+   $('raffleName').textContent='¿Quién será el ganador?';
+   $('raffleContact').textContent='Se elegirá al azar entre los participantes de esta ronda.';
+  }else{
+   $('raffleName').textContent='No quedan ganadores pendientes';
+   $('raffleContact').textContent=available.length?'Podés iniciar otro sorteo con los restantes.':'No quedan participantes disponibles.';
+  }
  }
- $('raffleNoWinners').hidden=other.length>0;
+ $('raffleWinners').replaceChildren();
+ for(const w of previous){
+  const li=document.createElement('li');
+  const label=(w.status||'pending')==='no_show'?'No se presentó':w.status==='confirmed'?'Confirmado':'Pendiente';
+  const status=document.createElement('span');
+  status.className='result-state'+(w.status==='no_show'?' no-show':w.status==='confirmed'?' confirmed':'');
+  status.textContent='· '+label;
+  li.textContent=w.winner_name+' · '+date(w.created_at)+' ';
+  li.append(status);$('raffleWinners').append(li);
+ }
+ $('raffleNoWinners').hidden=previous.length>0;
 }
 function openRaffle(slug){
- raffleSlug=slug;
- $('raffleName').textContent='¿Quién será el ganador?';
- $('raffleContact').textContent='Solo participan las inscripciones de la nueva ronda.';
- renderRaffle();$('raffle').showModal();
+ raffleSlug=slug;raffleMessage('');renderRaffle();$('raffle').showModal();
+}
+async function animateRaffle(available){
+ const began=Date.now();
+ while(Date.now()-began<1900&&available.length){
+  const item=available[Math.floor(Math.random()*available.length)];
+  $('raffleName').textContent=item.full_name;
+  await new Promise(resolve=>setTimeout(resolve,95));
+ }
+}
+function keepDraw(winner,campaign,available){
+ draws.unshift({
+  id:winner.draw_id,campaign_id:campaign.id,company_slug:raffleSlug,
+  winner_contact_id:winner.winner_contact_id,winner_name:winner.full_name,
+  winner_email:winner.email||'',winner_phone:winner.phone||'',
+  winner_identity:available.find(x=>x.id===winner.winner_contact_id)?.entryKey||'',
+  created_at:winner.drawn_at,status:'pending'
+ });
 }
 async function runRaffle(){
- const c=activeCampaign(raffleSlug);if(!c)return showAlert('Esta empresa no tiene una rifa activa.');
- const available=peopleFor(raffleSlug).filter(p=>!draws.some(d=>d.campaign_id===c.id&&d.winner_identity===p.entryKey));
- if(!available.length)return;
- $('raffleDraw').disabled=true;$('raffleRound').disabled=true;
- $('raffleScreen').classList.add('spinning');$('raffleName').textContent='Seleccionando…';$('raffleContact').textContent='El sorteo se decide en el servidor de BTS.';
+ const {campaign,previous,available}=raffleEntries();
+ if(!campaign||raffleBusy)return;
+ if(previous.some(d=>(d.status||'pending')==='pending'||d.status==='confirmed')){
+  raffleMessage('Primero confirmá al ganador pendiente o elegí Volver a tirar si no aparece.');return;
+ }
+ if(!available.length){raffleMessage('No quedan participantes disponibles para este sorteo.');return;}
+ raffleMessage('');raffleBusy=true;renderRaffle();
+ $('raffleScreen').classList.add('spinning');
+ $('raffleName').textContent='Seleccionando…';$('raffleContact').textContent='El sorteo se decide en el servidor de BTS.';
  try{
   const result=await fetchAPI('/rest/v1/rpc/bts_draw_business_raffle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_company_slug:raffleSlug,p_include_all:false,p_exclude_previous:true})});
   const winner=Array.isArray(result)?result[0]:null;
-  if(!winner||!winner.draw_id)throw Error('El sorteo no devolvió un ganador válido.');
-  const began=Date.now();
-  while(Date.now()-began<1900){
-   const item=available[Math.floor(Math.random()*available.length)];
-   $('raffleName').textContent=item.full_name;
-   await new Promise(resolve=>setTimeout(resolve,95));
-  }
-  $('raffleName').textContent='🏆 '+winner.full_name;
-  $('raffleContact').textContent=[winner.phone,winner.email].filter(Boolean).join(' · ')||'Sin contacto disponible';
-  draws.unshift({id:winner.draw_id,campaign_id:c.id,company_slug:raffleSlug,winner_name:winner.full_name,winner_identity:available.find(x=>x.id===winner.winner_contact_id)?.entryKey||'',created_at:winner.drawn_at});
-  $('raffleScreen').classList.remove('spinning');renderRaffle();render();
- }catch(e){$('raffleName').textContent='No se pudo realizar el sorteo';$('raffleContact').textContent=e.message;showAlert(e.message);}
- finally{$('raffleScreen').classList.remove('spinning');$('raffleRound').disabled=false;renderRaffle();}
+  if(!winner?.draw_id)throw Error('El sorteo no devolvió un ganador válido.');
+  await animateRaffle(available);
+  keepDraw(winner,campaign,available);render();
+ }catch(e){raffleMessage('No se pudo sortear: '+e.message);}
+ finally{raffleBusy=false;$('raffleScreen').classList.remove('spinning');renderRaffle();}
+}
+async function retryRaffle(){
+ const {campaign,previous,available}=raffleEntries();
+ const pending=previous.find(d=>(d.status||'pending')==='pending');
+ if(raffleBusy||!campaign||!pending)return;
+ if(!available.length){raffleMessage('No quedan participantes distintos para volver a tirar.');return;}
+ if(!window.confirm('¿El ganador "'+pending.winner_name+'" no se presentó? Se guardará como ausente y la tómbola elegirá a otra persona, sin borrar ni reiniciar participantes.'))return;
+ raffleMessage('');raffleBusy=true;renderRaffle();
+ $('raffleScreen').classList.add('spinning');
+ $('raffleName').textContent='Volviendo a tirar…';$('raffleContact').textContent='Los participantes de esta rifa se conservan.';
+ try{
+  const result=await fetchAPI('/rest/v1/rpc/bts_redraw_business_raffle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_company_slug:raffleSlug,p_prior_draw_id:pending.id})});
+  const winner=Array.isArray(result)?result[0]:null;
+  if(!winner?.draw_id)throw Error('El sorteo no devolvió un nuevo ganador válido.');
+  pending.status='no_show';pending.resolved_at=new Date().toISOString();
+  await animateRaffle(available);
+  keepDraw(winner,campaign,available);render();
+ }catch(e){raffleMessage('No se pudo repetir la tómbola: '+e.message);}
+ finally{raffleBusy=false;$('raffleScreen').classList.remove('spinning');renderRaffle();}
+}
+async function confirmRaffle(){
+ const {previous}=raffleEntries(),pending=previous.find(d=>(d.status||'pending')==='pending');
+ if(raffleBusy||!pending)return;
+ if(!window.confirm('¿Confirmar que "'+pending.winner_name+'" se presentó y recibió el premio? Una vez confirmado no se podrá volver a tirar esta ronda.'))return;
+ raffleMessage('');raffleBusy=true;renderRaffle();
+ try{
+  await fetchAPI('/rest/v1/rpc/bts_confirm_business_raffle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_company_slug:raffleSlug,p_draw_id:pending.id})});
+  pending.status='confirmed';pending.resolved_at=new Date().toISOString();
+ }catch(e){raffleMessage('No se pudo confirmar al ganador: '+e.message);}
+ finally{raffleBusy=false;renderRaffle();}
 }
 async function newRaffleRound(){
  if(!raffleSlug)return;
@@ -288,7 +370,7 @@ function exportCSV(){
  const a=document.createElement('a');a.href=url;a.download='BTS_Contactos_Empresariales.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 $('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('company').addEventListener('change',render);$('bucket').addEventListener('change',render);$('status').addEventListener('change',render);$('export').addEventListener('click',exportCSV);
-$('raffleClose').addEventListener('click',()=>$('raffle').close());$('raffleDraw').addEventListener('click',runRaffle);$('raffleRound').addEventListener('click',newRaffleRound);
+$('raffleClose').addEventListener('click',()=>$('raffle').close());$('raffleDraw').addEventListener('click',runRaffle);$('raffleRetry').addEventListener('click',retryRaffle);$('raffleConfirm').addEventListener('click',confirmRaffle);$('raffleRound').addEventListener('click',newRaffleRound);
 $('close').addEventListener('click',()=>$('detail').close());$('cancel').addEventListener('click',()=>$('detail').close());$('edit').addEventListener('submit',save);
 load();
 })();
